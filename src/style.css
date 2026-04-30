@@ -1,0 +1,266 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #06060f;
+  font-family: system-ui, sans-serif;
+}
+
+#canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#sidebar,
+#tooltip,
+button {
+  pointer-events: auto;
+}
+
+/* ── Sidebar ─────────────────────────────────── */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh;
+  background: rgba(6, 6, 20, 0.85);
+  border-right: 1px solid rgba(91, 143, 249, 0.2);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  font-family: "Courier New", monospace;
+}
+
+.sb-header {
+  padding: 18px 16px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #c8d4ee;
+  border-bottom: 1px solid rgba(91, 143, 249, 0.15);
+  letter-spacing: 0.04em;
+}
+
+.sb-logo {
+  color: #5b8ff9;
+  font-weight: 700;
+}
+
+.sb-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+}
+
+.sb-body::-webkit-scrollbar {
+  width: 2px;
+}
+.sb-body::-webkit-scrollbar-thumb {
+  background: rgba(91, 143, 249, 0.3);
+  border-radius: 2px;
+}
+
+.sb-group {
+  margin-bottom: 6px;
+}
+
+.sb-group-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 16px 5px;
+  opacity: 0.8;
+}
+
+.sb-group-line {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 16px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.sb-item:hover {
+  background: rgba(91, 143, 249, 0.07);
+  border-left-color: rgba(91, 143, 249, 0.3);
+}
+
+.sb-item.active {
+  background: rgba(91, 143, 249, 0.12);
+  border-left-color: #5b8ff9;
+}
+
+.sb-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 5px currentColor;
+}
+
+.sb-name {
+  font-size: 12.5px;
+  color: rgba(200, 212, 238, 0.8);
+  flex: 1;
+  letter-spacing: 0.03em;
+}
+
+.sb-item.active .sb-name {
+  color: #c8d4ee;
+}
+
+.sb-arrow {
+  font-size: 14px;
+  color: rgba(91, 143, 249, 0.4);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.sb-item:hover .sb-arrow,
+.sb-item.active .sb-arrow {
+  opacity: 1;
+}
+
+/* ── Tooltip ─────────────────────────────────── */
+#tooltip {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 260px;
+  background: rgba(6, 6, 20, 0.88);
+  border: 1px solid rgba(91, 143, 249, 0.35);
+  border-radius: 10px;
+  padding: 16px 18px;
+  backdrop-filter: blur(12px);
+  font-family: "Courier New", monospace;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+#tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tt-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(91, 143, 249, 0.15);
+}
+
+.tt-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tt-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e0e8ff;
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+
+.tt-type {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(91, 143, 249, 0.15);
+  color: #7aaff9;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tt-desc {
+  font-size: 12px;
+  color: rgba(200, 212, 238, 0.6);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.tt-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tt-fact {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 4px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tt-fact-label {
+  color: rgba(200, 212, 238, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tt-fact-value {
+  color: #c8d4ee;
+  font-weight: 500;
+}
+
+/* ── Bouton retour ───────────────────────────── */
+#btn-back {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  background: rgba(6, 6, 20, 0.85);
+  border: 1px solid rgba(91, 143, 249, 0.4);
+  border-radius: 6px;
+  color: #7aaff9;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.2s, background 0.15s;
+  pointer-events: none;
+}
+
+#btn-back.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#btn-back:hover {
+  background: rgba(91, 143, 249, 0.15);
+}
