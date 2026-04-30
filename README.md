@@ -115,6 +115,7 @@ Fichiers utilisés dans `public/textures/` :
 
 ### Interface
 - [ ] Contrôle pause / vitesse de simulation
+- [ ] Planètes cliquables  (même action que le clique sur les éléments de la barre latérale)
 - [ ] Afficher / masquer les orbites
 - [ ] Boutons d'échelle (système interne / système complet / galaxie)
 - [ ] Tooltip en style Dead Space (UI 3D positionnée à côté de la planète dans la scène) vs coin fixe — à décider
