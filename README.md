@@ -54,6 +54,7 @@ SpaceObjects/
 ## Textures
 
 Textures 2K téléchargées depuis [solarsystemscope.com/textures](https://www.solarsystemscope.com/textures).
+Skybox de test : https://svs.gsfc.nasa.gov/4851
 
 | Fichier | Objet |
 |---|---|
