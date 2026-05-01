@@ -56,6 +56,7 @@ SpaceObjects/
 ## Textures
 
 Textures 2K téléchargées depuis [solarsystemscope.com/textures](https://www.solarsystemscope.com/textures).
+Skybox de test : https://svs.gsfc.nasa.gov/4851
 
 Fichiers utilisés dans `public/textures/` :
 
@@ -101,7 +102,7 @@ Fichiers utilisés dans `public/textures/` :
 
 ## Bugs connus
 
-- [ ] **Étoiles de fond** — générées aléatoirement, certaines apparaissent trop proches et se voient sous forme de pixels blancs au zoom sur une planète
+- [X] **Étoiles de fond** — générées aléatoirement, certaines apparaissent trop proches et se voient sous forme de pixels blancs au zoom sur une planète
 - [X] **Zoom dynamique** — le zoom sur une planète ne suit pas sa position en temps réel (la planète continue de tourner pendant le zoom)
 - [X] **Dézoom bloqué** — bug empêchant le dézoom après un focus sur une planète
 
@@ -127,10 +128,11 @@ Fichiers utilisés dans `public/textures/` :
 ### Visuel
 - [ ] Fond de scène — étoiles générées avec différentes couleurs, Voie Lactée, ou skybox photographique ?
     => [X] Pour le moment, différentes taille et couleurs + opacité diminuée si on en approche trop
-    => [X] Tentative d'ajout de "Nébuleuse", trop ressemblante à des étoiles, voir pour utiliser une texture en ligne ? une Skybox comme indiqué dans la tache principale ?
+    => [X] Tentative d'ajout de "Nébuleuse", trop ressemblante à des étoiles - branche etoile-nebuleuse
+    => [En cours] Test avec la skybox provenant de la nasa
 - [ ] Modèles 3D GLTF pour les sondes et satellites (NASA 3D Models)
 - [ ] Atmosphères planétaires (shader de halo)
-    => [En cours] Nébuleuse volumétriques en test
+    => [En cours] Nébuleuse volumétriques en test - branche etoile-nebuleuse
 - [ ] Brume particule autour du soleil ?
 - [ ] Nuages Terre (seconde sphère semi-transparente)
 
