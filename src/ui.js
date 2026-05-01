@@ -1,4 +1,5 @@
 import { OBJECTS, TYPE_LABELS } from "./data.js";
+import { sim } from "./state.js";
 
 // ── Construction de la sidebar ────────────────────
 export function buildSidebar(onSelect) {
@@ -54,6 +55,35 @@ export function buildSidebar(onSelect) {
       const obj = OBJECTS.find((o) => o.id === el.dataset.id);
       if (obj) onSelect(obj);
     });
+  });
+}
+
+export function buildSimControls() {
+  const hud = document.createElement("div");
+  hud.id = "sim-hud";
+  hud.innerHTML = `
+    <button id="btn-pause">⏸ Pause</button>
+    <div id="speed-control">
+      <span id="speed-label">×0.03</span>
+      <input type="range" id="speed-slider" min="0.01" max="2" step="0.01" value="0.03"/>
+    </div>
+  `;
+  document.body.appendChild(hud);
+
+  // Pause
+  document.getElementById("btn-pause").addEventListener("click", () => {
+    sim.paused = !sim.paused;
+    const btn = document.getElementById("btn-pause");
+    btn.textContent = sim.paused ? "▶ Reprendre" : "⏸ Pause";
+    btn.classList.toggle("active", sim.paused);
+  });
+
+  // Vitesse
+  document.getElementById("speed-slider").addEventListener("input", (e) => {
+    sim.speedFactor = parseFloat(e.target.value);
+    document.getElementById(
+      "speed-label"
+    ).textContent = `×${sim.speedFactor.toFixed(1)}`;
   });
 }
 

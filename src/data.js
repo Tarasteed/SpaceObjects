@@ -1,9 +1,12 @@
+// data.js — source de vérité unique pour tous les objets spatiaux
+
 export const OBJECTS = [
-  // ── Étoiles ──────────────────────────────────
   {
+    // ── Identification ──
     id: "sun",
     name: "Soleil",
     type: "star",
+    // ── UI ──
     color: "#F9CB42",
     desc: "Notre étoile, âgée de 4,6 milliards d'années. Elle représente 99,8 % de la masse du système solaire.",
     facts: {
@@ -11,8 +14,12 @@ export const OBJECTS = [
       rayon: "696 340 km",
       type: "Naine jaune (G2V)",
     },
+    // ── 3D ──
+    radius: 2,
+    texturePath: "/textures/2k_sun.jpg",
+    emissive: true, // brille sans lumière externe
+    rotSpeed: 0.037, // rotation en 27 jours
   },
-  // ── Planètes ──────────────────────────────────
   {
     id: "mercury",
     name: "Mercure",
@@ -24,6 +31,11 @@ export const OBJECTS = [
       rayon: "2 439 km",
       orbite: "88 jours",
     },
+    radius: 0.2,
+    texturePath: "/textures/2k_mercury.jpg",
+    orbitR: 5,
+    speed: 0.8,
+    rotSpeed: 0.017,
   },
   {
     id: "venus",
@@ -36,6 +48,11 @@ export const OBJECTS = [
       rayon: "6 051 km",
       orbite: "225 jours",
     },
+    radius: 0.38,
+    texturePath: "/textures/2k_venus_atmosphere.jpg",
+    orbitR: 7,
+    speed: 0.6,
+    rotSpeed: -0.004,
   },
   {
     id: "earth",
@@ -48,6 +65,12 @@ export const OBJECTS = [
       rayon: "6 371 km",
       orbite: "365 jours",
     },
+    radius: 0.4,
+    texturePath: "/textures/2k_earth_daymap.jpg",
+    orbitR: 10,
+    speed: 0.5,
+    rotSpeed: 1.0,
+    hasMoon: true,
   },
   {
     id: "mars",
@@ -60,6 +83,11 @@ export const OBJECTS = [
       rayon: "3 389 km",
       orbite: "687 jours",
     },
+    radius: 0.28,
+    texturePath: "/textures/2k_mars.jpg",
+    orbitR: 13,
+    speed: 0.4,
+    rotSpeed: 0.97,
   },
   {
     id: "jupiter",
@@ -72,6 +100,11 @@ export const OBJECTS = [
       rayon: "69 911 km",
       orbite: "12 ans",
     },
+    radius: 1.1,
+    texturePath: "/textures/2k_jupiter.jpg",
+    orbitR: 19,
+    speed: 0.2,
+    rotSpeed: 2.42,
   },
   {
     id: "saturn",
@@ -84,6 +117,12 @@ export const OBJECTS = [
       rayon: "58 232 km",
       orbite: "29 ans",
     },
+    radius: 0.9,
+    texturePath: "/textures/2k_saturn.jpg",
+    orbitR: 25,
+    speed: 0.15,
+    rotSpeed: 2.24,
+    rings: true,
   },
   {
     id: "uranus",
@@ -96,6 +135,11 @@ export const OBJECTS = [
       rayon: "25 362 km",
       orbite: "84 ans",
     },
+    radius: 0.6,
+    texturePath: "/textures/2k_uranus.jpg",
+    orbitR: 32,
+    speed: 0.1,
+    rotSpeed: -1.39,
   },
   {
     id: "neptune",
@@ -108,8 +152,12 @@ export const OBJECTS = [
       rayon: "24 622 km",
       orbite: "165 ans",
     },
+    radius: 0.55,
+    texturePath: "/textures/2k_neptune.jpg",
+    orbitR: 38,
+    speed: 0.08,
+    rotSpeed: 1.49,
   },
-  // ── Satellites ────────────────────────────────
   {
     id: "moon",
     name: "Lune",
@@ -121,6 +169,12 @@ export const OBJECTS = [
       rayon: "1 737 km",
       orbite: "27 jours",
     },
+    radius: 0.11,
+    texturePath: "/textures/2k_moon.jpg",
+    orbitR: 0.8, // distance à la Terre
+    orbitalSpeed: 6, // vitesse orbitale autour de la Terre
+    rotSpeed: 6, // rotation synchrone
+    parentId: "earth", // satellite de la Terre
   },
 ];
 

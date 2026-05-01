@@ -101,20 +101,20 @@ Fichiers utilisés dans `public/textures/` :
 
 ## Bugs connus
 
-- **Étoiles de fond** — générées aléatoirement, certaines apparaissent trop proches et se voient sous forme de pixels blancs au zoom sur une planète
-- **Zoom dynamique** — le zoom sur une planète ne suit pas sa position en temps réel (la planète continue de tourner pendant le zoom)
-- **Dézoom bloqué** — bug empêchant le dézoom après un focus sur une planète
+- [ ] **Étoiles de fond** — générées aléatoirement, certaines apparaissent trop proches et se voient sous forme de pixels blancs au zoom sur une planète
+- [X] **Zoom dynamique** — le zoom sur une planète ne suit pas sa position en temps réel (la planète continue de tourner pendant le zoom)
+- [X] **Dézoom bloqué** — bug empêchant le dézoom après un focus sur une planète
 
 ---
 
 ## Roadmap
 
 ### Caméra & navigation
-- [ ] Orbiter autour de la planète sélectionnée (recentrer `OrbitControls` sur elle) ou simplement se rapprocher — à définir dans un panel d'options
+- [X] Orbiter autour de la planète sélectionnée (recentrer `OrbitControls` sur elle) ou simplement se rapprocher
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 
 ### Interface
-- [ ] Contrôle pause / vitesse de simulation
+- [X] Contrôle pause / vitesse de simulation
 - [ ] Planètes cliquables  (même action que le clique sur les éléments de la barre latérale)
 - [ ] Afficher / masquer les orbites
 - [ ] Boutons d'échelle (système interne / système complet / galaxie)
@@ -125,9 +125,13 @@ Fichiers utilisés dans `public/textures/` :
 - [ ] Ajouter les sondes historiques (Voyager 1 & 2, New Horizons, Juno…) avec positions réelles via TLE / satellite.js
 
 ### Visuel
-- [ ] Fond de scène — étoiles générées, Voie Lactée, ou skybox photographique ?
+- [ ] Fond de scène — étoiles générées avec différentes couleurs, Voie Lactée, ou skybox photographique ?
+    => [X] Pour le moment, différentes taille et couleurs + opacité diminuée si on en approche trop
+    => [X] Tentative d'ajout de "Nébuleuse", trop ressemblante à des étoiles, voir pour utiliser une texture en ligne ? une Skybox comme indiqué dans la tache principale ?
 - [ ] Modèles 3D GLTF pour les sondes et satellites (NASA 3D Models)
 - [ ] Atmosphères planétaires (shader de halo)
+    => [En cours] Nébuleuse volumétriques en test
+- [ ] Brume particule autour du soleil ?
 - [ ] Nuages Terre (seconde sphère semi-transparente)
 
 ### Technique
