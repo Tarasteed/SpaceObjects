@@ -25,13 +25,15 @@ export const meshById = new Map();
 function createSkybox() {
   const loader = new THREE.TextureLoader();
   loader.load("/textures/starmap.jpg", (texture) => {
-    const geo = new THREE.SphereGeometry(500, 64, 64);
+    const geo = new THREE.SphereGeometry(4000, 256, 256); // ← 256 segments, plus de facettes
     const mat = new THREE.MeshBasicMaterial({
       map: texture,
       side: THREE.BackSide, // rendu depuis l'intérieur
       color: new THREE.Color(0.4, 0.4, 0.4), // ← assombrit la texture de 40%
     });
-    scene.add(new THREE.Mesh(geo, mat));
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.renderOrder = -1; // ← rendu en premier
+    scene.add(mesh);
   });
 }
 
@@ -49,17 +51,16 @@ function createStars() {
   const starTexture = new THREE.CanvasTexture(canvas);
 
   const starGroups = [
-    { count: 1500, color: new THREE.Color("#ffccaa"), size: 0.8, minDist: 80 },
-    { count: 600, color: new THREE.Color("#fff5e0"), size: 1.0, minDist: 80 },
-    { count: 200, color: new THREE.Color("#ffffff"), size: 1.3, minDist: 100 },
-    { count: 50, color: new THREE.Color("#aabbff"), size: 2.0, minDist: 120 },
+    { count: 12000, color: new THREE.Color("#ffccaa"), size: 0.8, minDist: 80 },
+    { count: 4800, color: new THREE.Color("#fff5e0"), size: 1.0, minDist: 80 },
+    { count: 1600, color: new THREE.Color("#ffffff"), size: 1.3, minDist: 100 },
+    { count: 400, color: new THREE.Color("#aabbff"), size: 2.0, minDist: 120 },
   ];
 
   starGroups.forEach((group) => {
     const positions = [];
     for (let i = 0; i < group.count; i++) {
-      // Entre 80 et 490 — juste devant la skybox (rayon 500)
-      const r = group.minDist + Math.random() * 380;
+      const r = group.minDist + Math.random() * 3800;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       positions.push(
@@ -82,6 +83,7 @@ function createStars() {
       transparent: true,
       opacity: 1.5,
       depthWrite: false,
+      depthTest: false,
     });
     scene.add(new THREE.Points(geo, mat));
   });
