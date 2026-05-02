@@ -83,7 +83,7 @@ function createStars() {
       transparent: true,
       opacity: 1.5,
       depthWrite: false,
-      depthTest: false,
+      depthTest: true,
     });
     scene.add(new THREE.Points(geo, mat));
   });
@@ -117,6 +117,7 @@ const pivots = planetsData.map((p) => {
     radius: p.radius,
     texturePath: p.texturePath,
     position: [p.orbitR, 0, 0],
+    roughness: p.roughness ?? 0.8,
   });
 
   // On retire le mesh de la scène et on le met sous le pivot
