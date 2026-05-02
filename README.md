@@ -144,9 +144,12 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 ### Visuel
 - [x] Skybox photographique NASA (Voie Lactée)
 - [x] Étoiles procédurales multi-couleurs en overlay
-- [ ] Atmosphères planétaires (shader de halo)
+- [x] Rayon et halo du soleil
+- [ ] Scintillement des étoiles (constant ? au mouvement de la caméra ?)
+- [ ] Brume/surface bouillonnante autour du Soleil ?
+- [ ] Atmosphères planétaires (halo ? fog ?)
 - [ ] Nuages Terre (seconde sphère semi-transparente)
-- [ ] Brume / halo autour du Soleil
+- [ ] Lumières humaines sur la partie sombre de la terre ?
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 
 ### Technique

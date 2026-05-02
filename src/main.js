@@ -1,5 +1,5 @@
 import { scene, startLoop, camera } from "./scene.js";
-import { createPlanet, createSaturnRings } from "./objects.js";
+import { createPlanet, createSaturnRings, createLensFlare } from "./objects.js";
 import {
   buildSidebar,
   showTooltip,
@@ -103,6 +103,8 @@ const sunMesh = createPlanet({
 sunMesh.userData.name = sunData.name;
 sunMesh.userData.id = sunData.id;
 meshById.set("sun", sunMesh);
+
+createLensFlare(sunMesh);
 
 // ── Création des pivots d'orbite ─────────────────
 // Un "pivot" est un Object3D invisible placé au centre (0,0,0).
