@@ -20,7 +20,7 @@ export const camera = new THREE.PerspectiveCamera(
   0.01,
   8000
 );
-camera.position.set(0, 8, 20);
+camera.position.set(0, 12, 30);
 
 // Contrôles orbite (rotation libre à la souris)
 export const controls = new OrbitControls(camera, canvas);
@@ -29,7 +29,7 @@ controls.dampingFactor = 0.05;
 
 // Lumières
 scene.add(new THREE.AmbientLight(0xffffff, 0.08));
-const sunLight = new THREE.PointLight(0xfffde0, 200, 1000, 2);
+const sunLight = new THREE.PointLight(0xfffde0, 200, 0, 1.9);
 scene.add(sunLight);
 
 // ── Post-processing : Bloom ───────────────────────
@@ -37,9 +37,9 @@ const renderPass = new RenderPass(scene, camera);
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0.5, // strength  — intensité du bloom
-  0.3, // radius    — rayon du halo
-  0.95 // threshold — seuil de luminosité pour déclencher le bloom
+  0.6,   // strength
+  0.5,   // radius
+  0.98   // threshold très haut — seul le Soleil surexposé passe
 );
 
 export const composer = new EffectComposer(renderer);

@@ -88,7 +88,7 @@ export function zoomTo(mesh, radiusMultiplier = 4) {
 }
 
 export function zoomToSystem() {
-  state.targetPosition.set(0, 18, 45);
+  state.targetPosition.set(0, 24, 60);
   state.targetLookAt.set(0, 0, 0);
   state.mode = "returning";
   state.targetMesh = null;
