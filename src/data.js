@@ -53,7 +53,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_venus_atmosphere.jpg",
     roughness: 0.95,
     orbitR: 12,
-    speed: 0.6,
+    speed: 0.62,
     rotSpeed: -0.004,
   },
   {
@@ -90,7 +90,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_mars.jpg",
     roughness: 0.75,
     orbitR: 22,
-    speed: 0.4,
+    speed: 0.27,
     rotSpeed: 0.97,
   },
   {
@@ -108,7 +108,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_jupiter.jpg",
     roughness: 0.75,
     orbitR: 32,
-    speed: 0.2,
+    speed: 0.11,
     rotSpeed: 2.42,
   },
   {
@@ -126,7 +126,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_saturn.jpg",
     roughness: 0.75,
     orbitR: 42,
-    speed: 0.15,
+    speed: 0.076,
     rotSpeed: 2.24,
     rings: true,
   },
@@ -145,7 +145,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_uranus.jpg",
     roughness: 0.65,
     orbitR: 54,
-    speed: 0.1,
+    speed: 0.038,
     rotSpeed: -1.39,
   },
   {
@@ -163,7 +163,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_neptune.jpg",
     roughness: 0.6,
     orbitR: 66,
-    speed: 0.08,
+    speed: 0.019,
     rotSpeed: 1.49,
   },
   {
