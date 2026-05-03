@@ -1,4 +1,4 @@
-import { scene, startLoop, camera } from "./scene.js";
+import { scene, startLoop, bloomPass } from "./scene.js";
 import { createPlanet, createSaturnRings, createLensFlare } from "./objects.js";
 import {
   buildSidebar,
@@ -57,6 +57,8 @@ function createStars() {
     { count: 400, color: new THREE.Color("#aabbff"), size: 2.0, minDist: 120 },
   ];
 
+  const starsGroup = new THREE.Group();
+
   starGroups.forEach((group) => {
     const positions = [];
     for (let i = 0; i < group.count; i++) {
@@ -85,12 +87,16 @@ function createStars() {
       depthWrite: false,
       depthTest: true,
     });
-    scene.add(new THREE.Points(geo, mat));
+
+    starsGroup.add(new THREE.Points(geo, mat));
   });
+
+  scene.add(starsGroup);
+  return starsGroup;
 }
 
 createSkybox();
-createStars();
+const starsGroup = createStars();
 
 // ── Soleil ───────────────────────────────────────
 const sunMesh = createPlanet({
@@ -125,6 +131,7 @@ const pivots = planetsData.map((p) => {
     texturePath: p.texturePath,
     position: [p.orbitR, 0, 0],
     roughness: p.roughness ?? 0.8,
+    nightTexturePath: p.nightTexturePath ?? null,
   });
 
   // Inclinaison axiale — appliquée sur le mesh, pas le pivot
@@ -190,6 +197,11 @@ startLoop(() => {
   if (!sim.paused) {
     t += 0.005 * sim.speedFactor;
   }
+
+  // Pulse continu
+  const now = Date.now() * 0.001;
+  starsGroup.rotation.y = now * 0.003;
+  bloomPass.threshold = 0.82 + Math.sin(now * 0.4) * 0.06;
 
   pivots.forEach(({ pivot, speed, rotSpeed, mesh, moonPivot, moonMesh }) => {
     pivot.rotation.y = t * speed;

@@ -79,6 +79,7 @@ export const OBJECTS = [
     rotSpeed: 1.0,
     inclination: 0,
     axialTilt: 23.44,
+    nightTexturePath: "/textures/2k_earth_nightmap.jpg",
     hasMoon: true,
   },
   {

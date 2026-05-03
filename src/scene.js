@@ -28,18 +28,19 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
 // Lumières
-scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+scene.add(new THREE.AmbientLight(0xffffff, 0.15));
 const sunLight = new THREE.PointLight(0xfffde0, 200, 0, 1.9);
 scene.add(sunLight);
 
 // ── Post-processing : Bloom ───────────────────────
 const renderPass = new RenderPass(scene, camera);
 
+// Bloom fort — seulement pour les objets très lumineux (Soleil)
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0.6,   // strength
-  0.5,   // radius
-  0.98   // threshold très haut — seul le Soleil surexposé passe
+  0.8, // strength
+  0.4, // radius
+  0.85 // threshold élevé — seul le Soleil passe
 );
 
 export const composer = new EffectComposer(renderer);
