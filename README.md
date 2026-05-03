@@ -149,6 +149,7 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [x] Étoiles procédurales multi-couleurs en overlay
 - [x] Rayon et halo du soleil
 - [x] Scintillement des étoiles constant
+- [x] Scintillement du soleil
 - [ ] Brume/surface bouillonnante autour du Soleil ?
 - [ ] Atmosphères planétaires (halo ? fog ?)
 - [ ] Nuages Terre (seconde sphère semi-transparente)
