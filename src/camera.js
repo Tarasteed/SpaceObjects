@@ -32,7 +32,10 @@ export function updateCamera() {
     const worldPos = new THREE.Vector3();
     state.targetMesh.getWorldPosition(worldPos);
 
-    state.targetMesh.geometry.computeBoundingSphere();
+    if (!state.targetMesh.geometry.boundingSphere) {
+      state.targetMesh.geometry.computeBoundingSphere();
+    }
+
     const radius = state.targetMesh.geometry.boundingSphere.radius;
     const offset = new THREE.Vector3(
       0,
@@ -47,7 +50,7 @@ export function updateCamera() {
     controls.update();
 
     const dist = camera.position.distanceTo(state.targetPosition);
-    if (dist < 0.3) {
+    if (dist < radius * 0.1) {
       // Initialise lastWorldPos juste avant de passer en following
       state.targetMesh.getWorldPosition(state.lastWorldPos);
       // Force la position finale propre
