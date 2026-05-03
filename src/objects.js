@@ -215,3 +215,33 @@ export function createSolarBoiling(sunMesh, radius) {
   scene.add(overlay);
   return overlay;
 }
+
+export function createAtmosphere(mesh, color, size) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext("2d");
+
+  const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+  gradient.addColorStop(0, `rgba(${color}, 0.12)`); // centre — léger
+  gradient.addColorStop(0.3, `rgba(${color}, 0.10)`); // milieu
+  gradient.addColorStop(0.6, `rgba(${color}, 0.06)`); // commence à diminuer
+  gradient.addColorStop(0.8, `rgba(${color}, 0.03)`); // fin progressive
+  gradient.addColorStop(0.92, `rgba(${color}, 0.01)`); // très fin
+  gradient.addColorStop(1.0, `rgba(${color}, 0.00)`); // bord transparent
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 512, 512);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(size, size, 1);
+  mesh.add(sprite); // attaché au mesh — suit la planète automatiquement
+}

@@ -19,6 +19,7 @@ export const OBJECTS = [
     texturePath: "/textures/2k_sun.jpg",
     emissive: true,
     rotSpeed: 0.037,
+    atmosphere: null,
   },
   {
     id: "mercury",
@@ -39,6 +40,7 @@ export const OBJECTS = [
     rotSpeed: 0.017,
     inclination: 7.0,
     axialTilt: 0.03,
+    atmosphere: null,
   },
   {
     id: "venus",
@@ -59,6 +61,7 @@ export const OBJECTS = [
     rotSpeed: -0.004,
     inclination: 3.4,
     axialTilt: 177.4,
+    atmosphere: { color: "255,200,100", size: 1.8 },
   },
   {
     id: "earth",
@@ -81,6 +84,7 @@ export const OBJECTS = [
     axialTilt: 23.44,
     nightTexturePath: "/textures/2k_earth_nightmap.jpg",
     hasMoon: true,
+    atmosphere: { color: "100,180,255", size: 1.6 },
   },
   {
     id: "mars",
@@ -101,6 +105,7 @@ export const OBJECTS = [
     rotSpeed: 0.97,
     inclination: 1.85,
     axialTilt: 25.19,
+    atmosphere: { color: "255,120,60", size: 1.3 },
   },
   {
     id: "jupiter",
@@ -121,6 +126,7 @@ export const OBJECTS = [
     rotSpeed: 2.42,
     inclination: 1.3,
     axialTilt: 3.13,
+    atmosphere: { color: "220,180,120", size: 2.2 },
   },
   {
     id: "saturn",
@@ -142,6 +148,7 @@ export const OBJECTS = [
     inclination: 2.49,
     axialTilt: 26.73,
     rings: true,
+    atmosphere: { color: "210,180,140", size: 2.0 },
   },
   {
     id: "uranus",
@@ -162,6 +169,7 @@ export const OBJECTS = [
     rotSpeed: -1.39,
     inclination: 0.77,
     axialTilt: 97.77,
+    atmosphere: { color: "150,220,210", size: 1.8 },
   },
   {
     id: "neptune",
@@ -182,6 +190,7 @@ export const OBJECTS = [
     rotSpeed: 1.49,
     inclination: 1.77,
     axialTilt: 28.32,
+    atmosphere: { color: "80,120,255", size: 1.8 },
   },
   {
     id: "moon",
@@ -201,6 +210,7 @@ export const OBJECTS = [
     orbitalSpeed: 6,
     rotSpeed: 6,
     parentId: "earth",
+    atmosphere: null,
   },
 ];
 

@@ -150,8 +150,8 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [x] Rayon et halo du soleil
 - [x] Scintillement des étoiles constant
 - [x] Scintillement du soleil
-- [ ] Brume/surface bouillonnante autour du Soleil ?
-- [ ] Atmosphères planétaires (halo ? fog ?)
+- [x] Brume/surface bouillonnante autour du Soleil ?
+- [x] Atmosphères planétaires (halo ? fog ?)
 - [ ] Nuages Terre (seconde sphère semi-transparente)
 - [x] Lumières humaines sur la partie sombre de la terre
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)

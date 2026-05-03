@@ -4,6 +4,7 @@ import {
   createSaturnRings,
   createLensFlare,
   createSolarBoiling,
+  createAtmosphere,
 } from "./objects.js";
 import {
   buildSidebar,
@@ -157,6 +158,10 @@ const pivots = planetsData.map((p) => {
   // Anneaux pour Saturne
   if (p.rings) {
     createSaturnRings(mesh);
+  }
+
+  if (p.atmosphere) {
+    createAtmosphere(mesh, p.atmosphere.color, p.atmosphere.size);
   }
 
   // ── Lune ──────────────────────────────────────
