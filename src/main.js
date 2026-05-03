@@ -1,5 +1,10 @@
 import { scene, startLoop, bloomPass } from "./scene.js";
-import { createPlanet, createSaturnRings, createLensFlare } from "./objects.js";
+import {
+  createPlanet,
+  createSaturnRings,
+  createLensFlare,
+  createSolarBoiling,
+} from "./objects.js";
 import {
   buildSidebar,
   showTooltip,
@@ -111,6 +116,7 @@ sunMesh.userData.id = sunData.id;
 meshById.set("sun", sunMesh);
 
 createLensFlare(sunMesh);
+const solarBoiling = createSolarBoiling(sunMesh, sunData.radius);
 
 // ── Création des pivots d'orbite ─────────────────
 // Un "pivot" est un Object3D invisible placé au centre (0,0,0).
@@ -196,6 +202,10 @@ startLoop(() => {
   // N'avance le temps que si pas en pause
   if (!sim.paused) {
     t += 0.005 * sim.speedFactor;
+
+    if (solarBoiling.material.uniforms) {
+      solarBoiling.material.uniforms.uTime.value = Date.now() * 0.001;
+    }
   }
 
   // Pulse continu

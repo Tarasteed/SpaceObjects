@@ -126,3 +126,92 @@ export function createLensFlare(sunMesh) {
     sunMesh.add(sprite3);
   });
 }
+
+export function createSolarBoiling(sunMesh, radius) {
+  const mat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    side: THREE.FrontSide,
+    uniforms: {
+      uTime: { value: 0 },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      varying vec2 vUv;
+
+      // Hash 2D simple et stable — pas de simplex
+      float hash(vec2 p) {
+        p = fract(p * vec2(234.34, 435.345));
+        p += dot(p, p + 34.23);
+        return fract(p.x * p.y);
+      }
+
+      // Noise smooth interpolé
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(hash(i),             hash(i + vec2(1,0)), u.x),
+          mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), u.x),
+          u.y
+        );
+      }
+
+      // FBM — plusieurs octaves pour les cellules
+      float fbm(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        for (int i = 0; i < 5; i++) {
+          v += a * noise(p);
+          p  = p * 2.1 + vec2(1.7, 9.2);
+          a *= 0.5;
+        }
+        return v;
+      }
+
+      void main() {
+        vec2 p = vUv * 5;
+        float t1 = uTime * 0.1;
+        float t2 = uTime * 0.5;
+
+        // Deux couches de bruit décalées dans le temps
+        float n1 = fbm(p + vec2(t1, t2));
+        float n2 = fbm(p * 1.5 - vec2(t2, t1) + n1 * 0.4);
+
+        float cell = mix(n1, n2, 0.45);
+
+        // Cellules de convection — zones chaudes/froides
+        float hot = smoothstep(0.45, 0.75, cell);
+        //float hot = smoothstep(0.35, 0.65, cell);
+
+        // Couleur : orange chaud → jaune vif
+        vec3 col = mix(
+          vec3(0.8, 0.1, 0.0),   // cellule froide — rouge sombre
+          vec3(1.0, 0.9, 0.3),   // cellule chaude — jaune vif
+          hot
+        );
+
+        float alpha = hot * 0.6;  // subtil — juste une texture de surface
+
+        gl_FragColor = vec4(col * alpha, alpha);
+      }
+    `,
+  });
+
+  const overlay = new THREE.Mesh(
+    new THREE.SphereGeometry(radius * 1.008, 64, 64), // ← utilise le paramètre
+    mat
+  );
+
+  scene.add(overlay);
+  return overlay;
+}
