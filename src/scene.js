@@ -28,9 +28,6 @@ export const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
-// Lumières
-scene.add(new THREE.AmbientLight(0xffffff, 0.15));
-
 // Lumière principale — forte mais decay agressif pour Mercure/Vénus
 const sunLight = new THREE.PointLight(0xfffde0, 400, 0, 2.3);
 scene.add(sunLight);
@@ -69,7 +66,6 @@ export function startLoop(onFrame) {
   renderer.setAnimationLoop(() => {
     controls.update();
     onFrame();
-    // renderer.render(scene, camera);
     composer.render();
   });
 }

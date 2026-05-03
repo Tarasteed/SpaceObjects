@@ -130,18 +130,21 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [x] Zoom fluide vers une planète avec suivi temps réel
 - [x] Orbiter autour de la planète sélectionnée
 - [x] Bouton retour vue système solaire
+- [ ] Cliquer sur une planète dans la scène pour zoomer (raycasting)
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 
 ### Interface
 - [x] Contrôle pause / vitesse de simulation
-- [ ] Planètes cliquables directement dans la scène (raycasting)
 - [ ] Afficher / masquer les orbites
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
+- [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
 
 ### Données
-- [ ] Récupérer les données depuis une API (ex: NASA Horizons) plutôt que `data.js`
-- [ ] Ajouter les sondes historiques (Voyager 1 & 2, New Horizons, Juno) avec positions réelles via satellite.js
+- [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
+- [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
+- [ ] Ceinture d'astéroïdes (entre Mars et Jupiter)
+- [ ] Pluton et planètes naines
 
 ### Visuel
 - [x] Décaler les orbites pour se rapprocher des inclinaisons réelles
@@ -155,11 +158,19 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [x] Atmosphères planétaires (halo ? fog ?)
 - [x] Nuages Terre/Atmosphere Venus (seconde sphère semi-transparente)
 - [x] Lumières humaines sur la partie sombre de la terre
-- [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [x] BONUS : Passer les texture en 4k/8k
+- [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
+- [ ] Ombres portées (planètes qui projettent une ombre) possible via PointLight ?
+- [ ] Anneaux d'Uranus (discrets mais réels)
+- [ ] Halo lumineux autour de la Lune
+- [ ] Amélioration des anneaux de Saturne (ombre sur la planète)
+- [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
 
 ### Technique
 - [x] Hébergement (Vercel ou Netlify — `npm run build` génère le dossier `dist/`)
+- [ ] Optimisation performances mobile (LOD, réduction particules) ?
+- [ ] PWA — installable sur mobile ?
+- [ ] Mode plein écran
 
 ---
 
