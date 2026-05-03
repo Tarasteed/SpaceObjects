@@ -37,6 +37,8 @@ export const OBJECTS = [
     orbitR: 8,
     speed: 0.8,
     rotSpeed: 0.017,
+    inclination: 7.0,
+    axialTilt: 0.03,
   },
   {
     id: "venus",
@@ -55,6 +57,8 @@ export const OBJECTS = [
     orbitR: 12,
     speed: 0.62,
     rotSpeed: -0.004,
+    inclination: 3.4,
+    axialTilt: 177.4,
   },
   {
     id: "earth",
@@ -73,6 +77,8 @@ export const OBJECTS = [
     orbitR: 16,
     speed: 0.5,
     rotSpeed: 1.0,
+    inclination: 0,
+    axialTilt: 23.44,
     hasMoon: true,
   },
   {
@@ -92,6 +98,8 @@ export const OBJECTS = [
     orbitR: 22,
     speed: 0.27,
     rotSpeed: 0.97,
+    inclination: 1.85,
+    axialTilt: 25.19,
   },
   {
     id: "jupiter",
@@ -110,6 +118,8 @@ export const OBJECTS = [
     orbitR: 32,
     speed: 0.11,
     rotSpeed: 2.42,
+    inclination: 1.3,
+    axialTilt: 3.13,
   },
   {
     id: "saturn",
@@ -128,6 +138,8 @@ export const OBJECTS = [
     orbitR: 42,
     speed: 0.076,
     rotSpeed: 2.24,
+    inclination: 2.49,
+    axialTilt: 26.73,
     rings: true,
   },
   {
@@ -147,6 +159,8 @@ export const OBJECTS = [
     orbitR: 54,
     speed: 0.038,
     rotSpeed: -1.39,
+    inclination: 0.77,
+    axialTilt: 97.77,
   },
   {
     id: "neptune",
@@ -165,6 +179,8 @@ export const OBJECTS = [
     orbitR: 66,
     speed: 0.019,
     rotSpeed: 1.49,
+    inclination: 1.77,
+    axialTilt: 28.32,
   },
   {
     id: "moon",

@@ -119,6 +119,7 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Étoiles apparaissant en carrés au zoom |
 | ✅ Résolu | Zoom ne suivant pas la planète en temps réel |
 | ✅ Résolu | Dézoom bloqué après focus sur une planète |
+| ✅ Résolu | Mauvais mapping pour les anneaux de Saturne |
 
 ---
 
@@ -142,6 +143,8 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [ ] Ajouter les sondes historiques (Voyager 1 & 2, New Horizons, Juno) avec positions réelles via satellite.js
 
 ### Visuel
+- [x] Décaler les orbites pour se rapprocher des inclinaisons réelles
+- [x] Inclinaison de l'axe des planètes le plus réaliste possible
 - [x] Skybox photographique NASA (Voie Lactée)
 - [x] Étoiles procédurales multi-couleurs en overlay
 - [x] Rayon et halo du soleil

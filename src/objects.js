@@ -33,15 +33,33 @@ export function createPlanet({
 }
 
 export function createSaturnRings(saturnMesh) {
-  const geo = new THREE.RingGeometry(1.4, 2.4, 64);
-  const mat = new THREE.MeshBasicMaterial({
+  const innerRadius = 1.4;
+  const outerRadius = 2.4;
+  const geo = new THREE.RingGeometry(innerRadius, outerRadius, 128);
+
+  // Fix UVs — mappe la texture radialement du centre vers l'extérieur
+  const pos = geo.attributes.position;
+  const uv = geo.attributes.uv;
+  const v3 = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v3.fromBufferAttribute(pos, i);
+    const normalized =
+      (v3.length() - innerRadius) / (outerRadius - innerRadius);
+    uv.setXY(i, normalized, 0);
+  }
+  uv.needsUpdate = true;
+
+  const mat = new THREE.MeshStandardMaterial({
     map: loader.load("/textures/2k_saturn_ring_alpha.png"),
     side: THREE.DoubleSide,
     transparent: true,
     alphaTest: 0.01, // ignore les pixels quasi-transparent
+    roughness: 0.8,
+    metalness: 0.0,
   });
+
   const ring = new THREE.Mesh(geo, mat);
-  ring.rotation.x = Math.PI / 2 - 0.3;
+  ring.rotation.x = Math.PI / 2;
   saturnMesh.add(ring);
 }
 

@@ -28,7 +28,7 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
 // Lumières
-scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+scene.add(new THREE.AmbientLight(0xffffff, 0.2));
 const sunLight = new THREE.PointLight(0xfffde0, 200, 0, 1.9);
 scene.add(sunLight);
 

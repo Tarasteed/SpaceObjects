@@ -114,6 +114,11 @@ const pivots = planetsData.map((p) => {
   const pivot = new THREE.Object3D();
   scene.add(pivot);
 
+  // Inclinaison orbitale — convertit les degrés en radians
+  if (p.inclination) {
+    pivot.rotation.z = THREE.MathUtils.degToRad(p.inclination);
+  }
+
   // La planète est placée à x=orbitR dans le référentiel du pivot
   const mesh = createPlanet({
     radius: p.radius,
@@ -121,6 +126,11 @@ const pivots = planetsData.map((p) => {
     position: [p.orbitR, 0, 0],
     roughness: p.roughness ?? 0.8,
   });
+
+  // Inclinaison axiale — appliquée sur le mesh, pas le pivot
+  if (p.axialTilt) {
+    mesh.rotation.z = THREE.MathUtils.degToRad(p.axialTilt);
+  }
 
   // On retire le mesh de la scène et on le met sous le pivot
   scene.remove(mesh);
