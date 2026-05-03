@@ -65,7 +65,7 @@ export function createSaturnRings(saturnMesh) {
   uv.needsUpdate = true;
 
   const mat = new THREE.MeshStandardMaterial({
-    map: loader.load("/textures/2k_saturn_ring_alpha.png"),
+    map: loader.load("/textures/8k_saturn_ring_alpha.png"),
     side: THREE.DoubleSide,
     transparent: true,
     alphaTest: 0.01, // ignore les pixels quasi-transparent

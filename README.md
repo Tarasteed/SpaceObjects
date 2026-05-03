@@ -22,6 +22,7 @@ npm run dev
 ```
 
 Ouvre `http://localhost:5173` dans le navigateur.
+Désormais hébergé sur Vercel : https://space-objects.vercel.app/
 
 ```bash
 npm run build    # Build de production → dossier dist/
@@ -58,17 +59,17 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 
 | Fichier | Objet |
 |---|---|
-| `2k_sun.jpg` | Soleil |
-| `2k_mercury.jpg` | Mercure |
-| `2k_venus_atmosphere.jpg` | Vénus |
-| `2k_earth_daymap.jpg` | Terre |
-| `2k_mars.jpg` | Mars |
-| `2k_jupiter.jpg` | Jupiter |
-| `2k_saturn.jpg` | Saturne |
-| `2k_saturn_ring_alpha.png` | Anneaux de Saturne |
+| `8k_sun.jpg` | Soleil |
+| `8k_mercury.jpg` | Mercure |
+| `4k_venus_atmosphere.jpg` | Vénus |
+| `8k_earth_daymap.jpg` | Terre |
+| `8k_mars.jpg` | Mars |
+| `8k_jupiter.jpg` | Jupiter |
+| `8k_saturn.jpg` | Saturne |
+| `8k_saturn_ring_alpha.png` | Anneaux de Saturne |
 | `2k_uranus.jpg` | Uranus |
 | `2k_neptune.jpg` | Neptune |
-| `2k_moon.jpg` | Lune |
+| `8k_moon.jpg` | Lune |
 | `starmap.jpg` | Skybox (carte du ciel NASA — [source](https://svs.gsfc.nasa.gov/4851)) |
 
 ---
