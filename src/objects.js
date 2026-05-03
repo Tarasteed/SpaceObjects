@@ -28,7 +28,7 @@ export function createPlanet({
     mat = new THREE.MeshStandardMaterial({
       map: loader.load(texturePath),
       emissiveMap: loader.load(nightTexturePath),
-      emissive: new THREE.Color(1.0, 0.8, 0.5), // teinte chaude pour les lumières
+      emissive: new THREE.Color(2.0, 1.4, 0.6), // teinte chaude pour les lumières
       emissiveIntensity: 0.8,
       roughness: roughness,
       metalness: 0.0,

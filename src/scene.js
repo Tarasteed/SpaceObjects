@@ -20,6 +20,7 @@ export const camera = new THREE.PerspectiveCamera(
   0.01,
   8000
 );
+
 camera.position.set(0, 12, 30);
 
 // Contrôles orbite (rotation libre à la souris)
@@ -29,8 +30,14 @@ controls.dampingFactor = 0.05;
 
 // Lumières
 scene.add(new THREE.AmbientLight(0xffffff, 0.15));
-const sunLight = new THREE.PointLight(0xfffde0, 200, 0, 1.9);
+
+// Lumière principale — forte mais decay agressif pour Mercure/Vénus
+const sunLight = new THREE.PointLight(0xfffde0, 400, 0, 2.3);
 scene.add(sunLight);
+
+// Lumière de remplissage — faible, sans decay, pour les planètes lointaines
+const sunFill = new THREE.PointLight(0xfffde0, 0.4, 0, 0);
+scene.add(sunFill);
 
 // ── Post-processing : Bloom ───────────────────────
 const renderPass = new RenderPass(scene, camera);
