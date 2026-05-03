@@ -5,6 +5,7 @@ import {
   createLensFlare,
   createSolarBoiling,
   createAtmosphere,
+  createClouds,
 } from "./objects.js";
 import {
   buildSidebar,
@@ -119,6 +120,8 @@ meshById.set("sun", sunMesh);
 createLensFlare(sunMesh);
 const solarBoiling = createSolarBoiling(sunMesh, sunData.radius);
 
+const cloudMeshes = [];
+
 // ── Création des pivots d'orbite ─────────────────
 // Un "pivot" est un Object3D invisible placé au centre (0,0,0).
 // La planète est son enfant, décalée sur l'axe X de orbitR.
@@ -162,6 +165,16 @@ const pivots = planetsData.map((p) => {
 
   if (p.atmosphere) {
     createAtmosphere(mesh, p.atmosphere.color, p.atmosphere.size);
+  }
+
+  if (p.clouds) {
+    const cloud = createClouds(
+      mesh,
+      p.clouds.texture,
+      p.radius,
+      p.clouds.opacity
+    );
+    cloudMeshes.push({ mesh: cloud, speed: p.clouds.speed });
   }
 
   // ── Lune ──────────────────────────────────────
@@ -211,6 +224,10 @@ startLoop(() => {
     if (solarBoiling.material.uniforms) {
       solarBoiling.material.uniforms.uTime.value = Date.now() * 0.001;
     }
+
+    cloudMeshes.forEach(({ mesh, speed }) => {
+      mesh.rotation.y += 0.0001 * speed * sim.speedFactor;
+    });
   }
 
   // Pulse continu

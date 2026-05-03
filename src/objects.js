@@ -179,7 +179,7 @@ export function createSolarBoiling(sunMesh, radius) {
       }
 
       void main() {
-        vec2 p = vUv * 5;
+        vec2 p = vUv * 5.0;
         float t1 = uTime * 0.1;
         float t2 = uTime * 0.5;
 
@@ -244,4 +244,19 @@ export function createAtmosphere(mesh, color, size) {
   const sprite = new THREE.Sprite(mat);
   sprite.scale.set(size, size, 1);
   mesh.add(sprite); // attaché au mesh — suit la planète automatiquement
+}
+
+export function createClouds(mesh, texturePath, radius, opacity) {
+  const geo = new THREE.SphereGeometry(radius * 1.02, 64, 64); // 2% plus grand
+  const mat = new THREE.MeshStandardMaterial({
+    map: loader.load(texturePath),
+    transparent: true,
+    opacity: opacity,
+    depthWrite: false,
+    roughness: 1.0,
+    metalness: 0.0,
+  });
+  const cloudMesh = new THREE.Mesh(geo, mat);
+  mesh.add(cloudMesh); // attaché à la planète — tourne avec elle
+  return cloudMesh;
 }

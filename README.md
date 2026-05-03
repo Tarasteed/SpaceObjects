@@ -152,9 +152,10 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [x] Scintillement du soleil
 - [x] Brume/surface bouillonnante autour du Soleil ?
 - [x] Atmosphères planétaires (halo ? fog ?)
-- [ ] Nuages Terre (seconde sphère semi-transparente)
+- [x] Nuages Terre/Atmosphere Venus (seconde sphère semi-transparente)
 - [x] Lumières humaines sur la partie sombre de la terre
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
+- [ ] BONUS : Passer les texture en 4k/8k
 
 ### Technique
 - [ ] Hébergement (Vercel ou Netlify — `npm run build` génère le dossier `dist/`)

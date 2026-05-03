@@ -54,7 +54,7 @@ export const OBJECTS = [
       orbite: "225 jours",
     },
     radius: 0.48,
-    texturePath: "/textures/2k_venus_atmosphere.jpg",
+    texturePath: "/textures/2k_venus_surface.jpg",
     roughness: 0.95,
     orbitR: 12,
     speed: 0.62,
@@ -62,6 +62,11 @@ export const OBJECTS = [
     inclination: 3.4,
     axialTilt: 177.4,
     atmosphere: { color: "255,200,100", size: 1.8 },
+    clouds: {
+      texture: "/textures/2k_venus_atmosphere.jpg",
+      opacity: 0.5,
+      speed: -0.3,
+    },
   },
   {
     id: "earth",
@@ -85,6 +90,11 @@ export const OBJECTS = [
     nightTexturePath: "/textures/2k_earth_nightmap.jpg",
     hasMoon: true,
     atmosphere: { color: "100,180,255", size: 1.6 },
+    clouds: {
+      texture: "/textures/2k_earth_clouds.jpg",
+      opacity: 0.6,
+      speed: 0.8,
+    },
   },
   {
     id: "mars",
