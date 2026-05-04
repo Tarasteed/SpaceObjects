@@ -325,3 +325,30 @@ button {
   accent-color: #5b8ff9;
   cursor: pointer;
 }
+
+#btn-orbits {
+  position: fixed;
+  top: 20px;
+  left: 240px;
+  padding: 8px 16px;
+  background: rgba(6, 6, 20, 0.85);
+  border: 1px solid rgba(91, 143, 249, 0.4);
+  border-radius: 6px;
+  color: #7aaff9;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+
+#btn-orbits.active {
+  background: rgba(91, 143, 249, 0.15);
+  border-color: rgba(91, 143, 249, 0.8);
+  color: #c8d4ee;
+}
+
+#btn-orbits:hover {
+  background: rgba(91, 143, 249, 0.1);
+}

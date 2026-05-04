@@ -6,6 +6,7 @@ import {
   createSolarBoiling,
   createAtmosphere,
   createClouds,
+  createOrbit,
 } from "./objects.js";
 import {
   buildSidebar,
@@ -14,6 +15,7 @@ import {
   buildBackButton,
   showBackButton,
   buildSimControls,
+  buildOrbitToggle,
 } from "./ui.js";
 import { updateCamera, zoomTo, zoomToSystem } from "./camera.js";
 import * as THREE from "three";
@@ -121,6 +123,7 @@ createLensFlare(sunMesh);
 const solarBoiling = createSolarBoiling(sunMesh, sunData.radius);
 
 const cloudMeshes = [];
+const orbitLines = [];
 
 // ── Création des pivots d'orbite ─────────────────
 // Un "pivot" est un Object3D invisible placé au centre (0,0,0).
@@ -132,8 +135,23 @@ const pivots = planetsData.map((p) => {
 
   // Inclinaison orbitale — convertit les degrés en radians
   if (p.inclination) {
-    pivot.rotation.z = THREE.MathUtils.degToRad(p.inclination);
+    pivot.rotation.x = THREE.MathUtils.degToRad(p.inclination);
   }
+
+  const orbitColor = p.orbitColor
+    ? new THREE.Color(...p.orbitColor)
+    : new THREE.Color(0.3, 0.6, 1.0);
+
+  const orbitLine = createOrbit(p.orbitR, orbitColor);
+
+  // Même inclinaison que le pivot — signe identique
+  if (p.inclination) {
+    orbitLine.rotation.x = THREE.MathUtils.degToRad(p.inclination);
+  }
+
+  orbitLine.visible = false;
+  scene.add(orbitLine); // ← dans la scène, pas dans le pivot
+  orbitLines.push(orbitLine);
 
   // La planète est placée à x=orbitR dans le référentiel du pivot
   const mesh = createPlanet({
@@ -196,6 +214,15 @@ const pivots = planetsData.map((p) => {
 
     scene.remove(moonMesh);
     moonPivot.add(moonMesh);
+
+    const moonOrbit = createOrbit(
+      moonData.orbitR,
+      new THREE.Color(0.5, 0.5, 0.6)
+    );
+    moonOrbit.visible = false;
+    mesh.add(moonOrbit); // ← attachée à la Terre, pas à la scène
+    orbitLines.push(moonOrbit);
+
     moonMesh.userData.name = moonData.name;
     moonMesh.userData.id = moonData.id;
     meshById.set(moonData.id, moonMesh);
@@ -232,8 +259,15 @@ startLoop(() => {
 
   // Pulse continu
   const now = Date.now() * 0.001;
+
   starsGroup.rotation.y = now * 0.003;
   bloomPass.threshold = 0.82 + Math.sin(now * 0.4) * 0.06;
+
+  // orbitLines.forEach((line) => {
+  //   if (line.material.uniforms) {
+  //     line.material.uniforms.uTime.value = now;
+  //   }
+  // });
 
   pivots.forEach(({ pivot, speed, rotSpeed, mesh, moonPivot, moonMesh }) => {
     pivot.rotation.y = t * speed;
@@ -268,3 +302,7 @@ buildBackButton(() => {
 });
 
 buildSimControls();
+
+buildOrbitToggle((visible) => {
+  orbitLines.forEach((line) => (line.visible = visible));
+});

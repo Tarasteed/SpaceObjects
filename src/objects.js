@@ -260,3 +260,29 @@ export function createClouds(mesh, texturePath, radius, opacity) {
   mesh.add(cloudMesh); // attaché à la planète — tourne avec elle
   return cloudMesh;
 }
+
+export function createOrbit(orbitR, color = new THREE.Color(0.3, 0.6, 1.0)) {
+  const segments = 256; // plus de segments = cercle plus lisse
+  const points = [];
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    points.push(
+      new THREE.Vector3(Math.cos(angle) * orbitR, 0, Math.sin(angle) * orbitR)
+    );
+  }
+
+  const geo = new THREE.BufferGeometry().setFromPoints(points);
+
+  const mat = new THREE.LineDashedMaterial({
+    color: color,
+    transparent: true,
+    opacity: 0.3,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    dashSize: 0.8,
+    gapSize: 0.4,
+  });
+
+  const line = new THREE.LineLoop(geo, mat);
+  return line;
+}

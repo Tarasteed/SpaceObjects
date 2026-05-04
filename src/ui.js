@@ -145,3 +145,14 @@ export function buildBackButton(onBack) {
 export function showBackButton() {
   document.getElementById("btn-back").classList.add("visible");
 }
+
+export function buildOrbitToggle(onToggle) {
+  const btn = document.createElement("button");
+  btn.id = "btn-orbits";
+  btn.textContent = "⬡ Orbites";
+  document.body.appendChild(btn);
+  btn.addEventListener("click", () => {
+    btn.classList.toggle("active");
+    onToggle(btn.classList.contains("active"));
+  });
+}

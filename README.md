@@ -121,21 +121,23 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Zoom ne suivant pas la planète en temps réel |
 | ✅ Résolu | Dézoom bloqué après focus sur une planète |
 | ✅ Résolu | Mauvais mapping pour les anneaux de Saturne |
+| [ ] | Impossible de déplacer la caméra autour de la planète cliqué dans certains cas |
+| [ ] | Au focus sur une planète, possibilité que la camera passe dedans au lieu de la suivre par l'exterieure |
 
 ---
 
 ## Roadmap
 
 ### Caméra & navigation
-- [x] Zoom fluide vers une planète avec suivi temps réel
-- [x] Orbiter autour de la planète sélectionnée
-- [x] Bouton retour vue système solaire
+- ✅ Zoom fluide vers une planète avec suivi temps réel
+- ✅ Orbiter autour de la planète sélectionnée
+- ✅ Bouton retour vue système solaire
 - [ ] Cliquer sur une planète dans la scène pour zoomer (raycasting)
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 
 ### Interface
-- [x] Contrôle pause / vitesse de simulation
-- [ ] Afficher / masquer les orbites
+- ✅ Contrôle pause / vitesse de simulation
+- ✅ Afficher / masquer les orbites
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
 - [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
@@ -147,27 +149,27 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [ ] Pluton et planètes naines
 
 ### Visuel
-- [x] Décaler les orbites pour se rapprocher des inclinaisons réelles
-- [x] Inclinaison de l'axe des planètes le plus réaliste possible
-- [x] Skybox photographique NASA (Voie Lactée)
-- [x] Étoiles procédurales multi-couleurs en overlay
-- [x] Rayon et halo du soleil
-- [x] Scintillement des étoiles constant
-- [x] Scintillement du soleil
-- [x] Brume/surface bouillonnante autour du Soleil ?
-- [x] Atmosphères planétaires (halo ? fog ?)
-- [x] Nuages Terre/Atmosphere Venus (seconde sphère semi-transparente)
-- [x] Lumières humaines sur la partie sombre de la terre
-- [x] BONUS : Passer les texture en 4k/8k
+- ✅ Décaler les orbites pour se rapprocher des inclinaisons réelles
+- ✅ Inclinaison de l'axe des planètes le plus réaliste possible
+- ✅ Skybox photographique NASA (Voie Lactée)
+- ✅ Étoiles procédurales multi-couleurs en overlay
+- ✅ Rayon et halo du soleil
+- ✅ Scintillement des étoiles constant
+- ✅ Scintillement du soleil
+- ✅ Brume/surface bouillonnante autour du Soleil ?
+- ✅ Atmosphères planétaires (halo ? fog ?)
+- ✅ Nuages Terre/Atmosphere Venus (seconde sphère semi-transparente)
+- ✅ Lumières humaines sur la partie sombre de la terre
+- ✅ BONUS : Passer les texture en 4k/8k
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
-- [ ] Ombres portées (planètes qui projettent une ombre) possible via PointLight ?
+- ❌ Ombres portées (planètes qui projettent une ombre) possible via PointLight ? Rapport perf/rendu mauvais
 - [ ] Anneaux d'Uranus (discrets mais réels)
 - [ ] Halo lumineux autour de la Lune
 - [ ] Amélioration des anneaux de Saturne (ombre sur la planète)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
 
 ### Technique
-- [x] Hébergement (Vercel ou Netlify — `npm run build` génère le dossier `dist/`)
+- ✅ Hébergement (Vercel ou Netlify — `npm run build` génère le dossier `dist/`)
 - [ ] Optimisation performances mobile (LOD, réduction particules) ?
 - [ ] PWA — installable sur mobile ?
 - [ ] Mode plein écran
