@@ -129,6 +129,8 @@ const orbitLines = [];
 // Un "pivot" est un Object3D invisible placé au centre (0,0,0).
 // La planète est son enfant, décalée sur l'axe X de orbitR.
 // Faire tourner le pivot fait orbiter la planète autour du Soleil.
+const maxOrbitR = Math.max(...planetsData.map((p) => p.orbitR)); // Récupère l'orbit le plus lointain
+
 const pivots = planetsData.map((p) => {
   const pivot = new THREE.Object3D();
   scene.add(pivot);
@@ -142,7 +144,7 @@ const pivots = planetsData.map((p) => {
     ? new THREE.Color(...p.orbitColor)
     : new THREE.Color(0.3, 0.6, 1.0);
 
-  const orbitLine = createOrbit(p.orbitR, orbitColor);
+  const orbitLine = createOrbit(p.orbitR, orbitColor, maxOrbitR);
 
   // Même inclinaison que le pivot — signe identique
   if (p.inclination) {
@@ -217,8 +219,10 @@ const pivots = planetsData.map((p) => {
 
     const moonOrbit = createOrbit(
       moonData.orbitR,
-      new THREE.Color(0.5, 0.5, 0.6)
+      new THREE.Color(0.5, 0.5, 0.6),
+      maxOrbitR
     );
+
     moonOrbit.visible = false;
     mesh.add(moonOrbit); // ← attachée à la Terre, pas à la scène
     orbitLines.push(moonOrbit);

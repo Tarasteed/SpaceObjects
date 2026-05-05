@@ -261,8 +261,8 @@ export function createClouds(mesh, texturePath, radius, opacity) {
   return cloudMesh;
 }
 
-export function createOrbit(orbitR, color = new THREE.Color(0.3, 0.6, 1.0)) {
-  const segments = 256; // plus de segments = cercle plus lisse
+export function createOrbit(orbitR, color = new THREE.Color(0.3, 0.6, 1.0), maxOrbitR) {
+  const segments = 512; // plus de segments = cercle plus lisse
   const points = [];
   for (let i = 0; i <= segments; i++) {
     const angle = (i / segments) * Math.PI * 2;
@@ -273,16 +273,20 @@ export function createOrbit(orbitR, color = new THREE.Color(0.3, 0.6, 1.0)) {
 
   const geo = new THREE.BufferGeometry().setFromPoints(points);
 
+  // Opacité dégradée — plus loin = plus transparent
+  const opacity = 0.45 - (orbitR / maxOrbitR) * 0.25; // 0.45 près → 0.20 loin
+
   const mat = new THREE.LineDashedMaterial({
     color: color,
     transparent: true,
-    opacity: 0.3,
+    opacity: opacity,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     dashSize: 0.8,
-    gapSize: 0.4,
+    gapSize: 0.5,
   });
 
   const line = new THREE.LineLoop(geo, mat);
+  line.computeLineDistances();
   return line;
 }
