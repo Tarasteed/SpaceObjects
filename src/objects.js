@@ -47,9 +47,14 @@ export function createPlanet({
   return mesh;
 }
 
-export function createSaturnRings(saturnMesh) {
-  const innerRadius = 1.4;
-  const outerRadius = 2.4;
+export function createSaturnRings(
+  saturnMesh,
+  radius,
+  innerRatio = 1.24,
+  outerRatio = 2.26
+) {
+  const innerRadius = radius * innerRatio;
+  const outerRadius = radius * outerRatio;
   const geo = new THREE.RingGeometry(innerRadius, outerRadius, 128);
 
   // Fix UVs — mappe la texture radialement du centre vers l'extérieur

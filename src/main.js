@@ -201,7 +201,8 @@ const pivots = planetsData.map((p) => {
   mesh.userData.id = p.id;
   meshById.set(p.id, mesh); // enregistrement pour le zoom sidebar
 
-  if (p.rings) createSaturnRings(mesh);
+  if (p.rings)
+    createSaturnRings(mesh, p.radius, p.ringsInnerRatio, p.ringsOuterRatio);
   if (p.atmosphere)
     createAtmosphere(mesh, p.atmosphere.color, p.atmosphere.size);
 
