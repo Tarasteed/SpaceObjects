@@ -164,8 +164,8 @@ Skybox de test : https://svs.gsfc.nasa.gov/4851
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - ❌ Ombres portées (planètes qui projettent une ombre) possible via PointLight ? Rapport perf/rendu mauvais
 - [ ] Anneaux d'Uranus (discrets mais réels)
-- [ ] Halo lumineux autour de la Lune
-- [ ] Amélioration des anneaux de Saturne (ombre sur la planète)
+- ❌ Halo lumineux autour de la Lune
+- ❌ Amélioration des anneaux de Saturne (ombre sur la planète)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
 
 ### Technique

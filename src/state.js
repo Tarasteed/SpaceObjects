@@ -2,5 +2,5 @@
 // Importé par main.js (lecture) et ui.js (écriture)
 export const sim = {
   paused: false,
-  speedFactor: 0.03,
+  speedFactor: 1.5,
 };

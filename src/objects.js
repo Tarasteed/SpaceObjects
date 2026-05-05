@@ -267,25 +267,33 @@ export function createOrbit(
   maxOrbitR
 ) {
   const segments = 512;
-  const points = [];
+  const positions = [];
+  const colors = [];
+
   for (let i = 0; i <= segments; i++) {
     const angle = (i / segments) * Math.PI * 2;
-    points.push(
-      new THREE.Vector3(Math.cos(angle) * orbitR, 0, Math.sin(angle) * orbitR)
-    );
+    positions.push(Math.cos(angle) * orbitR, 0, Math.sin(angle) * orbitR);
+    colors.push(0, 0, 0);
   }
 
-  const geo = new THREE.BufferGeometry().setFromPoints(points);
-  const opacity = 0.45 - (orbitR / maxOrbitR) * 0.25;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  const colorAttr = new THREE.Float32BufferAttribute(colors, 3);
+  colorAttr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute("color", colorAttr);
 
-  // Ligne fine et nette
-  const matLine = new THREE.LineBasicMaterial({
-    color: color.clone().lerp(new THREE.Color(1, 1, 1), 0.3), // légèrement plus claire
+  const mat = new THREE.LineBasicMaterial({
+    vertexColors: true,
     transparent: true,
-    opacity: opacity * 0.85,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
   });
 
-  return new THREE.LineLoop(geo, matLine);
+  const line = new THREE.LineLoop(geo, mat);
+  line.userData.orbitR = orbitR;
+  line.userData.segments = segments;
+  line.userData.color = color;
+  line.userData.maxOrbitR = maxOrbitR;
+
+  return line;
 }

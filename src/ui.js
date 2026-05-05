@@ -64,13 +64,12 @@ export function buildSimControls() {
   hud.innerHTML = `
     <button id="btn-pause">⏸ Pause</button>
     <div id="speed-control">
-      <span id="speed-label">×0.03</span>
-      <input type="range" id="speed-slider" min="0.01" max="2" step="0.01" value="0.03"/>
+      <span id="speed-label">×1.5</span>
+      <input type="range" id="speed-slider" min="0" max="10" step="0.1" value="1.5"/>
     </div>
   `;
   document.body.appendChild(hud);
 
-  // Pause
   document.getElementById("btn-pause").addEventListener("click", () => {
     sim.paused = !sim.paused;
     const btn = document.getElementById("btn-pause");
@@ -78,7 +77,6 @@ export function buildSimControls() {
     btn.classList.toggle("active", sim.paused);
   });
 
-  // Vitesse
   document.getElementById("speed-slider").addEventListener("input", (e) => {
     sim.speedFactor = parseFloat(e.target.value);
     document.getElementById(
