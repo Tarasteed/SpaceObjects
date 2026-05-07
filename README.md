@@ -183,6 +183,10 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - [ ] PWA — installable sur mobile
 - [ ] Mode plein écran
 
+### Sound design
+- [ ] Musique ambiante
+- [ ] Effet sonor aux différents clique ?
+
 ---
 
 ## Notes de développement
