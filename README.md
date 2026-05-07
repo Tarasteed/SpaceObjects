@@ -130,7 +130,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Dézoom bloqué après focus sur une planète |
 | ✅ Résolu | Mauvais mapping pour les anneaux de Saturne |
 | ✅ Résolu | Traînes orbitales dans le mauvais sens / décalées |
-| [ ] | Impossible de déplacer la caméra autour de la planète dans certains cas |
+| ✅ Résolu | Impossible de déplacer la caméra autour de la planète dans certains cas |
+|  | Petit snap en fin de zoom lié à la position de la planète qui a changé pendant le mouvement |
 | [ ] | Au focus sur une planète, la caméra peut passer à travers au lieu de la suivre par l'extérieur |
 
 ---

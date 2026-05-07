@@ -18,16 +18,20 @@ const state = {
   lastMouseY: 0,
 };
 
+const canvas = document.getElementById("canvas");
+
 // Listeners drag/zoom — actifs seulement en mode following
-window.addEventListener("mousedown", (e) => {
+canvas.addEventListener("mousedown", (e) => {
   if (state.mode !== "following" || e.button !== 0) return;
   state.isDragging = true;
   state.lastMouseX = e.clientX;
   state.lastMouseY = e.clientY;
 });
 
-window.addEventListener("mousemove", (e) => {
-  if (!state.isDragging || state.mode !== "following") return;
+canvas.addEventListener("mousemove", (e) => {
+  if (!state.isDragging || state.mode !== "following") {
+    return;
+  }
   const dx = e.clientX - state.lastMouseX;
   const dy = e.clientY - state.lastMouseY;
   state.lastMouseX = e.clientX;
@@ -40,14 +44,14 @@ window.addEventListener("mousemove", (e) => {
   );
 });
 
-window.addEventListener("mouseup", () => {
+canvas.addEventListener("mouseup", () => {
   state.isDragging = false;
 });
-window.addEventListener("mouseleave", () => {
+canvas.addEventListener("mouseleave", () => {
   state.isDragging = false;
 });
 
-window.addEventListener(
+canvas.addEventListener(
   "wheel",
   (e) => {
     if (state.mode !== "following") return;
@@ -94,18 +98,19 @@ export function updateCamera() {
 
     const dist = camera.position.distanceTo(state.targetPosition);
     if (dist < radius * 0.1) {
-      camera.position.copy(state.targetPosition);
-      controls.target.copy(state.targetLookAt);
-      controls.update();
-
+      // Ne pas forcer camera.position — on reste où on est
+      // et on calcule le spherical depuis la position actuelle de la planète
       const planetPos = new THREE.Vector3();
       state.targetMesh.getWorldPosition(planetPos);
+
+      // Spherical depuis la position caméra actuelle relative à la planète réelle
       state.spherical.setFromVector3(camera.position.clone().sub(planetPos));
 
       controls.dispose();
       setSkipControlsUpdate(true);
       state.zoomInitialized = false;
       state.mode = "following";
+      // Pas de camera.position.copy() ni controls.update() ici
     }
     return;
   }
@@ -118,6 +123,7 @@ export function updateCamera() {
     camera.lookAt(planetPos);
     // PAS de controls.update() — OrbitControls est disposé, l'appeler
     // recalculerait camera.position depuis ses spherical internes
+
     return;
   }
 
