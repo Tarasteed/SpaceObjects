@@ -3,4 +3,5 @@
 export const sim = {
   paused: false,
   speedFactor: 1.5,
+  zoomInitialized: false,
 };
