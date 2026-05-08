@@ -142,7 +142,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Zoom fluide vers une planète avec suivi temps réel
 - ✅ Orbiter autour de la planète sélectionnée
 - ✅ Bouton retour vue système solaire
-- [ ] Cliquer sur une planète dans la scène pour zoomer (raycasting)
+- ✅ Cliquer sur une planète dans la scène pour zoomer (raycasting)
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 
 ### Interface
@@ -155,7 +155,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 ### Données
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
-- [ ] Ceinture d'astéroïdes (entre Mars et Jupiter)
+- 🚧 Ceinture d'astéroïdes (entre Mars et Jupiter) V1 : Polygone random, V2 => tester avec textures
 - [ ] Pluton et planètes naines
 
 ### Visuel

@@ -1,4 +1,4 @@
-import { scene, startLoop, bloomPass } from "./scene.js";
+import { scene, startLoop, bloomPass, camera } from "./scene.js";
 import {
   createPlanet,
   createSaturnRings,
@@ -7,9 +7,11 @@ import {
   createAtmosphere,
   createClouds,
   createOrbit,
+  createAsteroidBelt,
 } from "./objects.js";
 import {
   buildSidebar,
+  setActiveItem,
   showTooltip,
   hideTooltip,
   buildBackButton,
@@ -17,7 +19,7 @@ import {
   buildSimControls,
   buildOrbitToggle,
 } from "./ui.js";
-import { updateCamera, zoomTo, zoomToSystem } from "./camera.js";
+import { updateCamera, zoomTo, zoomToSystem, isFollowing } from "./camera.js";
 import * as THREE from "three";
 import { sim } from "./state.js";
 import { OBJECTS } from "./data.js";
@@ -344,6 +346,18 @@ function updateOrbitTrails() {
   });
 }
 
+// Mars : orbitR => 22 => innerRadius doit être supérieur
+// Jupiter : orbitR => 32 => outerRadius doit être inférieur
+const asteroidBeltInstances = createAsteroidBelt({
+  innerRadius: 24,
+  outerRadius: 29,
+  count: 2000,
+  ySpread: 0.5,
+});
+
+// Reset du dummy pour éviter les maj
+const _dummy = new THREE.Object3D();
+
 // ── Boucle d'animation ────────────────────────────
 // t est un compteur de temps global qui grandit à chaque frame (sauf en pause).
 // Chaque pivot reçoit rotation.y = t * speed — c'est la source unique du mouvement orbital.
@@ -364,6 +378,27 @@ startLoop(() => {
     // Rotation des couches nuageuses — vitesse et sens propres à chaque planète
     cloudMeshes.forEach(({ mesh, speed }) => {
       mesh.rotation.y += 0.0001 * speed * sim.speedFactor;
+    });
+
+    asteroidBeltInstances.forEach(({ mesh, instanceData }) => {
+      instanceData.forEach((ast, i) => {
+        ast.angle += ast.orbitSpeed * 0.005 * sim.speedFactor;
+        ast.rotX += ast.rotSpeedX * sim.speedFactor; // ← stocké par astéroïde
+        ast.rotY += ast.rotSpeedY * sim.speedFactor;
+        ast.rotZ += ast.rotSpeedZ * sim.speedFactor;
+
+        _dummy.position.set(
+          Math.cos(ast.angle) * ast.radius,
+          ast.inclination,
+          Math.sin(ast.angle) * ast.radius
+        );
+
+        _dummy.rotation.set(ast.rotX, ast.rotY, ast.rotZ); // ← set, pas +=
+        _dummy.scale.setScalar(ast.size);
+        _dummy.updateMatrix();
+        mesh.setMatrixAt(i, _dummy.matrix);
+      });
+      mesh.instanceMatrix.needsUpdate = true;
     });
   }
 
@@ -413,4 +448,38 @@ buildSimControls();
 // Toggle orbites : active/désactive la visibilité de toutes les orbitLines d'un coup
 buildOrbitToggle((visible) => {
   orbitLines.forEach((line) => (line.visible = visible));
+});
+
+// ── Raycasting — clic sur un mesh dans la scène ───
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+
+// Collecte tous les meshes cliquables (planètes + soleil + lune)
+// On exclut les anneaux, atmosphères, nuages (pas dans meshById)
+const clickableMeshes = [...meshById.values()];
+
+document.getElementById("canvas").addEventListener("click", (e) => {
+  // En mode following/zooming, le clic sert au drag — on ignore
+  if (isFollowing()) return;
+
+  // Coordonnées normalisées [-1, +1]
+  const rect = e.target.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(clickableMeshes, false);
+
+  if (hits.length === 0) return;
+
+  const hitMesh = hits[0].object;
+  const id = hitMesh.userData.id;
+  const obj = OBJECTS.find((o) => o.id === id);
+  if (!obj) return;
+
+  // Même comportement que le clic sidebar
+  showTooltip(obj);
+  setActiveItem(id);
+  zoomTo(hitMesh);
+  showBackButton();
 });

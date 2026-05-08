@@ -302,3 +302,113 @@ export function createOrbit(
 
   return line;
 }
+
+export function createAsteroidBelt({
+  innerRadius,
+  outerRadius,
+  count = 1800, // A tester niveau perfs
+  ySpread, // Epaisseur
+}) {
+  // Création de 3 geométries différentes, dans l'idéale déformées
+  const baseGeos = [
+    new THREE.SphereGeometry(1, 7, 6),
+    new THREE.SphereGeometry(1, 6, 5),
+    new THREE.SphereGeometry(1, 8, 6),
+  ];
+
+  // Déformation des vertices pour casser la forme sphérique trop régulière
+  baseGeos.forEach((geo) => {
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      // Déformation douce et uniforme — pas de valeurs extrêmes
+      const noise = 0.75 + Math.random() * 0.5;
+      pos.setX(i, pos.getX(i) * noise);
+      pos.setY(i, pos.getY(i) * (0.75 + Math.random() * 0.5));
+      pos.setZ(i, pos.getZ(i) * (0.75 + Math.random() * 0.5));
+    }
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+  });
+
+  // Création des 3 matériaux composant la ceinture
+  const materials = [
+    new THREE.MeshBasicMaterial({ color: 0x4a3a2a }), // C-type — charbon
+    new THREE.MeshBasicMaterial({ color: 0x7a6a5a }), // S-type — silex
+    new THREE.MeshBasicMaterial({ color: 0x9a9285 }), // M-type — fer
+  ];
+
+  // Répartition des types selon la réalité astronomique
+  const typeWeights = [0.6, 0.3, 0.1];
+  const counts = typeWeights.map((w) => Math.round(w * count));
+
+  const dummy = new THREE.Object3D();
+  const allInstances = [];
+
+  counts.forEach((n, typeIdx) => {
+    const geo = baseGeos[typeIdx % baseGeos.length];
+    const mat = materials[typeIdx];
+    const mesh = new THREE.InstancedMesh(geo, mat, n);
+
+    mesh.castShadow = false;
+    mesh.receiveShadow = false;
+
+    const instanceData = [];
+
+    for (let i = 0; i < n; i++) {
+      // Distribution radiale non-uniforme : plus dense au centre de la ceinture
+      const r =
+        innerRadius +
+        (outerRadius - innerRadius) * Math.pow(Math.random(), 0.8);
+
+      // Légère ellipticité orbitale (excentricité réaliste)
+      const eccentricity = Math.random() * 0.15;
+      const angle = Math.random() * Math.PI * 2;
+      const rElliptic = r * (1 + eccentricity * Math.cos(angle));
+
+      // Inclinaison individuelle (Epaisseur de ceinture, on évite qu'lle soit plate)
+      const inclination = (Math.random() - 0.5) * ySpread;
+
+      // Taille : Logarithmique => Beaucpus de petits, peu de grands
+      const size = 0.012 + Math.pow(Math.random(), 2) * 0.022;
+
+      dummy.position.set(
+        Math.cos(angle) * rElliptic,
+        inclination,
+        Math.sin(angle) * rElliptic
+      );
+
+      dummy.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+
+      dummy.scale.setScalar(size);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+
+      instanceData.push({
+        angle,
+        radius: rElliptic,
+        baseRadius: r,
+        inclination,
+        // Vitesse selon la loi Kepler
+        orbitSpeed: 0.27 / Math.sqrt(r / innerRadius),
+        rotSpeedX: (Math.random() - 0.5) * 0.02,
+        rotSpeedY: (Math.random() - 0.5) * 0.02,
+        rotSpeedZ: (Math.random() - 0.5) * 0.02,
+        rotX: Math.random() * Math.PI, // ← rotation initiale aléatoire
+        rotY: Math.random() * Math.PI,
+        rotZ: Math.random() * Math.PI,
+        size,
+      });
+    }
+
+    mesh.instanceMatrix.needsUpdate = true;
+    scene.add(mesh);
+    allInstances.push({ mesh, instanceData, typeIdx });
+  });
+
+  // Retourné pour la mise à jour dans la boucle
+  return allInstances;
+}
