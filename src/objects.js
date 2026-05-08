@@ -330,11 +330,28 @@ export function createAsteroidBelt({
     geo.computeVertexNormals();
   });
 
-  // Création des 3 matériaux composant la ceinture
+  const textures = [
+    loader.load("/textures/asteroid_c.jpg"), // C-type — sombre, carbone
+    loader.load("/textures/asteroid_s.jpg"), // S-type — rocheux, silicate
+    loader.load("/textures/asteroid_m.jpg"), // M-type — métallique
+  ];
+
   const materials = [
-    new THREE.MeshBasicMaterial({ color: 0x4a3a2a }), // C-type — charbon
-    new THREE.MeshBasicMaterial({ color: 0x7a6a5a }), // S-type — silex
-    new THREE.MeshBasicMaterial({ color: 0x9a9285 }), // M-type — fer
+    new THREE.MeshStandardMaterial({
+      map: textures[0],
+      roughness: 1.0,
+      metalness: 0.05,
+    }),
+    new THREE.MeshStandardMaterial({
+      map: textures[1],
+      roughness: 0.85,
+      metalness: 0.1,
+    }),
+    new THREE.MeshStandardMaterial({
+      map: textures[2],
+      roughness: 0.5,
+      metalness: 0.6,
+    }),
   ];
 
   // Répartition des types selon la réalité astronomique
@@ -369,7 +386,7 @@ export function createAsteroidBelt({
       const inclination = (Math.random() - 0.5) * ySpread;
 
       // Taille : Logarithmique => Beaucpus de petits, peu de grands
-      const size = 0.012 + Math.pow(Math.random(), 2) * 0.022;
+      const size = 0.025 + Math.pow(Math.random(), 2) * 0.030;
 
       dummy.position.set(
         Math.cos(angle) * rElliptic,

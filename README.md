@@ -75,6 +75,9 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | `8k_moon.jpg` | Lune |
 | `starmap.jpg` | Skybox (carte du ciel NASA — [source](https://svs.gsfc.nasa.gov/4851)) |
 | `lensflare0.png` | Halo du Soleil |
+| `asteroid_c.jpg` | asteroid_c - Color [source](https://ambientcg.com/get?file=Rock026_1K-JPG.zip) |
+| `asteroid_s.jpg` | asteroid_s - Color [source](https://ambientcg.com/get?file=Rock023_1K-JPG.zip) |
+| `asteroid_m.jpg` | asteroid_m - Color [source](https://ambientcg.com/get?file=Rock032_1K-JPG.zip) |
 
 ---
 
@@ -155,7 +158,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 ### Données
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
-- 🚧 Ceinture d'astéroïdes (entre Mars et Jupiter) V1 : Polygone random, V2 => tester avec textures
+- ✅ Ceinture d'astéroïdes (entre Mars et Jupiter) V2 : Textures 
 - [ ] Pluton et planètes naines
 
 ### Visuel
