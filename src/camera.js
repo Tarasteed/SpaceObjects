@@ -96,22 +96,20 @@ export function updateCamera() {
     controls.target.lerp(state.targetLookAt, 0.03);
     controls.update();
 
+    // ✅ Seuil plus large — on bascule en following avant d'arriver
+    // La planète a moins le temps de se décaler
     const dist = camera.position.distanceTo(state.targetPosition);
-    if (dist < radius * 0.1) {
-      // Ne pas forcer camera.position — on reste où on est
-      // et on calcule le spherical depuis la position actuelle de la planète
+    if (dist < radius * 1.2) {
       const planetPos = new THREE.Vector3();
       state.targetMesh.getWorldPosition(planetPos);
-
-      // Spherical depuis la position caméra actuelle relative à la planète réelle
       state.spherical.setFromVector3(camera.position.clone().sub(planetPos));
 
       controls.dispose();
       setSkipControlsUpdate(true);
       state.zoomInitialized = false;
       state.mode = "following";
-      // Pas de camera.position.copy() ni controls.update() ici
     }
+    
     return;
   }
 
