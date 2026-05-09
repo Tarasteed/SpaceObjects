@@ -8,7 +8,18 @@
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 
-<body> <!-- Canvas Three.js --> <canvas id="canvas"></canvas> <!-- UI overlay -->
+<body> <!-- Canvas Three.js -->
+
+  <!-- index.html — ajoute avant le canvas -->
+  <div id="splash">
+    <div id="splash-content">
+      <div id="splash-title"><span>3D</span> Space Objects</div>
+      <button id="splash-btn">▶ Explorer</button>
+    </div>
+  </div>
+
+  <canvas id="canvas"></canvas>
+  <!-- UI overlay -->
   <div id="ui">
     <div id="sidebar"></div>
     <div id="tooltip"></div>

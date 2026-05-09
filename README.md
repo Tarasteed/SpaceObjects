@@ -81,6 +81,14 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 
 ---
 
+## Crédits
+
+| Ressource | Auteur | Licence |
+|---|---|---|
+| Musique "Celestial" | [Scott Buckley](https://www.scottbuckley.com.au) | CC BY 4.0 |
+
+---
+
 ## Objets affichés
 
 | Type | Objets |
@@ -88,6 +96,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | Étoile | Soleil |
 | Planètes | Mercure, Vénus, Terre, Mars, Jupiter, Saturne, Uranus, Neptune |
 | Satellites naturels | Lune (orbite autour de la Terre) |
+| Ceinture | Ceinture d'astéroïdes (entre Mars et Jupiter) |
 
 ---
 
@@ -114,6 +123,13 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Contrôle pause / vitesse de simulation (×0 à ×10, défaut ×1.5)
 - Afficher / masquer les orbites
 - **Traînes orbitales** : dégradé vertex par vertex, longueur calée sur la vitesse angulaire réelle
+- Écran de démarrage (splash screen) avec lancement de la musique au clic
+- Musique ambiante spatiale en boucle avec fondu d'entrée progressif
+- Contrôle volume + pause/play musique dans le HUD
+- Crédit artiste (Scott Buckley — "Celestial", CC BY 4.0)
+- Ceinture d'astéroïdes procédurale (InstancedMesh, 3 types C/S/M, loi de Kepler)
+- Clic sur une planète dans la scène pour zoomer (raycasting)
+- Vue dédiée ceinture d'astéroïdes depuis la sidebar
 
 ---
 
@@ -151,7 +167,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 ### Interface
 - ✅ Contrôle pause / vitesse de simulation (×0 à ×10)
 - ✅ Afficher / masquer les orbites
-- [ ] Cliquer sur la ceinture d'astéroide dans la sidebar
+- ✅ Afficher le controle de la musique
+- ✅ Cliquer sur la ceinture d'astéroide dans la sidebar
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
 - [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
@@ -174,7 +191,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Lumières humaines sur la partie sombre de la Terre
 - ✅ Textures 4k/8k
 - ✅ Traînes orbitales (dégradé vertex, longueur proportionnelle à la vitesse)
-- [ ] Raycasting — clic sur une planète pour zoomer
+- ✅ Splash screen permettant le lancement de la musique
+- ✅ Raycasting — clic sur une planète pour zoomer
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [ ] Anneaux d'Uranus (discrets mais réels)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
@@ -189,7 +207,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - [ ] Mode plein écran
 
 ### Sound design
-- [ ] Musique ambiante spatiale en continu (Scott Buckley - Celestial ?)
+- ✅ Musique ambiante spatiale en continu (Scott Buckley — "Celestial", CC BY 4.0)
 - [ ] Whoosh doux au début du zoom vers une planète
 - [ ] Hum atmosphérique en mode following de planète avec atmosphère (Terre, Jupiter…)
 - [ ] Clic sonar/ping au clique dans la sidebar ou raycasting

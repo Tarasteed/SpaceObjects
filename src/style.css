@@ -150,7 +150,7 @@ button {
 /* ── Tooltip ─────────────────────────────────── */
 #tooltip {
   position: fixed;
-  bottom: 24px;
+  bottom: 80px;
   right: 24px;
   width: 260px;
   background: rgba(6, 6, 20, 0.88);
@@ -351,4 +351,137 @@ button {
 
 #btn-orbits:hover {
   background: rgba(91, 143, 249, 0.1);
+}
+
+#audio-hud {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(6, 6, 20, 0.85);
+  border: 1px solid rgba(91, 143, 249, 0.3);
+  border-radius: 8px;
+  padding: 8px 16px;
+  backdrop-filter: blur(12px);
+  font-family: "Courier New", monospace;
+  z-index: 20;
+}
+
+#btn-music {
+  font-size: 12px;
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid rgba(91, 143, 249, 0.4);
+  border-radius: 5px;
+  color: #7aaff9;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+
+#btn-music:hover {
+  background: rgba(91, 143, 249, 0.15);
+}
+
+#btn-music.active {
+  background: rgba(249, 203, 66, 0.12);
+  border-color: rgba(249, 203, 66, 0.5);
+  color: #f9cb42;
+}
+
+#volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#volume-label {
+  font-size: 12px;
+  color: #c8d4ee;
+  min-width: 30px;
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+#volume-slider {
+  width: 80px;
+  accent-color: #5b8ff9;
+  cursor: pointer;
+}
+
+#music-credit {
+  font-size: 10px;
+  color: rgba(200, 212, 238, 0.3);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+#music-credit a {
+  color: rgba(91, 143, 249, 0.5);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+#music-credit a:hover {
+  color: #7aaff9;
+}
+
+#sim-hud,
+#audio-hud {
+  padding: 0 16px;
+  height: 44px;
+  align-items: center;
+}
+
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #06060f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.8s;
+}
+
+#splash.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#splash-title {
+  font-family: "Courier New", monospace;
+  font-size: 28px;
+  color: #c8d4ee;
+  letter-spacing: 0.1em;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+#splash-title span {
+  color: #5b8ff9;
+  font-weight: 700;
+}
+
+#splash-btn {
+  padding: 12px 32px;
+  background: transparent;
+  border: 1px solid rgba(91, 143, 249, 0.6);
+  border-radius: 6px;
+  color: #7aaff9;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#splash-btn:hover {
+  background: rgba(91, 143, 249, 0.15);
 }

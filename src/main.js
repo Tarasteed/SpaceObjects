@@ -18,6 +18,7 @@ import {
   showBackButton,
   buildSimControls,
   buildOrbitToggle,
+  buildAudioControls,
 } from "./ui.js";
 import {
   updateCamera,
@@ -29,6 +30,19 @@ import {
 import * as THREE from "three";
 import { sim } from "./state.js";
 import { OBJECTS } from "./data.js";
+import { initAudio, setMusicVolume, toggleMusic } from "./audio.js";
+
+const splash = document.getElementById("splash");
+document.getElementById("splash-btn").addEventListener("click", () => {
+  splash.classList.add("hidden");
+  setTimeout(() => splash.remove(), 800);
+  initAudio();
+});
+
+buildAudioControls(
+  (v) => setMusicVolume(v),
+  () => toggleMusic()
+);
 
 // ── Données source ────────────────────────────────
 // On dérive les sous-ensembles utiles depuis OBJECTS (data.js)

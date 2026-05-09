@@ -154,3 +154,34 @@ export function buildOrbitToggle(onToggle) {
     onToggle(btn.classList.contains("active"));
   });
 }
+
+export function buildAudioControls(onVolumeChange, onToggle) {
+  const div = document.createElement("div");
+  div.id = "audio-hud";
+  div.innerHTML = `
+  <button id="btn-music">♪ Musique</button>
+  <div id="volume-control">
+    <span id="volume-label">×0.3</span>
+    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3"/>
+  </div>
+  <span id="music-credit">
+    <a href="https://www.scottbuckley.com.au" target="_blank" rel="noopener">Scott Buckley</a>
+    — "Celestial" (CC BY 4.0)
+  </span>
+`;
+  document.body.appendChild(div);
+
+  document.getElementById("btn-music").addEventListener("click", () => {
+    const playing = onToggle();
+    document.getElementById("btn-music").textContent = playing
+      ? "♪ Musique"
+      : "♩ Musique";
+    document.getElementById("btn-music").classList.toggle("active", !playing);
+  });
+
+  document.getElementById("volume-slider").addEventListener("input", (e) => {
+    const v = parseFloat(e.target.value);
+    document.getElementById("volume-label").textContent = `×${v.toFixed(1)}`;
+    onVolumeChange(v);
+  });
+}
