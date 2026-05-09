@@ -19,7 +19,13 @@ import {
   buildSimControls,
   buildOrbitToggle,
 } from "./ui.js";
-import { updateCamera, zoomTo, zoomToSystem, isFollowing } from "./camera.js";
+import {
+  updateCamera,
+  zoomTo,
+  zoomToSystem,
+  zoomToBelt,
+  isFollowing,
+} from "./camera.js";
 import * as THREE from "three";
 import { sim } from "./state.js";
 import { OBJECTS } from "./data.js";
@@ -429,6 +435,13 @@ startLoop(() => {
 // Au clic : affiche l'infobulle + zoom caméra vers la planète.
 buildSidebar((obj) => {
   showTooltip(obj);
+
+  if (obj.id === "asteroid-belt") {
+    zoomToBelt();
+    showBackButton();
+    return;
+  }
+
   const mesh = meshById.get(obj.id);
   if (mesh) {
     zoomTo(mesh);

@@ -92,8 +92,8 @@ export function updateCamera() {
 
     state.targetLookAt.copy(worldPos);
 
-    camera.position.lerp(state.targetPosition, 0.05);
-    controls.target.lerp(state.targetLookAt, 0.08);
+    camera.position.lerp(state.targetPosition, 0.025);
+    controls.target.lerp(state.targetLookAt, 0.03);
     controls.update();
 
     const dist = camera.position.distanceTo(state.targetPosition);
@@ -128,12 +128,12 @@ export function updateCamera() {
   }
 
   if (state.mode === "returning") {
-    camera.position.lerp(state.targetPosition, 0.05);
-    controls.target.lerp(state.targetLookAt, 0.08);
+    camera.position.lerp(state.targetPosition, 0.025);
+    controls.target.lerp(state.targetLookAt, 0.03);
     controls.update();
 
     const dist = camera.position.distanceTo(state.targetPosition);
-    if (dist < 0.1) {
+    if (dist < 0.5) {
       camera.position.copy(state.targetPosition);
       controls.target.copy(state.targetLookAt);
       setSkipControlsUpdate(false);
@@ -162,6 +162,21 @@ export function zoomToSystem() {
   }
   state.targetPosition.set(0, 24, 60);
   state.targetLookAt.set(0, 0, 0);
+  state.mode = "returning";
+  state.targetMesh = null;
+  controls.enabled = false;
+  state.isDragging = false;
+}
+
+export function zoomToBelt() {
+  // Réactive les controls si on était en following
+  if (state.mode === "following") {
+    controls.connect(document.getElementById("canvas"));
+  }
+  // Côté soleil (Z négatif) — on regarde la ceinture avec le soleil dans le dos
+  // Faible inclinaison Y pour voir l'épaisseur sans trop plonger
+  state.targetPosition.set(0, 5, 15);
+  state.targetLookAt.set(0, 0, 26);
   state.mode = "returning";
   state.targetMesh = null;
   controls.enabled = false;

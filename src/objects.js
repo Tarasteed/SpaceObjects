@@ -385,7 +385,7 @@ export function createAsteroidBelt({
       // Inclinaison individuelle (Epaisseur de ceinture, on évite qu'lle soit plate)
       const inclination = (Math.random() - 0.5) * ySpread;
 
-      // Taille : Logarithmique => Beaucpus de petits, peu de grands
+      // Taille : Logarithmique => Beaucoup de petits, peu de grands
       const size = 0.025 + Math.pow(Math.random(), 2) * 0.030;
 
       dummy.position.set(

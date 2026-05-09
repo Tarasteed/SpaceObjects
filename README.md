@@ -134,7 +134,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Mauvais mapping pour les anneaux de Saturne |
 | ✅ Résolu | Traînes orbitales dans le mauvais sens / décalées |
 | ✅ Résolu | Impossible de déplacer la caméra autour de la planète dans certains cas |
-|  | Petit snap en fin de zoom lié à la position de la planète qui a changé pendant le mouvement |
+| [ ] | Petit snap en fin de zoom lié à la position de la planète qui a changé pendant le mouvement |
 | [ ] | Au focus sur une planète, la caméra peut passer à travers au lieu de la suivre par l'extérieur |
 
 ---
@@ -151,6 +151,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 ### Interface
 - ✅ Contrôle pause / vitesse de simulation (×0 à ×10)
 - ✅ Afficher / masquer les orbites
+- [ ] Cliquer sur la ceinture d'astéroide dans la sidebar
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
 - [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
@@ -188,8 +189,12 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - [ ] Mode plein écran
 
 ### Sound design
-- [ ] Musique ambiante
-- [ ] Effet sonor aux différents clique ?
+- [ ] Musique ambiante spatiale en continu (Scott Buckley - Celestial ?)
+- [ ] Whoosh doux au début du zoom vers une planète
+- [ ] Hum atmosphérique en mode following de planète avec atmosphère (Terre, Jupiter…)
+- [ ] Clic sonar/ping au clique dans la sidebar ou raycasting
+- [ ] Crépitement rocailleux au focus sur la ceinture d'astéroïdes
+- [ ] Swoosh retour sur le bouton "← Système solaire"
 
 ---
 

@@ -122,6 +122,18 @@ export const OBJECTS = [
     atmosphere: { color: "255,120,60", size: 1.3 },
   },
   {
+    id: "asteroid-belt",
+    name: "Ceinture d'astéroïdes",
+    type: "belt",
+    color: "#8a7a6a",
+    desc: "Zone entre Mars et Jupiter contenant des millions de corps rocheux, vestige de la formation du système solaire.",
+    facts: {
+      distance: "300–500M km du Soleil",
+      objets: "~1,1 million d'astéroïdes",
+      largeur: "~225 millions km",
+    },
+  },
+  {
     id: "jupiter",
     name: "Jupiter",
     type: "planet",
@@ -239,5 +251,6 @@ export const TYPE_LABELS = {
   star: { label: "Étoiles", color: "#F9CB42" },
   planet: { label: "Planètes", color: "#5b8ff9" },
   satellite: { label: "Satellites", color: "#5DCAA5" },
+  belt: { label: "Ceintures", color: "#8a7a6a" },
   probe: { label: "Sondes", color: "#F5C4B3" },
 };
