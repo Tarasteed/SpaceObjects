@@ -81,10 +81,10 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | `2k_uranus.jpg` | Uranus |
 | `2k_neptune.jpg` | Neptune |
 | `8k_moon.jpg` | Lune |
-| `4k_eris.jpg` | Eris |
-| `4k_haumea.jpg` | Haumea |
-| `4k_makemake.jpg` | Makemake |
 | `4k_pluto.jpg` | Pluton |
+| `4k_eris.jpg` | Éris |
+| `4k_haumea.jpg` | Hauméa |
+| `4k_makemake.jpg` | Makemake |
 | `starmap.jpg` | Skybox (carte du ciel NASA — [source](https://svs.gsfc.nasa.gov/4851)) |
 | `lensflare0.png` | Halo du Soleil |
 | `asteroid_c.jpg` | C-type — [source](https://ambientcg.com/get?file=Rock026_1K-JPG.zip) |
@@ -112,7 +112,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | Planètes | Mercure, Vénus, Terre, Mars, Jupiter, Saturne, Uranus, Neptune |
 | Satellites naturels | Lune |
 | Ceinture | Ceinture d'astéroïdes (entre Mars et Jupiter) |
-| Planètes naines | Pluton, Haumea, Makemake, Eris |
+| Planètes naines | Pluton, Éris, Hauméa, Makemake |
 
 ---
 
@@ -131,12 +131,13 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Nuages Terre + atmosphère Vénus (sphère semi-transparente)
 - Lumières humaines sur la partie sombre de la Terre (emissiveMap)
 - Ceinture d'astéroïdes procédurale (InstancedMesh, 3 types C/S/M, loi de Kepler)
+- Pluton et planètes naines à l'échelle (Éris, Hauméa, Makemake)
 - Zoom fluide vers une planète avec suivi en temps réel (lerp)
 - Navigation autour de la planète sélectionnée (drag + zoom molette)
 - Clic sur une planète dans la scène pour zoomer (raycasting)
 - Vue dédiée ceinture d'astéroïdes depuis la sidebar
 - Retour vue système solaire
-- Sidebar futuriste avec objets regroupés par type + lien GitHub
+- Sidebar futuriste repliable avec objets regroupés par type + lien GitHub
 - Infobulles au clic avec données scientifiques
 - Contrôle pause / vitesse de simulation (×0 à ×10, défaut ×1.5)
 - Afficher / masquer les orbites
@@ -149,6 +150,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Crépitement rocailleux au focus ceinture d'astéroïdes
 - Swoosh au retour système solaire
 - Favicon SVG + logo animé
+- Interface mobile responsive (sidebar repliable, HUDs adaptés, touch-friendly)
 
 ---
 
@@ -171,8 +173,10 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Traînes orbitales dans le mauvais sens / décalées |
 | ✅ Résolu | Impossible de déplacer la caméra autour de la planète dans certains cas |
 | ✅ Résolu | Son atmosphérique ne se relance pas en naviguant entre planètes |
+| ✅ Résolu | HUDs sim/audio de largeurs différentes sur mobile |
 | [ ] | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | [ ] | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
+| [ ] | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
 
 ---
 
@@ -191,6 +195,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Contrôle musique (volume + pause/play)
 - ✅ Cliquer sur la ceinture d'astéroïdes dans la sidebar
 - ✅ Lien GitHub dans la sidebar
+- ✅ Sidebar repliable (desktop + mobile)
+- ✅ Interface mobile responsive
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
 - [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
@@ -227,6 +233,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Hébergement Vercel (`npm run build` → dossier `dist/`)
 - ✅ Splash screen avec LoadingManager — bouton bloqué jusqu'au chargement complet
 - ✅ LoadingManager partagé via `loader.js` (évite les imports circulaires)
+- ✅ Optimisation mobile (sidebar repliable, HUDs adaptatifs)
 - [ ] Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
 - [ ] Mode plein écran
@@ -247,13 +254,16 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 Chaque planète est l'enfant d'un `Object3D` invisible placé au centre. Faire tourner le pivot autour de Y fait orbiter la planète sans calculer sin/cos manuellement. La Lune est enfant d'un `moonPivot` attaché au mesh Terre — elle hérite automatiquement de toutes ses transformations.
 
 **Traînes orbitales (vertexColors)**
-Chaque orbite utilise un `BufferAttribute` de couleurs par vertex mis à jour à chaque frame. La conversion `planetAngle = -pivot.rotation.y` est nécessaire car la rotation Y Three.js est dans le sens opposé à la numérotation des vertices. La longueur de traîne est `BASE_TRAIL + angularVelocity * EXT_FRAMES`.
+Chaque orbite utilise un `BufferAttribute` de couleurs par vertex mis à jour à chaque frame. La conversion `planetAngle = -pivot.rotation.y` est nécessaire car la rotation Y Three.js est dans le sens opposé à la numérotation des vertices. La longueur de traîne est `BASE_TRAIL + angularVelocity * EXT_FRAMES`. Les orbites lointaines (r > 70) utilisent 4096 segments au lieu de 512 pour réduire l'effet de saccade sur les planètes naines.
 
 **Ceinture d'astéroïdes (InstancedMesh)**
-3 `InstancedMesh` (un par type C/S/M) — 1 draw call par type quelle que soit la quantité. Vitesses keplerienne (`v ∝ 1/√r`), ellipticité individuelle, distribution logarithmique des tailles. `MeshBasicMaterial` pour s'affranchir de la distance à la `PointLight` solaire.
+3 `InstancedMesh` (un par type C/S/M) — 1 draw call par type quelle que soit la quantité. Vitesses keplériennes (`v ∝ 1/√r`), ellipticité individuelle, distribution logarithmique des tailles. `MeshBasicMaterial` pour s'affranchir de la distance à la `PointLight` solaire.
 
 **Suivi caméra (mode following)**
 `OrbitControls` est `dispose()` en mode following. La position caméra est calculée manuellement via `THREE.Spherical` — drag et zoom molette sont gérés par des listeners canvas dédiés. `setSkipControlsUpdate(true)` empêche `controls.update()` d'écraser la position.
+
+**Sidebar repliable**
+La fonction `updateSidebarDependents(isCollapsed)` dans `ui.js` met à jour dynamiquement la position de `#btn-orbits`, `#sim-hud`, `#audio-hud` et `#tooltip` selon l'état de la sidebar. Sur mobile, la sidebar est repliée par défaut via `window.innerWidth <= 768`.
 
 **LoadingManager partagé**
 `loader.js` exporte un `TextureLoader` et un `LoadingManager` uniques. Évite l'import circulaire `main.js ↔ objects.js` en centralisant le loader dans un module tiers.

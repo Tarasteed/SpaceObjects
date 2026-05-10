@@ -1,6 +1,24 @@
 import { OBJECTS, TYPE_LABELS } from "./data.js";
 import { sim } from "./state.js";
 
+// ── Utilitaire : met à jour les positions des éléments selon l'état sidebar ──
+function updateSidebarDependents(isCollapsed) {
+  const sidebarWidth = isCollapsed ? 52 : 232;
+  const btnOrbits = document.getElementById("btn-orbits");
+  const audioHud = document.getElementById("audio-hud");
+  const simHud = document.getElementById("sim-hud");
+  const tooltip = document.getElementById("tooltip");
+
+  if (btnOrbits) btnOrbits.style.left = `${sidebarWidth}px`;
+
+  // Sur mobile uniquement — audio-hud et tooltip suivent la sidebar
+  if (window.innerWidth <= 768) {
+    if (audioHud) audioHud.style.left = `${sidebarWidth}px`;
+    if (simHud) simHud.style.left = `${sidebarWidth}px`;
+    if (tooltip) tooltip.style.left = `${sidebarWidth}px`;
+  }
+}
+
 // ── Construction de la sidebar ────────────────────
 export function buildSidebar(onSelect) {
   const sidebar = document.getElementById("sidebar");
@@ -15,10 +33,13 @@ export function buildSidebar(onSelect) {
   // Génère le HTML
   sidebar.innerHTML = `
     <div class="sb-header">
-      <span class="sb-logo">3D</span> Space Objects
+      <div class="sb-header-top">
+        <span><span class="sb-logo">3D</span> Space Objects</span>
+        <button id="btn-sidebar-toggle" title="Réduire">‹</button>
+      </div>
       <a href="https://github.com/Tarasteed/SpaceObjects" target="_blank" rel="noopener" id="sb-github">
-      ⎇ GitHub
-    </a>
+        ⎇ GitHub
+      </a>
     </div>
     <div class="sb-body">
       ${Object.entries(groups)
@@ -46,19 +67,35 @@ export function buildSidebar(onSelect) {
         .join("")}
     </div>`;
 
+  // Repliée par défaut sur mobile
+  if (window.innerWidth <= 768) {
+    sidebar.classList.add("collapsed");
+    document.getElementById("btn-sidebar-toggle").textContent = "›";
+  }
+
   // Clics sur les items
   sidebar.querySelectorAll(".sb-item").forEach((el) => {
     el.addEventListener("click", () => {
-      // Retire la sélection précédente
       sidebar
         .querySelectorAll(".sb-item")
         .forEach((i) => i.classList.remove("active"));
       el.classList.add("active");
-      // Appelle le callback avec l'id de l'objet
       const obj = OBJECTS.find((o) => o.id === el.dataset.id);
       if (obj) onSelect(obj);
     });
   });
+
+  // Toggle sidebar
+  document
+    .getElementById("btn-sidebar-toggle")
+    .addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+      const isCollapsed = sidebar.classList.contains("collapsed");
+      document.getElementById("btn-sidebar-toggle").textContent = isCollapsed
+        ? "›"
+        : "‹";
+      updateSidebarDependents(isCollapsed);
+    });
 }
 
 export function buildSimControls() {
@@ -101,7 +138,6 @@ export function showTooltip(obj) {
   const tooltip = document.getElementById("tooltip");
   const typeLabel = TYPE_LABELS[obj.type];
 
-  // Génère les lignes de faits
   const factsHTML = Object.entries(obj.facts)
     .map(
       ([key, val]) => `
@@ -123,7 +159,6 @@ export function showTooltip(obj) {
       <div class="tt-facts">${factsHTML}</div>
     `;
 
-  // Déclenche l'animation d'apparition
   tooltip.classList.add("visible");
 }
 
@@ -152,6 +187,12 @@ export function buildOrbitToggle(onToggle) {
   btn.id = "btn-orbits";
   btn.textContent = "⬡ Orbites";
   document.body.appendChild(btn);
+
+  // Position initiale selon état sidebar au moment de la création
+  const sidebar = document.getElementById("sidebar");
+  const isCollapsed = sidebar.classList.contains("collapsed");
+  updateSidebarDependents(isCollapsed);
+
   btn.addEventListener("click", () => {
     btn.classList.toggle("active");
     onToggle(btn.classList.contains("active"));
@@ -162,17 +203,21 @@ export function buildAudioControls(onVolumeChange, onToggle) {
   const div = document.createElement("div");
   div.id = "audio-hud";
   div.innerHTML = `
-  <button id="btn-music">♪ Musique</button>
-  <div id="volume-control">
-    <span id="volume-label">×0.1</span>
-    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1"/>
-  </div>
-  <span id="music-credit">
-    <a href="https://www.scottbuckley.com.au" target="_blank" rel="noopener">Scott Buckley</a>
-    — "Celestial" (CC BY 4.0)
-  </span>
-`;
+    <button id="btn-music">♪ Musique</button>
+    <div id="volume-control">
+      <span id="volume-label">×0.1</span>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1"/>
+    </div>
+    <span id="music-credit">
+      <a href="https://www.scottbuckley.com.au" target="_blank" rel="noopener">Scott Buckley</a>
+      — "Celestial" (CC BY 4.0)
+    </span>
+  `;
   document.body.appendChild(div);
+
+  // Position initiale selon état sidebar
+  const sidebar = document.getElementById("sidebar");
+  updateSidebarDependents(sidebar.classList.contains("collapsed"));
 
   document.getElementById("btn-music").addEventListener("click", () => {
     const playing = onToggle();

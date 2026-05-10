@@ -43,6 +43,7 @@ button {
   flex-direction: column;
   z-index: 10;
   font-family: "Courier New", monospace;
+  transition: width 0.25s ease;
 }
 
 .sb-header {
@@ -145,6 +146,72 @@ button {
 .sb-item:hover .sb-arrow,
 .sb-item.active .sb-arrow {
   opacity: 1;
+}
+
+#sb-github {
+  font-size: 10px;
+  color: rgba(91, 143, 249, 0.5);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+
+#sb-github:hover {
+  color: #7aaff9;
+}
+
+.sb-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#btn-sidebar-toggle {
+  background: transparent;
+  border: 1px solid rgba(91, 143, 249, 0.3);
+  border-radius: 4px;
+  color: #7aaff9;
+  font-size: 16px;
+  padding: 2px 8px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+#btn-sidebar-toggle:hover {
+  background: rgba(91, 143, 249, 0.15);
+}
+
+/* ── Sidebar repliée ─────────────────────────── */
+#sidebar.collapsed {
+  width: 40px;
+  overflow: hidden;
+}
+
+#sidebar.collapsed .sb-body,
+#sidebar.collapsed .sb-group-label,
+#sidebar.collapsed #sb-github,
+#sidebar.collapsed .sb-name,
+#sidebar.collapsed .sb-arrow,
+#sidebar.collapsed .sb-dot {
+  display: none;
+}
+
+#sidebar.collapsed .sb-header {
+  padding: 12px 6px;
+  display: flex;
+  justify-content: center;
+}
+
+#sidebar.collapsed .sb-header-top {
+  justify-content: center;
+}
+#sidebar.collapsed .sb-header-top span {
+  display: none;
 }
 
 /* ── Tooltip ─────────────────────────────────── */
@@ -277,7 +344,8 @@ button {
   background: rgba(6, 6, 20, 0.85);
   border: 1px solid rgba(91, 143, 249, 0.3);
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 0 16px;
+  height: 44px;
   backdrop-filter: blur(12px);
   font-family: "Courier New", monospace;
   z-index: 20;
@@ -294,6 +362,7 @@ button {
   font-family: "Courier New", monospace;
   letter-spacing: 0.04em;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 #btn-pause:hover {
@@ -326,10 +395,11 @@ button {
   cursor: pointer;
 }
 
+/* ── Bouton orbites ──────────────────────────── */
 #btn-orbits {
   position: fixed;
   top: 20px;
-  left: 240px;
+  left: 232px;
   padding: 8px 16px;
   background: rgba(6, 6, 20, 0.85);
   border: 1px solid rgba(91, 143, 249, 0.4);
@@ -340,7 +410,7 @@ button {
   letter-spacing: 0.06em;
   cursor: pointer;
   backdrop-filter: blur(8px);
-  transition: all 0.2s;
+  transition: left 0.25s ease, background 0.2s;
 }
 
 #btn-orbits.active {
@@ -353,6 +423,7 @@ button {
   background: rgba(91, 143, 249, 0.1);
 }
 
+/* ── HUD Audio ───────────────────────────────── */
 #audio-hud {
   position: fixed;
   bottom: 24px;
@@ -363,7 +434,8 @@ button {
   background: rgba(6, 6, 20, 0.85);
   border: 1px solid rgba(91, 143, 249, 0.3);
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 0 16px;
+  height: 44px;
   backdrop-filter: blur(12px);
   font-family: "Courier New", monospace;
   z-index: 20;
@@ -380,6 +452,7 @@ button {
   font-family: "Courier New", monospace;
   letter-spacing: 0.04em;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 
 #btn-music:hover {
@@ -432,13 +505,7 @@ button {
   color: #7aaff9;
 }
 
-#sim-hud,
-#audio-hud {
-  padding: 0 16px;
-  height: 44px;
-  align-items: center;
-}
-
+/* ── Splash ──────────────────────────────────── */
 #splash {
   position: fixed;
   inset: 0;
@@ -513,16 +580,106 @@ button {
   pointer-events: none;
 }
 
-#sb-github {
-  font-size: 10px;
-  color: rgba(91, 143, 249, 0.5);
-  text-decoration: none;
-  letter-spacing: 0.06em;
-  display: block;
-  margin-top: 4px;
-  transition: color 0.15s;
-}
+/* ── Mobile ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .sb-item {
+    padding: 10px 12px;
+    min-height: 44px;
+  }
 
-#sb-github:hover {
-  color: #7aaff9;
+  .sb-name {
+    font-size: 12px;
+  }
+
+  #btn-orbits {
+    left: 52px;
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  #btn-back {
+    top: 12px;
+    right: 12px;
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  #sim-hud {
+    bottom: 70px;
+    left: 52px;
+    right: 12px;
+    transform: none;
+    height: 38px;
+    gap: 6px;
+    padding: 0 8px;
+  }
+
+  #audio-hud {
+    bottom: 12px;
+    left: 52px;
+    right: 12px;
+    height: 38px;
+    gap: 6px;
+    padding: 0 8px;
+  }
+
+  #sim-hud,
+  #audio-hud {
+    justify-content: center; /* ← centre horizontalement */
+  }
+
+  #speed-control,
+  #volume-control {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+
+  #speed-slider,
+  #volume-slider {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #speed-label,
+  #volume-label {
+    min-width: 26px;
+    font-size: 11px;
+  }
+
+  #btn-pause,
+  #btn-music {
+    font-size: 11px;
+    padding: 4px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #music-credit {
+    display: none;
+  }
+
+  #tooltip {
+    bottom: 120px;
+    right: 8px;
+    left: 52px;
+    width: auto;
+    font-size: 11px;
+    padding: 12px 14px;
+  }
+
+  #splash-logo {
+    width: 220px;
+    height: 220px;
+  }
+
+  #splash-title {
+    font-size: 24px;
+  }
+
+  #splash-sub {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+  }
 }
