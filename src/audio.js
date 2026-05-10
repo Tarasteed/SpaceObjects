@@ -43,7 +43,7 @@ export function initAudio() {
     .play()
     .then(() => {
       started = true;
-      fadeToVolume(0.3, 3000);
+      fadeToVolume(0.1, 3000);
     })
     .catch(() => {});
 }

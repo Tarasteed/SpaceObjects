@@ -161,8 +161,8 @@ export function buildAudioControls(onVolumeChange, onToggle) {
   div.innerHTML = `
   <button id="btn-music">♪ Musique</button>
   <div id="volume-control">
-    <span id="volume-label">×0.3</span>
-    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.3"/>
+    <span id="volume-label">×0.1</span>
+    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1"/>
   </div>
   <span id="music-credit">
     <a href="https://www.scottbuckley.com.au" target="_blank" rel="noopener">Scott Buckley</a>
