@@ -44,6 +44,15 @@ import {
 } from "./audio.js";
 import { loadingManager } from "./loader.js";
 
+import {
+  initTooltipOverlay,
+  showDeadSpaceTooltip,
+  updateTooltipLine,
+  hideDeadSpaceTooltip,
+  setOnHideCallback,
+  isTooltipVisible,
+} from "./tooltip.js";
+
 const splash = document.getElementById("splash");
 document.getElementById("splash-btn").addEventListener("click", () => {
   const btn = document.getElementById("splash-btn");
@@ -56,21 +65,6 @@ document.getElementById("splash-btn").addEventListener("click", () => {
   setTimeout(() => splash.remove(), 800);
   initAudio();
 });
-
-// Ajoute ces lignes AVANT buildSidebar/buildSimControls
-// loadingManager.onProgress = (url, loaded, total) => {
-//   const btn = document.getElementById("splash-btn");
-//   if (btn)
-//     btn.textContent = `Chargement... ${Math.round((loaded / total) * 100)}%`;
-// };
-
-// loadingManager.onLoad = () => {
-//   const btn = document.getElementById("splash-btn");
-//   if (btn) {
-//     btn.textContent = "▶ Explorer";
-//     btn.disabled = false;
-//   }
-// };
 
 buildAudioControls(
   (v) => setMusicVolume(v),
@@ -88,6 +82,7 @@ const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
 
 let lastMode = "free";
 let currentPlanetId = null;
+let activeTooltipMesh = null; // mesh 3D actuellement suivi par le tooltip
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
 export const meshById = new Map();
@@ -176,6 +171,11 @@ function createStars() {
 
 createSkybox();
 const starsGroup = createStars();
+
+initTooltipOverlay();
+setOnHideCallback(() => {
+  activeTooltipMesh = null;
+});
 
 // ── Soleil ────────────────────────────────────────
 // MeshBasicMaterial (via emissive=true dans createPlanet) — ignore les lumières,
@@ -482,6 +482,15 @@ startLoop(() => {
   updateOrbitTrails(); // recalcule les couleurs vertex des orbites à chaque frame
   updateCamera(); // lerp caméra vers la planète sélectionnée ou retour système
 
+  if (activeTooltipMesh) {
+    const worldPos = new THREE.Vector3();
+    activeTooltipMesh.getWorldPosition(worldPos);
+    worldPos.project(camera);
+    const x = (worldPos.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-worldPos.y * 0.5 + 0.5) * window.innerHeight;
+    updateTooltipLine(x, y);
+  }
+
   const mode = getCameraMode();
 
   if (mode !== lastMode) {
@@ -508,7 +517,8 @@ buildSidebar((obj) => {
   currentPlanetId = obj.id;
   playPing();
   stopAsteroidHum();
-  showTooltip(obj);
+  hideDeadSpaceTooltip();
+  activeTooltipMesh = null;
 
   if (obj.id === "asteroid-belt") {
     startAsteroidHum();
@@ -552,6 +562,8 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   // En mode following/zooming, le clic sert au drag — on ignore
   if (isFollowing()) return;
 
+  if (isTooltipVisible()) return;
+
   // Coordonnées normalisées [-1, +1]
   const rect = e.target.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -569,7 +581,13 @@ document.getElementById("canvas").addEventListener("click", (e) => {
 
   currentPlanetId = id;
   playPing();
-  showTooltip(obj);
+  activeTooltipMesh = hitMesh;
+  const worldPos = new THREE.Vector3();
+  hitMesh.getWorldPosition(worldPos);
+  worldPos.project(camera);
+  const sx = (worldPos.x * 0.5 + 0.5) * window.innerWidth;
+  const sy = (-worldPos.y * 0.5 + 0.5) * window.innerHeight;
+  showDeadSpaceTooltip(obj, sx, sy);
   setActiveItem(id);
   zoomTo(hitMesh);
   showBackButton();
