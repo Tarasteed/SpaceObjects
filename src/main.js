@@ -462,11 +462,15 @@ startLoop(() => {
 
   if (mode !== lastMode) {
     if (mode === "following") {
-      // Vérifie si la planète suivie a une atmosphère
       if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
         startAtmoHum();
+      } else {
+        stopAtmoHum(); // planète sans atmosphère
       }
-    } else if (lastMode === "following") {
+    } else if (mode === "zooming") {
+      // Ne coupe pas le son pendant le zoom — on attend d'être en following
+    } else {
+      // free ou returning — coupe tout
       stopAtmoHum();
     }
     lastMode = mode;
