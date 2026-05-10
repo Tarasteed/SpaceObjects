@@ -158,7 +158,7 @@ export function zoomToSystem() {
   if (state.mode === "following") {
     controls.connect(document.getElementById("canvas"));
   }
-  state.targetPosition.set(0, 24, 60);
+  state.targetPosition.set(0, 40, 100);
   state.targetLookAt.set(0, 0, 0);
   state.mode = "returning";
   state.targetMesh = null;

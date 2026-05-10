@@ -62,6 +62,7 @@ SpaceObjects/
 ## Textures
 
 Textures téléchargées depuis [solarsystemscope.com/textures](https://www.solarsystemscope.com/textures).
+Pluton : [planet-texture-maps.fandom.com/wiki/Pluto](https://planet-texture-maps.fandom.com/wiki/Pluto)
 Skybox : https://svs.gsfc.nasa.gov/4851
 
 | Fichier | Objet |
@@ -80,6 +81,10 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | `2k_uranus.jpg` | Uranus |
 | `2k_neptune.jpg` | Neptune |
 | `8k_moon.jpg` | Lune |
+| `4k_eris.jpg` | Eris |
+| `4k_haumea.jpg` | Haumea |
+| `4k_makemake.jpg` | Makemake |
+| `4k_pluto.jpg` | Pluton |
 | `starmap.jpg` | Skybox (carte du ciel NASA — [source](https://svs.gsfc.nasa.gov/4851)) |
 | `lensflare0.png` | Halo du Soleil |
 | `asteroid_c.jpg` | C-type — [source](https://ambientcg.com/get?file=Rock026_1K-JPG.zip) |
@@ -107,7 +112,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | Planètes | Mercure, Vénus, Terre, Mars, Jupiter, Saturne, Uranus, Neptune |
 | Satellites naturels | Lune |
 | Ceinture | Ceinture d'astéroïdes (entre Mars et Jupiter) |
-| Planètes naines | Pluton *(à venir)* |
+| Planètes naines | Pluton, Haumea, Makemake, Eris |
 
 ---
 
@@ -194,7 +199,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
 - ✅ Ceinture d'astéroïdes (entre Mars et Jupiter) — textures C/S/M-type
-- [ ] Pluton et planètes naines à l'échelle
+- ✅ Pluton et planètes naines à l'échelle
 
 ### Visuel
 - ✅ Inclinaisons orbitales et axiales réalistes
@@ -211,7 +216,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Splash screen animé avec logo SVG + loader
 - ✅ Favicon SVG
 - ✅ Raycasting — clic sur une planète pour zoomer
-- [ ] Pluton et planètes naines à l'échelle
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
 - ❌ Anneaux d'Uranus — trop discrets, rendu peu convaincant

@@ -267,7 +267,7 @@ export function createOrbit(
   color = new THREE.Color(0.3, 0.6, 1.0),
   maxOrbitR
 ) {
-  const segments = 512;
+  const segments = orbitR > 70 ? 4096 : 512;
   const positions = [];
   const colors = [];
 

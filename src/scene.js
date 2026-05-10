@@ -18,7 +18,7 @@ export const camera = new THREE.PerspectiveCamera(
   0.01,
   8000
 );
-camera.position.set(0, 12, 30);
+camera.position.set(0, 40, 100);
 
 export const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;

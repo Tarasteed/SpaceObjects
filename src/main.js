@@ -50,7 +50,7 @@ document.getElementById("splash-btn").addEventListener("click", () => {
   if (btn.disabled) return; // ← si encore disabled, on ignore
 
   playPing();
-  
+
   const splash = document.getElementById("splash");
   splash.classList.add("hidden");
   setTimeout(() => splash.remove(), 800);
@@ -79,7 +79,9 @@ buildAudioControls(
 
 // ── Données source ────────────────────────────────
 // On dérive les sous-ensembles utiles depuis OBJECTS (data.js)
-const planetsData = OBJECTS.filter((o) => o.type === "planet");
+const planetsData = OBJECTS.filter(
+  (o) => o.type === "planet" || o.type === "dwarf"
+);
 const sunData = OBJECTS.find((o) => o.id === "sun");
 const moonData = OBJECTS.find((o) => o.id === "moon");
 const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
