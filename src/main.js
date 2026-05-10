@@ -26,6 +26,7 @@ import {
   zoomToSystem,
   zoomToBelt,
   isFollowing,
+  getCameraMode,
 } from "./camera.js";
 import * as THREE from "three";
 import { sim } from "./state.js";
@@ -36,6 +37,8 @@ import {
   toggleMusic,
   playPing,
   playWhoosh,
+  startAtmoHum,
+  stopAtmoHum,
 } from "./audio.js";
 
 const splash = document.getElementById("splash");
@@ -55,6 +58,10 @@ buildAudioControls(
 const planetsData = OBJECTS.filter((o) => o.type === "planet");
 const sunData = OBJECTS.find((o) => o.id === "sun");
 const moonData = OBJECTS.find((o) => o.id === "moon");
+const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
+
+let lastMode = "free";
+let currentPlanetId = null;
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
 export const meshById = new Map();
@@ -448,12 +455,28 @@ startLoop(() => {
 
   updateOrbitTrails(); // recalcule les couleurs vertex des orbites à chaque frame
   updateCamera(); // lerp caméra vers la planète sélectionnée ou retour système
+
+  const mode = getCameraMode();
+
+  if (mode !== lastMode) {
+    if (mode === "following") {
+      // Vérifie si la planète suivie a une atmosphère
+      if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
+
+        startAtmoHum();
+      }
+    } else if (lastMode === "following") {
+      stopAtmoHum();
+    }
+    lastMode = mode;
+  }
 });
 
 // ── Interface utilisateur ─────────────────────────
 // La sidebar liste tous les objets de OBJECTS par type.
 // Au clic : affiche l'infobulle + zoom caméra vers la planète.
 buildSidebar((obj) => {
+  currentPlanetId = obj.id;
   playPing();
   showTooltip(obj);
 
@@ -512,6 +535,7 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   const obj = OBJECTS.find((o) => o.id === id);
   if (!obj) return;
 
+  currentPlanetId = id;
   playPing();
   showTooltip(obj);
   setActiveItem(id);

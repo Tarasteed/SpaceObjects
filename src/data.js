@@ -132,6 +132,7 @@ export const OBJECTS = [
       objets: "~1,1 million d'astéroïdes",
       largeur: "~225 millions km",
     },
+    atmosphere: null,
   },
   {
     id: "jupiter",

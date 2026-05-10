@@ -109,7 +109,7 @@ export function updateCamera() {
       state.zoomInitialized = false;
       state.mode = "following";
     }
-    
+
     return;
   }
 
@@ -183,4 +183,8 @@ export function zoomToBelt() {
 
 export function isFollowing() {
   return state.mode === "following" || state.mode === "zooming";
+}
+
+export function getCameraMode() {
+  return state.mode;
 }
