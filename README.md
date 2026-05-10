@@ -169,6 +169,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Afficher / masquer les orbites
 - ✅ Afficher le controle de la musique
 - ✅ Cliquer sur la ceinture d'astéroide dans la sidebar
+- [ ] Ajouter un lien vers le github
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
 - [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
@@ -208,11 +209,11 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 
 ### Sound design
 - ✅ Musique ambiante spatiale en continu (Scott Buckley — "Celestial", CC BY 4.0)
-- [ ] Whoosh doux au début du zoom vers une planète
-- [ ] Hum atmosphérique en mode following de planète avec atmosphère (Terre, Jupiter…)
-- [ ] Clic sonar/ping au clique dans la sidebar ou raycasting
-- [ ] Crépitement rocailleux au focus sur la ceinture d'astéroïdes
-- [ ] Swoosh retour sur le bouton "← Système solaire"
+- ❌ Whoosh doux au début du zoom vers une planète => Trop compliqué à timer
+- ✅ Hum atmosphérique en mode following de planète avec atmosphère (Terre, Jupiter…)
+- ✅ Clic sonar/ping au clique dans la sidebar ou raycasting
+- ✅ Crépitement rocailleux au focus sur la ceinture d'astéroïdes
+- ✅ Swoosh retour sur le bouton "← Système solaire"
 
 ---
 
