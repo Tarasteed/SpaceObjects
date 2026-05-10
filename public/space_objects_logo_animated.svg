@@ -1,0 +1,96 @@
+<svg width="100%" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>3D Space Objects logo</title>
+  <desc>Circular space logo with animated orbiting planets</desc>
+
+  <defs>
+    <style>
+      @keyframes orbit1 {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+      @keyframes orbit2 {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+      @keyframes orbit3 {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
+      .p1 {
+        transform-origin: 340px 340px;
+        transform-box: view-box;
+        animation: orbit1 4s linear infinite;
+      }
+      .p2 {
+        transform-origin: 340px 340px;
+        transform-box: view-box;
+        animation: orbit2 9s linear infinite;
+      }
+      .p3 {
+        transform-origin: 340px 340px;
+        transform-box: view-box;
+        animation: orbit3 16s linear infinite;
+      }
+    </style>
+  </defs>
+
+  <!-- Outer border ring -->
+  <circle cx="340" cy="340" r="300" fill="none" stroke="#5b8ff9" stroke-width="2" opacity="0.7"/>
+
+  <!-- Tick marks -->
+  <g stroke="#5b8ff9" stroke-width="1.5" opacity="0.5">
+    <line x1="340" y1="40"  x2="340" y2="62"/>
+    <line x1="340" y1="618" x2="340" y2="640"/>
+    <line x1="40"  y1="340" x2="62"  y2="340"/>
+    <line x1="618" y1="340" x2="640" y2="340"/>
+    <line x1="128" y1="128" x2="144" y2="144"/>
+    <line x1="536" y1="536" x2="552" y2="552"/>
+    <line x1="536" y1="128" x2="552" y2="144"/>
+    <line x1="128" y1="536" x2="144" y2="552"/>
+  </g>
+
+  <!-- Orbit paths -->
+  <circle cx="340" cy="340" r="140" fill="none" stroke="#5b8ff9" stroke-width="1" opacity="0.45"/>
+  <circle cx="340" cy="340" r="195" fill="none" stroke="#5b8ff9" stroke-width="1" opacity="0.45"/>
+  <circle cx="340" cy="340" r="245" fill="none" stroke="#5b8ff9" stroke-width="1" opacity="0.45"/>
+
+  <!-- Stars -->
+  <circle cx="160" cy="180" r="2"   fill="#ffffff" opacity="0.7"/>
+  <circle cx="520" cy="155" r="1.5" fill="#ffffff" opacity="0.6"/>
+  <circle cx="495" cy="500" r="2"   fill="#7aaff9" opacity="0.6"/>
+  <circle cx="175" cy="505" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="195" cy="285" r="1.5" fill="#c8d4ee" opacity="0.6"/>
+  <circle cx="545" cy="375" r="2"   fill="#ffffff" opacity="0.6"/>
+  <circle cx="295" cy="120" r="1.5" fill="#7aaff9" opacity="0.6"/>
+  <circle cx="415" cy="565" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="145" cy="400" r="2"   fill="#c8d4ee" opacity="0.5"/>
+  <circle cx="560" cy="245" r="1.5" fill="#ffffff" opacity="0.6"/>
+  <circle cx="580" cy="450" r="1.5" fill="#ffffff" opacity="0.4"/>
+  <circle cx="110" cy="330" r="1.5" fill="#7aaff9" opacity="0.4"/>
+  <circle cx="430" cy="100" r="1.5" fill="#ffffff" opacity="0.5"/>
+  <circle cx="240" cy="580" r="1.5" fill="#c8d4ee" opacity="0.4"/>
+
+  <!-- Central planet -->
+  <circle cx="340" cy="340" r="62" fill="#0d1433" stroke="#5b8ff9" stroke-width="2.5"/>
+  <ellipse cx="340" cy="340" rx="52" ry="14" fill="none" stroke="#5b8ff9" stroke-width="0.75" opacity="0.35"/>
+  <ellipse cx="340" cy="328" rx="46" ry="10" fill="none" stroke="#5b8ff9" stroke-width="0.5"  opacity="0.25"/>
+  <ellipse cx="340" cy="352" rx="46" ry="10" fill="none" stroke="#5b8ff9" stroke-width="0.5"  opacity="0.25"/>
+  <!-- Saturn ring -->
+  <ellipse cx="340" cy="340" rx="90" ry="19" fill="none" stroke="#c8d4ee" stroke-width="2" opacity="0.5"/>
+
+  <!-- Orbiting planet 1 — petit, rapide -->
+  <g class="p1">
+    <circle cx="340" cy="200" r="9" fill="#5b8ff9" opacity="1"/>
+  </g>
+
+  <!-- Orbiting planet 2 — moyen -->
+  <g class="p2">
+    <circle cx="340" cy="145" r="13" fill="#EF9F27" opacity="1"/>
+  </g>
+
+  <!-- Orbiting planet 3 — grand, lent -->
+  <g class="p3">
+    <circle cx="340" cy="95" r="11" fill="#9FE1CB" opacity="1"/>
+  </g>
+
+</svg>

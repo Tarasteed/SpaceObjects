@@ -16,6 +16,9 @@ export function buildSidebar(onSelect) {
   sidebar.innerHTML = `
     <div class="sb-header">
       <span class="sb-logo">3D</span> Space Objects
+      <a href="https://github.com/Tarasteed/SpaceObjects" target="_blank" rel="noopener" id="sb-github">
+      ⎇ GitHub
+    </a>
     </div>
     <div class="sb-body">
       ${Object.entries(groups)

@@ -169,7 +169,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Afficher / masquer les orbites
 - ✅ Afficher le controle de la musique
 - ✅ Cliquer sur la ceinture d'astéroide dans la sidebar
-- [ ] Ajouter un lien vers le github
+- ✅ Ajouter un lien vers le github
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
 - [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
@@ -193,6 +193,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Textures 4k/8k
 - ✅ Traînes orbitales (dégradé vertex, longueur proportionnelle à la vitesse)
 - ✅ Splash screen permettant le lancement de la musique
+- ✅ Ajout d'un logo au splashscreen
 - ✅ Raycasting — clic sur une planète pour zoomer
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [ ] Anneaux d'Uranus (discrets mais réels)
@@ -203,6 +204,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 
 ### Technique
 - ✅ Hébergement Vercel (`npm run build` → dossier `dist/`)
+- ✅ Spalsh screen avec loader
 - [ ] Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
 - [ ] Mode plein écran

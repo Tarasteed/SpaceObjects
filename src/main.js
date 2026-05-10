@@ -42,13 +42,35 @@ import {
   startAsteroidHum,
   stopAsteroidHum,
 } from "./audio.js";
+import { loadingManager } from "./loader.js";
 
 const splash = document.getElementById("splash");
 document.getElementById("splash-btn").addEventListener("click", () => {
+  const btn = document.getElementById("splash-btn");
+  if (btn.disabled) return; // ← si encore disabled, on ignore
+
+  playPing();
+  
+  const splash = document.getElementById("splash");
   splash.classList.add("hidden");
   setTimeout(() => splash.remove(), 800);
   initAudio();
 });
+
+// Ajoute ces lignes AVANT buildSidebar/buildSimControls
+// loadingManager.onProgress = (url, loaded, total) => {
+//   const btn = document.getElementById("splash-btn");
+//   if (btn)
+//     btn.textContent = `Chargement... ${Math.round((loaded / total) * 100)}%`;
+// };
+
+// loadingManager.onLoad = () => {
+//   const btn = document.getElementById("splash-btn");
+//   if (btn) {
+//     btn.textContent = "▶ Explorer";
+//     btn.disabled = false;
+//   }
+// };
 
 buildAudioControls(
   (v) => setMusicVolume(v),

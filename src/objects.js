@@ -1,8 +1,6 @@
 import * as THREE from "three";
-import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
+import { loader } from "./loader.js";
 import { scene } from "./scene.js";
-
-const loader = new THREE.TextureLoader();
 
 export function createPlanet({
   radius,
@@ -84,8 +82,6 @@ export function createSaturnRings(
 }
 
 export function createLensFlare(sunMesh) {
-  const loader = new THREE.TextureLoader();
-
   // lensflare0 = texture avec vrais rayons
   loader.load("/textures/lensflare0.png", (tex) => {
     // Couche 1 — rayons proches, moyennement intenses
@@ -386,7 +382,7 @@ export function createAsteroidBelt({
       const inclination = (Math.random() - 0.5) * ySpread;
 
       // Taille : Logarithmique => Beaucoup de petits, peu de grands
-      const size = 0.025 + Math.pow(Math.random(), 2) * 0.030;
+      const size = 0.025 + Math.pow(Math.random(), 2) * 0.03;
 
       dummy.position.set(
         Math.cos(angle) * rElliptic,
