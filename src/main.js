@@ -30,7 +30,13 @@ import {
 import * as THREE from "three";
 import { sim } from "./state.js";
 import { OBJECTS } from "./data.js";
-import { initAudio, setMusicVolume, toggleMusic } from "./audio.js";
+import {
+  initAudio,
+  setMusicVolume,
+  toggleMusic,
+  playPing,
+  playWhoosh,
+} from "./audio.js";
 
 const splash = document.getElementById("splash");
 document.getElementById("splash-btn").addEventListener("click", () => {
@@ -448,6 +454,7 @@ startLoop(() => {
 // La sidebar liste tous les objets de OBJECTS par type.
 // Au clic : affiche l'infobulle + zoom caméra vers la planète.
 buildSidebar((obj) => {
+  playPing();
   showTooltip(obj);
 
   if (obj.id === "asteroid-belt") {
@@ -465,6 +472,7 @@ buildSidebar((obj) => {
 
 // Bouton retour : dézoom vers la vue système solaire + cache l'infobulle
 buildBackButton(() => {
+  playWhoosh();
   zoomToSystem();
   hideTooltip();
 });
@@ -504,7 +512,7 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   const obj = OBJECTS.find((o) => o.id === id);
   if (!obj) return;
 
-  // Même comportement que le clic sidebar
+  playPing();
   showTooltip(obj);
   setActiveItem(id);
   zoomTo(hitMesh);

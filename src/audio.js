@@ -2,6 +2,12 @@ const bgMusic = new Audio("/audio/sb_celestial.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0;
 
+const ping = new Audio("/audio/ping.mp3");
+ping.volume = 0.05;
+
+const whoosh = new Audio("/audio/whooshBack.mp3");
+whoosh.volume = 0.2;
+
 let started = false;
 
 function fadeToVolume(target, duration) {
@@ -37,4 +43,14 @@ export function toggleMusic() {
     bgMusic.pause();
   }
   return !bgMusic.paused;
+}
+
+export function playPing() {
+  ping.currentTime = 0;
+  ping.play().catch(() => {});
+}
+
+export function playWhoosh() {
+  whoosh.currentTime = 0;
+  whoosh.play().catch(() => {});
 }
