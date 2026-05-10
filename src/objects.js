@@ -382,7 +382,7 @@ export function createAsteroidBelt({
       const inclination = (Math.random() - 0.5) * ySpread;
 
       // Taille : Logarithmique => Beaucoup de petits, peu de grands
-      const size = 0.025 + Math.pow(Math.random(), 2) * 0.03;
+      const size = 0.025 + Math.pow(Math.random(), 2) * 0.04;
 
       dummy.position.set(
         Math.cos(angle) * rElliptic,

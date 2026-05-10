@@ -28,6 +28,7 @@ import {
   zoomToBelt,
   isFollowing,
   getCameraMode,
+  CameraMode,
 } from "./camera.js";
 import * as THREE from "three";
 import { sim } from "./state.js";
@@ -71,7 +72,7 @@ const sunData = OBJECTS.find((o) => o.id === "sun");
 const moonData = OBJECTS.find((o) => o.id === "moon");
 const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
 
-let lastMode = "free";
+let lastMode = CameraMode.FREE;
 let currentPlanetId = null;
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
@@ -374,13 +375,18 @@ function updateOrbitTrails() {
       delta = ((delta % TWO_PI) + TWO_PI) % TWO_PI;
 
       let alpha;
+      // Augment l'opacité de la ghost line en fonction de la distance
+      const ghostBoost = 0.08 + (orbitR / maxR) * 0.2;
+      const ghostAlpha = baseOpacity * ghostBoost;
+
       if (delta <= trailLength) {
-        // Dans la traîne — dégradé quadratique : vif près de la planète, s'efface vers la queue
         const frac = 1 - delta / trailLength;
-        alpha = frac * frac * baseOpacity * 2.2;
+        const trailAlpha = frac * frac * baseOpacity * 2.2;
+        // Crossfade sur les derniers 20% de la traîne pour éviter le "trou"
+        const blend = Math.min(1, (trailLength - delta) / (trailLength * 0.2));
+        alpha = trailAlpha * blend + ghostAlpha * (1 - blend);
       } else {
-        // Hors traîne — fantôme très discret pour garder la forme orbitale lisible
-        alpha = baseOpacity * 0.06;
+        alpha = ghostAlpha;
       }
 
       colorAttr.setXYZ(i, color.r * alpha, color.g * alpha, color.b * alpha);
@@ -393,10 +399,10 @@ function updateOrbitTrails() {
 // Mars : orbitR => 22 => innerRadius doit être supérieur
 // Jupiter : orbitR => 32 => outerRadius doit être inférieur
 const asteroidBeltInstances = createAsteroidBelt({
-  innerRadius: 24,
-  outerRadius: 29,
+  innerRadius: 25,
+  outerRadius: 28,
   count: 2000,
-  ySpread: 0.5,
+  ySpread: 0.6,
 });
 
 // Reset du dummy pour éviter les maj
@@ -470,13 +476,13 @@ startLoop(() => {
   const mode = getCameraMode();
 
   if (mode !== lastMode) {
-    if (mode === "following") {
+    if (mode === CameraMode.FOLLOWING) {
       if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
         startAtmoHum();
       } else {
         stopAtmoHum(); // planète sans atmosphère
       }
-    } else if (mode === "zooming") {
+    } else if (mode === CameraMode.ZOOMING) {
       // Ne coupe pas le son pendant le zoom — on attend d'être en following
     } else {
       // free ou returning — coupe tout
