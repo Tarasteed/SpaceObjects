@@ -12,6 +12,18 @@ const atmoHum = new Audio("/audio/Atmopshere.mp3");
 atmoHum.loop = true;
 atmoHum.volume = 0;
 
+// ── Asteroid hum via AudioContext pour loop fiable ──
+let asteroidSource = null;
+let asteroidGain = null;
+let asteroidBuffer = null;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+fetch("/audio/asteroidBelt.mp3")
+  .then(r => r.arrayBuffer())
+  .then(buf => audioCtx.decodeAudioData(buf))
+  .then(decoded => { asteroidBuffer = decoded; })
+  .catch(() => {});
+
 let started = false;
 
 function fadeToVolume(target, duration) {
@@ -79,4 +91,27 @@ export function startAtmoHum() {
 export function stopAtmoHum() {
   fadeAudio(atmoHum, 0, 1500);
   setTimeout(() => atmoHum.pause(), 1500);
+}
+
+export function startAsteroidHum() {
+  if (!asteroidBuffer || asteroidSource) return;
+  asteroidGain = audioCtx.createGain();
+  asteroidGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  asteroidGain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 2);
+  asteroidGain.connect(audioCtx.destination);
+  asteroidSource = audioCtx.createBufferSource();
+  asteroidSource.buffer = asteroidBuffer;
+  asteroidSource.loop = true;
+  asteroidSource.connect(asteroidGain);
+  asteroidSource.start();
+}
+
+export function stopAsteroidHum() {
+  if (!asteroidSource) return;
+  asteroidGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
+  setTimeout(() => {
+    asteroidSource?.stop();
+    asteroidSource = null;
+    asteroidGain = null;
+  }, 1500);
 }

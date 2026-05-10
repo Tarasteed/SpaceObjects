@@ -39,6 +39,8 @@ import {
   playWhoosh,
   startAtmoHum,
   stopAtmoHum,
+  startAsteroidHum,
+  stopAsteroidHum,
 } from "./audio.js";
 
 const splash = document.getElementById("splash");
@@ -462,7 +464,6 @@ startLoop(() => {
     if (mode === "following") {
       // Vérifie si la planète suivie a une atmosphère
       if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
-
         startAtmoHum();
       }
     } else if (lastMode === "following") {
@@ -478,9 +479,11 @@ startLoop(() => {
 buildSidebar((obj) => {
   currentPlanetId = obj.id;
   playPing();
+  stopAsteroidHum();
   showTooltip(obj);
 
   if (obj.id === "asteroid-belt") {
+    startAsteroidHum();
     zoomToBelt();
     showBackButton();
     return;
@@ -496,6 +499,7 @@ buildSidebar((obj) => {
 // Bouton retour : dézoom vers la vue système solaire + cache l'infobulle
 buildBackButton(() => {
   playWhoosh();
+  stopAsteroidHum();
   zoomToSystem();
   hideTooltip();
 });
