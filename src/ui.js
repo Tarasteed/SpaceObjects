@@ -19,6 +19,12 @@ function updateSidebarDependents(isCollapsed) {
   }
 }
 
+export function clearActiveItem() {
+  document
+    .querySelectorAll("#sidebar .sb-item")
+    .forEach((el) => el.classList.remove("active"));
+}
+
 // ── Construction de la sidebar ────────────────────
 export function buildSidebar(onSelect) {
   const sidebar = document.getElementById("sidebar");
@@ -76,9 +82,7 @@ export function buildSidebar(onSelect) {
   // Clics sur les items
   sidebar.querySelectorAll(".sb-item").forEach((el) => {
     el.addEventListener("click", () => {
-      sidebar
-        .querySelectorAll(".sb-item")
-        .forEach((i) => i.classList.remove("active"));
+      clearActiveItem();
       el.classList.add("active");
       const obj = OBJECTS.find((o) => o.id === el.dataset.id);
       if (obj) onSelect(obj);
@@ -203,7 +207,7 @@ export function buildAudioControls(onVolumeChange, onToggle) {
   const div = document.createElement("div");
   div.id = "audio-hud";
   div.innerHTML = `
-    <button id="btn-music">♪ Musique</button>
+  <button id="btn-music">⏸</button>
     <div id="volume-control">
       <span id="volume-label">×0.1</span>
       <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1"/>
@@ -221,9 +225,7 @@ export function buildAudioControls(onVolumeChange, onToggle) {
 
   document.getElementById("btn-music").addEventListener("click", () => {
     const playing = onToggle();
-    document.getElementById("btn-music").textContent = playing
-      ? "♪ Musique"
-      : "♩ Musique";
+    document.getElementById("btn-music").textContent = playing ? "⏸" : "▶";
     document.getElementById("btn-music").classList.toggle("active", !playing);
   });
 
