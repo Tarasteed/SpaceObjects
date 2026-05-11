@@ -109,7 +109,7 @@ export function buildSimControls() {
     <button id="btn-pause">⏸ Pause</button>
     <div id="speed-control">
       <span id="speed-label">×1.5</span>
-      <input type="range" id="speed-slider" min="0" max="10" step="0.1" value="1.5"/>
+      <input type="range" id="speed-slider" min="0" max="20" step="0.1" value="1.5"/>
     </div>
   `;
   document.body.appendChild(hud);

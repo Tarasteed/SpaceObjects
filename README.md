@@ -139,7 +139,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Retour vue système solaire
 - Sidebar futuriste repliable avec objets regroupés par type + lien GitHub
 - Infobulles au clic avec données scientifiques
-- Contrôle pause / vitesse de simulation (×0 à ×10, défaut ×1.5)
+- Contrôle pause / vitesse de simulation (×0 à ×20, défaut ×1.5)
 - Afficher / masquer les orbites
 - Traînes orbitales — dégradé vertex par vertex, longueur calée sur la vitesse angulaire réelle
 - Splash screen animé (logo SVG) avec barre de chargement — bouton Explorer débloqué à 100%
