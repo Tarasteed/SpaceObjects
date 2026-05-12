@@ -136,21 +136,23 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Navigation autour de la planète sélectionnée (drag + zoom molette)
 - Clic sur une planète dans la scène pour zoomer (raycasting)
 - Vue dédiée ceinture d'astéroïdes depuis la sidebar
-- Retour vue système solaire
+- Retour vue système solaire + touche Échap
 - Sidebar futuriste repliable avec objets regroupés par type + lien GitHub
-- Infobulles au clic avec données scientifiques
+- Infobulles au clic avec données scientifiques + vitesse orbitale réelle (km/s) en temps réel
+- Tooltip réductible via bouton toggle — libère la surface de visualisation sur mobile
 - Contrôle pause / vitesse de simulation (×0 à ×20, défaut ×1.5)
+- Mettre la vitesse à ×0 équivaut à une mise en pause complète (sons inclus)
 - Afficher / masquer les orbites
 - Traînes orbitales — dégradé vertex par vertex, longueur calée sur la vitesse angulaire réelle
 - Splash screen animé (logo SVG) avec barre de chargement — bouton Explorer débloqué à 100%
 - Musique ambiante spatiale en boucle avec fondu d'entrée progressif
 - Contrôle volume + pause/play musique dans le HUD
-- Son atmosphérique en mode suivi de planète avec atmosphère
+- Son atmosphérique suspendu/repris proprement lors de la pause ou vitesse ×0 de la simulation
+- Crépitement ceinture d'astéroïdes suspendu/repris proprement lors de la pause ou vitesse ×0
 - Ping sonar au clic sidebar / raycasting
-- Crépitement rocailleux au focus ceinture d'astéroïdes
 - Swoosh au retour système solaire
 - Favicon SVG + logo animé
-- Interface mobile responsive (sidebar repliable, HUDs adaptés, touch-friendly)
+- Interface mobile responsive (sidebar repliable, HUDs adaptatifs, tooltip réductible)
 
 ---
 
@@ -175,6 +177,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Son atmosphérique ne se relance pas en naviguant entre planètes |
 | ✅ Résolu | HUDs sim/audio de largeurs différentes sur mobile |
 | ✅ Résolu | Impossible de naviguer de planète en planète sans passer par la sidebar |
+| ✅ Résolu | Sons contextuels qui redémarrent lors d'une navigation en pause |
 | [ ] | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | [ ] | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | [ ] | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
@@ -187,30 +190,34 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Zoom fluide vers une planète avec suivi temps réel
 - ✅ Orbiter autour de la planète sélectionnée
 - ✅ Bouton retour vue système solaire
-- [ ] Touche Échap pour revenir au système depuis n'importe où
+- ✅ Touche Échap pour revenir au système depuis n'importe où
 - ✅ Cliquer sur une planète dans la scène pour zoomer (raycasting)
 - ✅ Navigation de planète en planète sans repasser par la vue système
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 
 ### Interface
 - ✅ Contrôle pause / vitesse de simulation (×0 à ×20)
+- ✅ Vitesse ×0 équivalente à la pause (sons + comportement cohérent)
 - ✅ Afficher / masquer les orbites
 - ✅ Contrôle musique (volume + pause/play)
 - ✅ Cliquer sur la ceinture d'astéroïdes dans la sidebar
 - ✅ Lien GitHub dans la sidebar
 - ✅ Sidebar repliable (desktop + mobile)
 - ✅ Interface mobile responsive
+- ✅ Tooltip réductible (bouton toggle − / +)
+- ✅ Vitesse orbitale réelle dans la tooltip (mode suivi, jitter live)
 - [ ] Étiquettes des planètes avec toggle dédié
-- [ ] Vitesse orbitale en temps réel dans le HUD (mode suivi)
 - [ ] Curseur custom style HUD militaire
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
-- ❌ Tooltip style Dead Space - trop complexe avec suivi de planète
-- ❌ Panel d'options : orbiter autour de la planète OU se rapprocher - Pas utile
+- ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
+- ❌ Panel orbiter / rapprocher — pas suffisamment utile
+
 ### Données
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
 - ✅ Ceinture d'astéroïdes (entre Mars et Jupiter) — textures C/S/M-type
 - ✅ Pluton et planètes naines à l'échelle
+- ✅ Vitesses orbitales réelles (km/s) dans data.js — source NASA Planetary Fact Sheets
 
 ### Visuel
 - ✅ Inclinaisons orbitales et axiales réalistes
@@ -247,8 +254,9 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 ### Sound design
 - ✅ Musique ambiante spatiale (Scott Buckley — "Celestial", CC BY 4.0)
 - ✅ Hum atmosphérique en mode suivi de planète avec atmosphère
+- ✅ Hum atmosphérique suspendu/repris proprement à la pause et vitesse ×0
+- ✅ Crépitement ceinture d'astéroïdes suspendu/repris proprement à la pause et vitesse ×0
 - ✅ Ping sonar au clic sidebar / raycasting
-- ✅ Crépitement rocailleux au focus ceinture d'astéroïdes
 - ✅ Swoosh retour système solaire
 - [ ] Volume hum atmosphérique variable selon distance à la planète ?
 - [ ] Son différencié selon type de planète (gazeuse / rocheuse / naine) ?
@@ -270,8 +278,14 @@ Chaque orbite utilise un `BufferAttribute` de couleurs par vertex mis à jour à
 **Suivi caméra (mode following)**
 `OrbitControls` est `dispose()` en mode following. La position caméra est calculée manuellement via `THREE.Spherical` — drag et zoom molette sont gérés par des listeners canvas dédiés. `setSkipControlsUpdate(true)` empêche `controls.update()` d'écraser la position.
 
+**Gestion audio pause/vitesse**
+Les sons contextuels (atmo, ceinture) sont suspendus via `pause()` / `audioCtx.suspend()` plutôt que stoppés — la reprise est instantanée et sans recréation de source. Un helper `isSimStopped()` centralise la vérification `sim.paused || sim.speedFactor === 0` pour traiter les deux états d'arrêt de façon cohérente.
+
+**Vitesse orbitale live (tooltip)**
+`obj.speedKms` dans `data.js` stocke la valeur réelle NASA (km/s). `updateTooltipSpeed()` dans `ui.js` applique un jitter de ±0.06 km/s par frame sur l'élément `#tt-speed-live` pour simuler une mesure de télémétrie en direct — sans reconstruire le DOM de la tooltip.
+
 **Sidebar repliable**
-La fonction `updateSidebarDependents(isCollapsed)` dans `ui.js` met à jour dynamiquement la position de `#btn-orbits`, `#sim-hud`, `#audio-hud` et `#tooltip` selon l'état de la sidebar. Sur mobile, la sidebar est repliée par défaut via `window.innerWidth <= 768`.
+La fonction `updateSidebarDependents(isCollapsed)` dans `ui.js` met à jour dynamiquement la position de `#btn-orbits`, `#sim-hud`, `#audio-hud` et `#tooltip` selon l'état de la sidebar et la taille d'écran. Un listener `resize` resynchronise automatiquement les positions desktop/mobile au redimensionnement.
 
 **LoadingManager partagé**
 `loader.js` exporte un `TextureLoader` et un `LoadingManager` uniques. Évite l'import circulaire `main.js ↔ objects.js` en centralisant le loader dans un module tiers.

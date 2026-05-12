@@ -219,12 +219,12 @@ button {
   position: fixed;
   bottom: 80px;
   right: 24px;
-  width: 260px;
-  background: rgba(6, 6, 20, 0.88);
-  border: 1px solid rgba(91, 143, 249, 0.35);
+  width: 300px;
+  background: rgba(4, 8, 20, 0.92);
+  border: 1px solid rgba(91, 143, 249, 0.4);
   border-radius: 10px;
   padding: 16px 18px;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   font-family: "Courier New", monospace;
   opacity: 0;
   transform: translateY(8px);
@@ -237,70 +237,140 @@ button {
   transform: translateY(0);
 }
 
+/* ── En-tête : point couleur + nom + badge type ── */
 .tt-header {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(91, 143, 249, 0.15);
+  margin-bottom: 11px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid rgba(91, 143, 249, 0.18);
 }
 
 .tt-dot {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .tt-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #e0e8ff;
-  letter-spacing: 0.04em;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #eef2ff; /* plus lumineux qu'avant */
+  letter-spacing: 0.05em;
   flex: 1;
 }
 
 .tt-type {
-  font-size: 10px;
-  padding: 2px 7px;
+  font-size: 9.5px;
+  padding: 2px 8px;
   border-radius: 3px;
-  background: rgba(91, 143, 249, 0.15);
-  color: #7aaff9;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
+  font-weight: 600;
+  /* couleur et fond injectés inline via obj.color */
 }
 
+/* ── Description ── */
 .tt-desc {
-  font-size: 12px;
-  color: rgba(200, 212, 238, 0.6);
-  line-height: 1.6;
-  margin-bottom: 12px;
+  font-size: 12.5px;
+  color: rgba(200, 218, 255, 0.65); /* légèrement plus visible */
+  line-height: 1.65;
+  margin-bottom: 13px;
 }
 
+/* ── Faits scientifiques ── */
 .tt-facts {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0; /* séparation gérée par border-top */
 }
 
 .tt-fact {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
-  padding: 4px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  align-items: baseline;
+  padding: 5px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .tt-fact-label {
-  color: rgba(200, 212, 238, 0.35);
+  font-size: 11px;
+  color: rgba(160, 185, 240, 0.55); /* libellé discret mais lisible */
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .tt-fact-value {
-  color: #c8d4ee;
-  font-weight: 500;
+  font-size: 12px;
+  color: #d8e4ff; /* valeur nettement plus visible */
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ── Bloc vitesse orbitale live ── */
+/* Affiché en bas de la tooltip quand speedKms est défini dans data.js.
+   La valeur #tt-speed-live est mise à jour chaque frame par updateTooltipSpeed(). */
+.tt-speed {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(91, 143, 249, 0.18);
+}
+
+.tt-speed-label {
+  font-size: 11px;
+  color: rgb(136 175 255 / 50%);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  flex: 1;
+}
+
+.tt-speed-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #7aaff9;
+  letter-spacing: 0.04em;
+  /* transition légère pour adoucir les sauts de jitter */
+  transition: color 0.1s;
+}
+
+.tt-speed-unit {
+  font-size: 12px;
+  color: rgb(136 175 255 / 50%);
+  letter-spacing: 0.06em;
+}
+
+/* ── Bouton collapse tooltip ── */
+.tt-toggle {
+  background: none;
+  border: 1px solid rgba(91, 143, 249, 0.3);
+  border-radius: 3px;
+  color: rgba(91, 143, 249, 0.6);
+  font-size: 14px;
+  line-height: 1;
+  padding: 0px 6px;
+  cursor: pointer;
+  font-family: "Courier New", monospace;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.tt-toggle:hover {
+  background: rgba(91, 143, 249, 0.15);
+  color: #7aaff9;
+}
+
+/* ── État réduit — seul le header reste visible ── */
+#tooltip.collapsed .tt-body {
+  display: none;
+}
+
+#tooltip.collapsed {
+  padding-bottom: 16px; /* conserve le padding symétrique */
 }
 
 /* ── Bouton retour ───────────────────────────── */
@@ -593,8 +663,9 @@ button {
 
   #btn-orbits {
     left: 52px;
+    top: 12px;
     font-size: 11px;
-    padding: 6px 10px;
+    padding: 6px 12px;
   }
 
   #btn-back {

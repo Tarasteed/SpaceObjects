@@ -20,6 +20,7 @@ import {
   buildSimControls,
   buildOrbitToggle,
   buildAudioControls,
+  updateTooltipSpeed,
 } from "./ui.js";
 import {
   updateCamera,
@@ -42,8 +43,12 @@ import {
   playWhoosh,
   startAtmoHum,
   stopAtmoHum,
+  pauseAtmoHum, // suspend le hum sans le stopper — reprise propre au play
+  resumeAtmoHum, // relance avec fade in depuis le volume courant
   startAsteroidHum,
   stopAsteroidHum,
+  pauseAsteroidHum, // suspend l'AudioContext de la ceinture
+  resumeAsteroidHum, // reprend l'AudioContext avec fade in
 } from "./audio.js";
 
 const splash = document.getElementById("splash");
@@ -75,6 +80,14 @@ const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
 
 let lastMode = CameraMode.FREE;
 let currentPlanetId = null;
+
+// Tracker de l'état de pause — permet de détecter les transitions
+// paused → running et running → paused dans la boucle animate,
+// sans avoir à brancher un listener sur le bouton pause.
+let wasPaused = false;
+
+// Tracker vitesse zéro — sim à l'arrêt sans être techniquement en pause
+let wasSpeedZero = false;
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
 export const meshById = new Map();
@@ -376,7 +389,7 @@ function updateOrbitTrails() {
       delta = ((delta % TWO_PI) + TWO_PI) % TWO_PI;
 
       let alpha;
-      // Augment l'opacité de la ghost line en fonction de la distance
+      // Augmente l'opacité de la ghost line en fonction de la distance
       const ghostBoost = 0.08 + (orbitR / maxR) * 0.2;
       const ghostAlpha = baseOpacity * ghostBoost;
 
@@ -453,6 +466,57 @@ startLoop(() => {
     });
   }
 
+  // ── Gestion pause/reprise audio ───────────────────
+  // Détecte les transitions sim.paused ↔ running à chaque frame via wasPaused.
+  // On utilise pause/resume (pas stop/start) pour éviter de recréer les sources
+  // audio — les sons reprennent exactement là où ils s'étaient arrêtés.
+  // La ceinture utilise audioCtx.suspend()/resume() car BufferSource ne supporte
+  // pas la pause native ; l'atmo utilise HTMLAudioElement.pause()/play().
+  if (sim.paused !== wasPaused) {
+    wasPaused = sim.paused;
+    const mode = getCameraMode();
+
+    if (sim.paused) {
+      // Mise en pause — suspend les sons contextuels actifs sans les détruire
+      if (mode === CameraMode.FOLLOWING) pauseAtmoHum();
+      pauseAsteroidHum(); // no-op si la ceinture n'est pas active
+    } else {
+      // Reprise — relance uniquement ce qui est pertinent selon le contexte courant
+      if (mode === CameraMode.FOLLOWING) {
+        // Hum atmo seulement si la planète courante en possède une
+        if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
+          resumeAtmoHum();
+        }
+      }
+      resumeAsteroidHum(); // no-op si audioCtx n'est pas suspendu
+    }
+  }
+
+  // ── Gestion vitesse zéro ──────────────────────────
+  // speedFactor=0 arrête la simulation visuellement mais ne change pas sim.paused.
+  // On le traite comme une pause audio pour cohérence.
+  const isSpeedZero = sim.speedFactor === 0;
+  if (isSpeedZero !== wasSpeedZero) {
+    wasSpeedZero = isSpeedZero;
+    const mode = getCameraMode();
+
+    if (isSpeedZero) {
+      if (mode === CameraMode.FOLLOWING) pauseAtmoHum();
+      pauseAsteroidHum();
+    } else {
+      if (mode === CameraMode.FOLLOWING) {
+        if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
+          resumeAtmoHum();
+        }
+      }
+      // Ceinture — resume + start au cas où startAsteroidHum n'avait pas été appelé
+      if (currentPlanetId === "asteroid-belt") {
+        resumeAsteroidHum();
+        startAsteroidHum();
+      }
+    }
+  }
+
   // Animations continues indépendantes de la pause (esthétique pure)
   const now = Date.now() * 0.001;
   starsGroup.rotation.y = now * 0.003; // rotation lente de la voie lactée
@@ -474,12 +538,21 @@ startLoop(() => {
   updateOrbitTrails(); // recalcule les couleurs vertex des orbites à chaque frame
   updateCamera(); // lerp caméra vers la planète sélectionnée ou retour système
 
+  // Vitesse orbitale live dans la tooltip — jitter ±JITTER_RANGE km/s par frame
+  // pour simuler une mesure de télémétrie en temps réel (voir updateTooltipSpeed dans ui.js)
+  const orbitObj = OBJECTS.find((o) => o.id === currentPlanetId);
+  updateTooltipSpeed(orbitObj, getCameraMode() === CameraMode.FOLLOWING);
+
+  // ── Transitions audio selon le mode caméra ────────
+  // Déclenché uniquement au changement de mode (pas à chaque frame) via lastMode.
+  // ZOOMING est volontairement ignoré — on attend FOLLOWING pour démarrer les sons
+  // contextuels, évitant un déclenchement prématuré pendant le lerp de zoom.
   const mode = getCameraMode();
 
   if (mode !== lastMode) {
     if (mode === CameraMode.FOLLOWING) {
       if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
-        startAtmoHum();
+        if (!isSimStopped()) startAtmoHum();
       } else {
         stopAtmoHum(); // planète sans atmosphère
       }
@@ -503,7 +576,7 @@ buildSidebar((obj) => {
   showTooltip(obj);
 
   if (obj.id === "asteroid-belt") {
-    startAsteroidHum();
+    if (!isSimStopped()) startAsteroidHum();
     zoomToBelt();
     showBackButton();
     return;
@@ -534,6 +607,18 @@ buildSimControls();
 // Toggle orbites : active/désactive la visibilité de toutes les orbitLines d'un coup
 buildOrbitToggle((visible) => {
   orbitLines.forEach((line) => (line.visible = visible));
+});
+
+// Touche Échap — retour vue système depuis n'importe quel mode caméra
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    playWhoosh();
+    stopAsteroidHum();
+    zoomToSystem();
+    hideTooltip();
+    clearActiveItem();
+    document.getElementById("btn-back")?.classList.remove("visible");
+  }
 });
 
 // ── Raycasting — clic sur un mesh dans la scène ───
@@ -568,7 +653,7 @@ document.getElementById("canvas").addEventListener("click", (e) => {
     return;
   }
 
-  // déjà en follow sur cette planète
+  // déjà en follow sur cette planète — on ignore le clic
   if (id === currentPlanetId) {
     return;
   }
@@ -581,3 +666,9 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   showBackButton();
   prepareForNewTarget();
 });
+
+// Retourne true si la simulation est effectivement à l'arrêt
+// (pause réelle OU vitesse zéro) — utilisé pour bloquer les sons contextuels
+function isSimStopped() {
+  return sim.paused || sim.speedFactor === 0;
+}

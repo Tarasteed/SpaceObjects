@@ -130,6 +130,27 @@ export function stopAtmoHum() {
   atmoFadeRaf = requestAnimationFrame(step);
 }
 
+// ── Pause / resume atmo ───────────────────────
+export function pauseAtmoHum() {
+  cancelAtmoFade();
+  atmoHum.pause();
+}
+
+export function resumeAtmoHum() {
+  atmoHum.play().catch(() => {});
+  // Fade in depuis le volume actuel (pas de reset)
+  const start = atmoHum.volume;
+  const target = 0.25;
+  const duration = 800;
+  const startTime = performance.now();
+  function step(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    atmoHum.volume = start + (target - start) * progress;
+    if (progress < 1) atmoFadeRaf = requestAnimationFrame(step);
+  }
+  atmoFadeRaf = requestAnimationFrame(step);
+}
+
 export function startAsteroidHum() {
   if (!asteroidBuffer || asteroidSource) return;
   asteroidGain = audioCtx.createGain();
@@ -151,4 +172,29 @@ export function stopAsteroidHum() {
     asteroidSource = null;
     asteroidGain = null;
   }, 1500);
+}
+
+// ── Pause / resume ceinture ───────────────────
+export function pauseAsteroidHum() {
+  if (!asteroidSource || !asteroidGain) return;
+  asteroidGain.gain.cancelScheduledValues(audioCtx.currentTime);
+  asteroidGain.gain.setValueAtTime(0, audioCtx.currentTime);
+  audioCtx.suspend();
+}
+
+export function resumeAsteroidHum() {
+  if (asteroidSource) {
+    // Son existant suspendu — on reprend l'AudioContext
+    audioCtx.resume().then(() => {
+      if (!asteroidGain) return;
+      asteroidGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      asteroidGain.gain.linearRampToValueAtTime(
+        0.04,
+        audioCtx.currentTime + 0.8
+      );
+    });
+  } else {
+    // Pas de source active — on démarre depuis zéro
+    startAsteroidHum();
+  }
 }
