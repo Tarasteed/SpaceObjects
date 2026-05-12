@@ -8,7 +8,7 @@ ping.volume = 0.05;
 const whoosh = new Audio("/audio/whooshBack.mp3");
 whoosh.volume = 0.2;
 
-const atmoHum = new Audio("/audio/Atmopshere.mp3");
+const atmoHum = new Audio("/audio/Atmopshere2.mp3");
 atmoHum.loop = true;
 atmoHum.volume = 0;
 
@@ -18,7 +18,7 @@ let asteroidGain = null;
 let asteroidBuffer = null;
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-fetch("/audio/asteroidBelt.mp3")
+fetch("/audio/asteroidBelt2.mp3")
   .then(r => r.arrayBuffer())
   .then(buf => audioCtx.decodeAudioData(buf))
   .then(decoded => { asteroidBuffer = decoded; })
@@ -77,7 +77,8 @@ function fadeAudio(audio, targetVol, duration) {
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     audio.volume = start + (targetVol - start) * progress;
-    if (progress < 1) requestAnimationFrame(step);
+    if (progress < 1) 
+      requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
@@ -85,7 +86,7 @@ function fadeAudio(audio, targetVol, duration) {
 export function startAtmoHum() {
   atmoHum.currentTime = 0;
   atmoHum.play().catch(() => {});
-  fadeAudio(atmoHum, 0.7, 2000);
+  fadeAudio(atmoHum, 0.3, 2000);
 }
 
 export function stopAtmoHum() {
@@ -97,7 +98,7 @@ export function startAsteroidHum() {
   if (!asteroidBuffer || asteroidSource) return;
   asteroidGain = audioCtx.createGain();
   asteroidGain.gain.setValueAtTime(0, audioCtx.currentTime);
-  asteroidGain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 2);
+  asteroidGain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 2);
   asteroidGain.connect(audioCtx.destination);
   asteroidSource = audioCtx.createBufferSource();
   asteroidSource.buffer = asteroidBuffer;

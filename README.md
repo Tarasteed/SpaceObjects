@@ -174,6 +174,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Impossible de déplacer la caméra autour de la planète dans certains cas |
 | ✅ Résolu | Son atmosphérique ne se relance pas en naviguant entre planètes |
 | ✅ Résolu | HUDs sim/audio de largeurs différentes sur mobile |
+| ✅ Résolu | Impossible de naviguer de planète en planète sans passer par la sidebar |
 | [ ] | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | [ ] | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | [ ] | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
@@ -186,21 +187,25 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Zoom fluide vers une planète avec suivi temps réel
 - ✅ Orbiter autour de la planète sélectionnée
 - ✅ Bouton retour vue système solaire
+- [ ] Touche Échap pour revenir au système depuis n'importe où
 - ✅ Cliquer sur une planète dans la scène pour zoomer (raycasting)
+- ✅ Navigation de planète en planète sans repasser par la vue système
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 
 ### Interface
-- ✅ Contrôle pause / vitesse de simulation (×0 à ×10)
+- ✅ Contrôle pause / vitesse de simulation (×0 à ×20)
 - ✅ Afficher / masquer les orbites
 - ✅ Contrôle musique (volume + pause/play)
 - ✅ Cliquer sur la ceinture d'astéroïdes dans la sidebar
 - ✅ Lien GitHub dans la sidebar
 - ✅ Sidebar repliable (desktop + mobile)
 - ✅ Interface mobile responsive
+- [ ] Étiquettes des planètes avec toggle dédié
+- [ ] Vitesse orbitale en temps réel dans le HUD (mode suivi)
+- [ ] Curseur custom style HUD militaire
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
-- [ ] Tooltip style Dead Space (UI 3D positionnée à côté de la planète)
-- [ ] Panel d'options : orbiter autour de la planète OU se rapprocher
-
+- ❌ Tooltip style Dead Space - trop complexe avec suivi de planète
+- ❌ Panel d'options : orbiter autour de la planète OU se rapprocher - Pas utile
 ### Données
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
@@ -234,6 +239,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Splash screen avec LoadingManager — bouton bloqué jusqu'au chargement complet
 - ✅ LoadingManager partagé via `loader.js` (évite les imports circulaires)
 - ✅ Optimisation mobile (sidebar repliable, HUDs adaptatifs)
+- ✅ Enum `CameraMode` pour les états caméra
 - [ ] Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
 - [ ] Mode plein écran
@@ -244,6 +250,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Ping sonar au clic sidebar / raycasting
 - ✅ Crépitement rocailleux au focus ceinture d'astéroïdes
 - ✅ Swoosh retour système solaire
+- [ ] Volume hum atmosphérique variable selon distance à la planète ?
+- [ ] Son différencié selon type de planète (gazeuse / rocheuse / naine) ?
 - ❌ Whoosh zoom vers planète — trop difficile à timer correctement
 
 ---

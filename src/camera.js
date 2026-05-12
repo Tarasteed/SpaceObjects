@@ -161,6 +161,9 @@ export function updateCamera() {
 }
 
 export function zoomTo(mesh, radiusMultiplier = 4) {
+  if (state.mode === CameraMode.FOLLOWING) {
+    controls.connect(document.getElementById("canvas"));
+  }
   state.targetMesh = mesh;
   state.radiusMultiplier = radiusMultiplier;
   state.mode = CameraMode.ZOOMING;
@@ -197,12 +200,22 @@ export function zoomToBelt() {
   state.isDragging = false;
 }
 
-export function isFollowing() {
-  return (
-    state.mode === CameraMode.FOLLOWING || state.mode === CameraMode.ZOOMING
-  );
+// export function isFollowing() {
+//   return (
+//     state.mode === CameraMode.FOLLOWING || state.mode === CameraMode.ZOOMING
+//   );
+// }
+
+export function isZooming() {
+  return state.mode === CameraMode.ZOOMING;
 }
 
 export function getCameraMode() {
   return state.mode;
+}
+
+export function prepareForNewTarget() {
+  if (state.mode === CameraMode.FOLLOWING) {
+    controls.connect(document.getElementById("canvas"));
+  }
 }

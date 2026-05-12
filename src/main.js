@@ -26,9 +26,10 @@ import {
   zoomTo,
   zoomToSystem,
   zoomToBelt,
-  isFollowing,
+  isZooming,
   getCameraMode,
   CameraMode,
+  prepareForNewTarget,
 } from "./camera.js";
 import * as THREE from "three";
 import { sim } from "./state.js";
@@ -509,10 +510,13 @@ buildSidebar((obj) => {
   }
 
   const mesh = meshById.get(obj.id);
-  if (mesh) {
-    zoomTo(mesh);
-    showBackButton();
+  if (!mesh) {
+    return;
   }
+
+  prepareForNewTarget();
+  zoomTo(mesh);
+  showBackButton();
 });
 
 // Bouton retour : dézoom vers la vue système solaire + cache l'infobulle
@@ -541,8 +545,10 @@ const pointer = new THREE.Vector2();
 const clickableMeshes = [...meshById.values()];
 
 document.getElementById("canvas").addEventListener("click", (e) => {
-  // En mode following/zooming, le clic sert au drag — on ignore
-  if (isFollowing()) return;
+  // pendant le zoom on ignore — drag actif
+  if (isZooming()) {
+    return;
+  }
 
   // Coordonnées normalisées [-1, +1]
   const rect = e.target.getBoundingClientRect();
@@ -551,18 +557,27 @@ document.getElementById("canvas").addEventListener("click", (e) => {
 
   raycaster.setFromCamera(pointer, camera);
   const hits = raycaster.intersectObjects(clickableMeshes, false);
-
-  if (hits.length === 0) return;
+  if (hits.length === 0) {
+    return;
+  }
 
   const hitMesh = hits[0].object;
   const id = hitMesh.userData.id;
   const obj = OBJECTS.find((o) => o.id === id);
-  if (!obj) return;
+  if (!obj) {
+    return;
+  }
+
+  // déjà en follow sur cette planète
+  if (id === currentPlanetId) {
+    return;
+  }
 
   currentPlanetId = id;
   playPing();
-  showTooltip(obj);
   setActiveItem(id);
+  showTooltip(obj);
   zoomTo(hitMesh);
   showBackButton();
+  prepareForNewTarget();
 });
