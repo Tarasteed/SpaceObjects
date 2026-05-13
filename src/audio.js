@@ -1,30 +1,8 @@
+// #region ── Musique de fond ──────────────────────────────────────────────────
+
 const bgMusic = new Audio("/audio/sb_celestial.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0;
-
-const ping = new Audio("/audio/ping.mp3");
-ping.volume = 0.05;
-
-const whoosh = new Audio("/audio/whooshBack.mp3");
-whoosh.volume = 0.2;
-
-const atmoHum = new Audio("/audio/Atmopshere.mp3");
-atmoHum.loop = true;
-atmoHum.volume = 0;
-
-// ── Asteroid hum via AudioContext pour loop fiable ──
-let asteroidSource = null;
-let asteroidGain = null;
-let asteroidBuffer = null;
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-fetch("/audio/asteroidBelt.mp3")
-  .then((r) => r.arrayBuffer())
-  .then((buf) => audioCtx.decodeAudioData(buf))
-  .then((decoded) => {
-    asteroidBuffer = decoded;
-  })
-  .catch(() => {});
 
 let started = false;
 
@@ -63,6 +41,16 @@ export function toggleMusic() {
   return !bgMusic.paused;
 }
 
+// #endregion
+
+// #region ── Effets sonores ponctuels ─────────────────────────────────────────
+
+const ping = new Audio("/audio/ping.mp3");
+ping.volume = 0.05;
+
+const whoosh = new Audio("/audio/whooshBack.mp3");
+whoosh.volume = 0.2;
+
 export function playPing() {
   ping.currentTime = 0;
   ping.play().catch(() => {});
@@ -73,16 +61,13 @@ export function playWhoosh() {
   whoosh.play().catch(() => {});
 }
 
-function fadeAudio(audio, targetVol, duration) {
-  const start = audio.volume;
-  const startTime = performance.now();
-  function step(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    audio.volume = start + (targetVol - start) * progress;
-    if (progress < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+// #endregion
+
+// #region ── Hum atmosphérique ────────────────────────────────────────────────
+
+const atmoHum = new Audio("/audio/Atmopshere.mp3");
+atmoHum.loop = true;
+atmoHum.volume = 0;
 
 let atmoFadeRaf = null;
 
@@ -93,16 +78,10 @@ function cancelAtmoFade() {
   }
 }
 
-export function startAtmoHum() {
-  cancelAtmoFade();
-  if (atmoHum.paused) {
-    atmoHum.currentTime = 0;
-    atmoHum.play().catch(() => {});
-  }
-  // Fade in depuis le volume actuel — pas de reset brutal
+// Fade in vers 0.25 depuis le volume courant — pas de reset brutal
+function fadeInAtmo(duration) {
   const start = atmoHum.volume;
   const target = 0.25;
-  const duration = 1500;
   const startTime = performance.now();
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
@@ -110,6 +89,15 @@ export function startAtmoHum() {
     if (progress < 1) atmoFadeRaf = requestAnimationFrame(step);
   }
   atmoFadeRaf = requestAnimationFrame(step);
+}
+
+export function startAtmoHum() {
+  cancelAtmoFade();
+  if (atmoHum.paused) {
+    atmoHum.currentTime = 0;
+    atmoHum.play().catch(() => {});
+  }
+  fadeInAtmo(1500);
 }
 
 export function stopAtmoHum() {
@@ -130,7 +118,6 @@ export function stopAtmoHum() {
   atmoFadeRaf = requestAnimationFrame(step);
 }
 
-// ── Pause / resume atmo ───────────────────────
 export function pauseAtmoHum() {
   cancelAtmoFade();
   atmoHum.pause();
@@ -138,18 +125,27 @@ export function pauseAtmoHum() {
 
 export function resumeAtmoHum() {
   atmoHum.play().catch(() => {});
-  // Fade in depuis le volume actuel (pas de reset)
-  const start = atmoHum.volume;
-  const target = 0.25;
-  const duration = 800;
-  const startTime = performance.now();
-  function step(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    atmoHum.volume = start + (target - start) * progress;
-    if (progress < 1) atmoFadeRaf = requestAnimationFrame(step);
-  }
-  atmoFadeRaf = requestAnimationFrame(step);
+  fadeInAtmo(800);
 }
+
+// #endregion
+
+// #region ── Hum ceinture d'astéroïdes ────────────────────────────────────────
+
+// Géré via AudioContext (pas HTMLAudioElement) pour une loop fiable sur BufferSource.
+// BufferSource ne supporte pas la pause native → on suspend/reprend l'AudioContext.
+let asteroidSource = null;
+let asteroidGain = null;
+let asteroidBuffer = null;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+fetch("/audio/asteroidBelt.mp3")
+  .then((r) => r.arrayBuffer())
+  .then((buf) => audioCtx.decodeAudioData(buf))
+  .then((decoded) => {
+    asteroidBuffer = decoded;
+  })
+  .catch(() => {});
 
 export function startAsteroidHum() {
   if (!asteroidBuffer || asteroidSource) return;
@@ -174,7 +170,6 @@ export function stopAsteroidHum() {
   }, 1500);
 }
 
-// ── Pause / resume ceinture ───────────────────
 export function pauseAsteroidHum() {
   if (!asteroidSource || !asteroidGain) return;
   asteroidGain.gain.cancelScheduledValues(audioCtx.currentTime);
@@ -184,7 +179,7 @@ export function pauseAsteroidHum() {
 
 export function resumeAsteroidHum() {
   if (asteroidSource) {
-    // Son existant suspendu — on reprend l'AudioContext
+    // Source existante suspendue — on reprend l'AudioContext
     audioCtx.resume().then(() => {
       if (!asteroidGain) return;
       asteroidGain.gain.setValueAtTime(0, audioCtx.currentTime);
@@ -198,3 +193,5 @@ export function resumeAsteroidHum() {
     startAsteroidHum();
   }
 }
+
+// #endregion

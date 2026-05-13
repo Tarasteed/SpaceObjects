@@ -1,9 +1,11 @@
 import * as THREE from "three";
 
+// #region ── LoadingManager partagé ───────────────────────────────────────────
+
+// Exporté et importé par objects.js (TextureLoader) et main.js (callbacks onLoad/onProgress).
 export const loadingManager = new THREE.LoadingManager();
 export const loader = new THREE.TextureLoader(loadingManager);
 
-// Callbacks ici — exécutés avant tout chargement
 loadingManager.onProgress = (url, loaded, total) => {
   const btn = document.getElementById("splash-btn");
   if (btn)
@@ -17,3 +19,5 @@ loadingManager.onLoad = () => {
     btn.disabled = false;
   }
 };
+
+// #endregion

@@ -1,5 +1,7 @@
-// data.js — source de vérité unique pour tous les objets spatiaux
+// #region ── Objets spatiaux ───────────────────────────────────────────────────
 
+// Source de vérité unique pour toutes les données 3D et UI des objets du système solaire.
+// Importé par main.js (construction de la scène) et ui.js (sidebar, tooltip).
 export const OBJECTS = [
   {
     // ── Identification ──
@@ -178,13 +180,13 @@ export const OBJECTS = [
     orbitR: 42,
     orbitColor: [0.95, 0.85, 0.5],
     speed: 0.076,
-    rotSpeed: 2.24,
     speedKms: 9.7,
+    rotSpeed: 2.24,
     inclination: 2.49,
     axialTilt: 26.73,
     rings: true,
-    ringsInnerRatio: 1.24, // ← inner = radius × 1.24
-    ringsOuterRatio: 2.26, // ← outer = radius × 2.26
+    ringsInnerRatio: 1.24, // inner = radius × 1.24
+    ringsOuterRatio: 2.26, // outer = radius × 2.26
     atmosphere: { color: "210,180,140", size: 5.3 },
   },
   {
@@ -348,7 +350,10 @@ export const OBJECTS = [
   },
 ];
 
-// Regroupement par type pour la sidebar
+// #endregion
+
+// #region ── Labels par type (sidebar + tooltip) ───────────────────────────────
+
 export const TYPE_LABELS = {
   star: { label: "Étoiles", color: "#F9CB42" },
   planet: { label: "Planètes", color: "#5b8ff9" },
@@ -357,3 +362,5 @@ export const TYPE_LABELS = {
   dwarf: { label: "Planètes naines", color: "#a0889a" },
   probe: { label: "Sondes", color: "#F5C4B3" },
 };
+
+// #endregion

@@ -1,18 +1,18 @@
-import {
-  camera,
-  controls,
-  setSkipControlsUpdate,
-  skipControlsUpdate,
-} from "./scene.js";
+import { camera, controls, setSkipControlsUpdate } from "./scene.js";
 import * as THREE from "three";
 
-// ── Enum des modes caméra ─────────────────────────
+// #region ── Enum des modes caméra ────────────────────────────────────────────
+
 export const CameraMode = Object.freeze({
   FREE: "free",
   ZOOMING: "zooming",
   FOLLOWING: "following",
   RETURNING: "returning",
 });
+
+// #endregion
+
+// #region ── État interne ─────────────────────────────────────────────────────
 
 const state = {
   mode: CameraMode.FREE,
@@ -26,24 +26,23 @@ const state = {
   lastMouseY: 0,
 };
 
+// #endregion
+
+// #region ── Drag et zoom en mode FOLLOWING ───────────────────────────────────
+
+// Les OrbitControls sont disposés en mode FOLLOWING — on gère drag et zoom manuellement
+// via THREE.Spherical sur le canvas pour orbiter autour de la planète ciblée.
 const canvas = document.getElementById("canvas");
 
-// Listeners drag/zoom — actifs seulement en mode following
 canvas.addEventListener("mousedown", (e) => {
-  if (state.mode !== CameraMode.FOLLOWING || e.button !== 0) {
-    return;
-  }
-
+  if (state.mode !== CameraMode.FOLLOWING || e.button !== 0) return;
   state.isDragging = true;
   state.lastMouseX = e.clientX;
   state.lastMouseY = e.clientY;
 });
 
 canvas.addEventListener("mousemove", (e) => {
-  if (!state.isDragging || state.mode !== CameraMode.FOLLOWING) {
-    return;
-  }
-
+  if (!state.isDragging || state.mode !== CameraMode.FOLLOWING) return;
   const dx = e.clientX - state.lastMouseX;
   const dy = e.clientY - state.lastMouseY;
   state.lastMouseX = e.clientX;
@@ -67,10 +66,7 @@ canvas.addEventListener("mouseleave", () => {
 canvas.addEventListener(
   "wheel",
   (e) => {
-    if (state.mode !== CameraMode.FOLLOWING) {
-      return;
-    }
-
+    if (state.mode !== CameraMode.FOLLOWING) return;
     state.spherical.radius *= 1 + e.deltaY * 0.001;
     const r = state.targetMesh?.geometry?.boundingSphere?.radius ?? 1;
     state.spherical.radius = Math.max(
@@ -81,10 +77,12 @@ canvas.addEventListener(
   { passive: true }
 );
 
+// #endregion
+
+// #region ── Mise à jour caméra (appelée chaque frame) ────────────────────────
+
 export function updateCamera() {
-  if (state.mode === CameraMode.FREE) {
-    return;
-  }
+  if (state.mode === CameraMode.FREE) return;
 
   if (state.mode === CameraMode.ZOOMING) {
     const worldPos = new THREE.Vector3();
@@ -95,8 +93,9 @@ export function updateCamera() {
     }
 
     const radius = state.targetMesh.geometry.boundingSphere.radius;
-    // Recalcule la cible seulement si pas encore initialisée
-    // (évite que la cible bouge avec la planète pendant le lerp)
+
+    // La cible est initialisée une seule fois au début du zoom pour éviter
+    // qu'elle suive la planète pendant le lerp (source du snap en fin de zoom)
     if (!state.zoomInitialized) {
       const offset = new THREE.Vector3(
         0,
@@ -108,12 +107,12 @@ export function updateCamera() {
     }
 
     state.targetLookAt.copy(worldPos);
-
     camera.position.lerp(state.targetPosition, 0.025);
     controls.target.lerp(state.targetLookAt, 0.03);
     controls.update();
-    // ✅ Seuil plus large — on bascule en following avant d'arriver
-    // La planète a moins le temps de se décaler
+
+    // Seuil plus large (radius * 1.2) — on bascule en FOLLOWING avant d'arriver
+    // pour que la planète ait moins le temps de se décaler
     const dist = camera.position.distanceTo(state.targetPosition);
     if (dist < radius * 1.2) {
       const planetPos = new THREE.Vector3();
@@ -160,6 +159,10 @@ export function updateCamera() {
   }
 }
 
+// #endregion
+
+// #region ── Actions de navigation ────────────────────────────────────────────
+
 export function zoomTo(mesh, radiusMultiplier = 4) {
   if (state.mode === CameraMode.FOLLOWING) {
     controls.connect(document.getElementById("canvas"));
@@ -185,11 +188,9 @@ export function zoomToSystem() {
 }
 
 export function zoomToBelt() {
-  // Réactive les controls si on était en following
   if (state.mode === CameraMode.FOLLOWING) {
     controls.connect(document.getElementById("canvas"));
   }
-
   // Côté soleil (Z négatif) — on regarde la ceinture avec le soleil dans le dos
   // Faible inclinaison Y pour voir l'épaisseur sans trop plonger
   state.targetPosition.set(0, 5, 15);
@@ -200,11 +201,16 @@ export function zoomToBelt() {
   state.isDragging = false;
 }
 
-// export function isFollowing() {
-//   return (
-//     state.mode === CameraMode.FOLLOWING || state.mode === CameraMode.ZOOMING
-//   );
-// }
+// Reconnecte les controls si on était en FOLLOWING avant de changer de cible
+export function prepareForNewTarget() {
+  if (state.mode === CameraMode.FOLLOWING) {
+    controls.connect(document.getElementById("canvas"));
+  }
+}
+
+// #endregion
+
+// #region ── Accesseurs ───────────────────────────────────────────────────────
 
 export function isZooming() {
   return state.mode === CameraMode.ZOOMING;
@@ -214,8 +220,4 @@ export function getCameraMode() {
   return state.mode;
 }
 
-export function prepareForNewTarget() {
-  if (state.mode === CameraMode.FOLLOWING) {
-    controls.connect(document.getElementById("canvas"));
-  }
-}
+// #endregion

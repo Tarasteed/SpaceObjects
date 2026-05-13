@@ -1,3 +1,5 @@
+/* #region ── Reset ──────────────────────────────────────────────────────────── */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -29,7 +31,10 @@ button {
   pointer-events: auto;
 }
 
-/* ── Sidebar ─────────────────────────────────── */
+/* #endregion */
+
+/* #region ── Sidebar ────────────────────────────────────────────────────────── */
+
 #sidebar {
   position: fixed;
   top: 0;
@@ -88,6 +93,7 @@ button {
   text-transform: uppercase;
   padding: 8px 16px 5px;
   opacity: 0.8;
+  /* color injecté inline depuis TYPE_LABELS — dépend du type, pas extractible en classe statique */
 }
 
 .sb-group-line {
@@ -117,12 +123,14 @@ button {
   border-left-color: #5b8ff9;
 }
 
+/* .sb-dot utilise --planet-color (injecté via style="--planet-color:...") */
 .sb-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 5px currentColor;
+  background: var(--planet-color);
+  box-shadow: 0 0 5px var(--planet-color);
 }
 
 .sb-name {
@@ -186,7 +194,10 @@ button {
   background: rgba(91, 143, 249, 0.15);
 }
 
-/* ── Sidebar repliée ─────────────────────────── */
+/* #endregion */
+
+/* #region ── Sidebar repliée ────────────────────────────────────────────────── */
+
 #sidebar.collapsed {
   width: 40px;
   overflow: hidden;
@@ -210,11 +221,47 @@ button {
 #sidebar.collapsed .sb-header-top {
   justify-content: center;
 }
+
 #sidebar.collapsed .sb-header-top span {
   display: none;
 }
 
-/* ── Tooltip ─────────────────────────────────── */
+/* #endregion */
+
+/* #region ── Bouton orbites ─────────────────────────────────────────────────── */
+
+/* left est piloté par --sidebar-width (custom property posée sur #sidebar par ui.js) */
+#btn-orbits {
+  position: fixed;
+  top: 20px;
+  left: var(--sidebar-width, 232px);
+  padding: 8px 16px;
+  background: rgba(6, 6, 20, 0.85);
+  border: 1px solid rgba(91, 143, 249, 0.4);
+  border-radius: 6px;
+  color: #7aaff9;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: left 0.25s ease, background 0.2s;
+}
+
+#btn-orbits.active {
+  background: rgba(91, 143, 249, 0.15);
+  border-color: rgba(91, 143, 249, 0.8);
+  color: #c8d4ee;
+}
+
+#btn-orbits:hover {
+  background: rgba(91, 143, 249, 0.1);
+}
+
+/* #endregion */
+
+/* #region ── Tooltip ────────────────────────────────────────────────────────── */
+
 #tooltip {
   position: fixed;
   bottom: 80px;
@@ -247,21 +294,25 @@ button {
   border-bottom: 1px solid rgba(91, 143, 249, 0.18);
 }
 
+/* .tt-dot utilise --planet-color (injecté sur .tt-header via style="--planet-color:...") */
 .tt-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  background: var(--planet-color);
+  box-shadow: 0 0 6px var(--planet-color);
 }
 
 .tt-name {
   font-size: 14.5px;
   font-weight: 700;
-  color: #eef2ff; /* plus lumineux qu'avant */
+  color: #eef2ff;
   letter-spacing: 0.05em;
   flex: 1;
 }
 
+/* .tt-type utilise --type-color (injecté sur .tt-header via style="--type-color:...") */
 .tt-type {
   font-size: 9.5px;
   padding: 2px 8px;
@@ -269,13 +320,14 @@ button {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   font-weight: 600;
-  /* couleur et fond injectés inline via obj.color */
+  color: var(--type-color);
+  background: color-mix(in srgb, var(--type-color) 13%, transparent);
 }
 
 /* ── Description ── */
 .tt-desc {
   font-size: 12.5px;
-  color: rgba(200, 218, 255, 0.65); /* légèrement plus visible */
+  color: rgba(200, 218, 255, 0.65);
   line-height: 1.65;
   margin-bottom: 13px;
 }
@@ -284,7 +336,7 @@ button {
 .tt-facts {
   display: flex;
   flex-direction: column;
-  gap: 0; /* séparation gérée par border-top */
+  gap: 0;
 }
 
 .tt-fact {
@@ -297,14 +349,14 @@ button {
 
 .tt-fact-label {
   font-size: 11px;
-  color: rgba(160, 185, 240, 0.55); /* libellé discret mais lisible */
+  color: rgba(160, 185, 240, 0.55);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .tt-fact-value {
   font-size: 12px;
-  color: #d8e4ff; /* valeur nettement plus visible */
+  color: #d8e4ff;
   font-weight: 600;
   letter-spacing: 0.03em;
 }
@@ -334,7 +386,6 @@ button {
   font-weight: 700;
   color: #7aaff9;
   letter-spacing: 0.04em;
-  /* transition légère pour adoucir les sauts de jitter */
   transition: color 0.1s;
 }
 
@@ -370,10 +421,13 @@ button {
 }
 
 #tooltip.collapsed {
-  padding-bottom: 16px; /* conserve le padding symétrique */
+  padding-bottom: 16px;
 }
 
-/* ── Bouton retour ───────────────────────────── */
+/* #endregion */
+
+/* #region ── Bouton retour ──────────────────────────────────────────────────── */
+
 #btn-back {
   position: fixed;
   top: 20px;
@@ -402,7 +456,10 @@ button {
   background: rgba(91, 143, 249, 0.15);
 }
 
-/* ── HUD Simulation ──────────────────────────── */
+/* #endregion */
+
+/* #region ── HUD Simulation ─────────────────────────────────────────────────── */
+
 #sim-hud {
   position: fixed;
   bottom: 24px;
@@ -465,35 +522,10 @@ button {
   cursor: pointer;
 }
 
-/* ── Bouton orbites ──────────────────────────── */
-#btn-orbits {
-  position: fixed;
-  top: 20px;
-  left: 232px;
-  padding: 8px 16px;
-  background: rgba(6, 6, 20, 0.85);
-  border: 1px solid rgba(91, 143, 249, 0.4);
-  border-radius: 6px;
-  color: #7aaff9;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: left 0.25s ease, background 0.2s;
-}
+/* #endregion */
 
-#btn-orbits.active {
-  background: rgba(91, 143, 249, 0.15);
-  border-color: rgba(91, 143, 249, 0.8);
-  color: #c8d4ee;
-}
+/* #region ── HUD Audio ───────────────────────────────────────────────────────── */
 
-#btn-orbits:hover {
-  background: rgba(91, 143, 249, 0.1);
-}
-
-/* ── HUD Audio ───────────────────────────────── */
 #audio-hud {
   position: fixed;
   bottom: 24px;
@@ -575,7 +607,10 @@ button {
   color: #7aaff9;
 }
 
-/* ── Splash ──────────────────────────────────── */
+/* #endregion */
+
+/* #region ── Splash ─────────────────────────────────────────────────────────── */
+
 #splash {
   position: fixed;
   inset: 0;
@@ -592,6 +627,18 @@ button {
   pointer-events: none;
 }
 
+#splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#splash-logo {
+  width: 360px;
+  height: 360px;
+  margin-bottom: 16px;
+}
+
 #splash-title {
   font-family: "Courier New", monospace;
   font-size: 36px;
@@ -604,6 +651,15 @@ button {
 #splash-title span {
   color: #5b8ff9;
   font-weight: 700;
+}
+
+#splash-sub {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  color: rgba(91, 143, 249, 0.7);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
 }
 
 #splash-btn {
@@ -623,34 +679,16 @@ button {
   background: rgba(91, 143, 249, 0.15);
 }
 
-#splash-logo {
-  width: 360px;
-  height: 360px;
-  margin-bottom: 16px;
-}
-
-#splash-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#splash-sub {
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  color: rgba(91, 143, 249, 0.7);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  margin-bottom: 40px;
-}
-
 #splash-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-/* ── Mobile ──────────────────────────────────── */
+/* #endregion */
+
+/* #region ── Mobile ─────────────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   .sb-item {
     padding: 10px 12px;
@@ -696,7 +734,7 @@ button {
 
   #sim-hud,
   #audio-hud {
-    justify-content: center; /* ← centre horizontalement */
+    justify-content: center;
   }
 
   #speed-control,
@@ -754,3 +792,5 @@ button {
     letter-spacing: 0.15em;
   }
 }
+
+/* #endregion */

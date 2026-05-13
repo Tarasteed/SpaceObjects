@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { loader } from "./loader.js";
 import { scene } from "./scene.js";
 
+// #region ── Planètes ─────────────────────────────────────────────────────────
+
 export function createPlanet({
   radius,
   texturePath,
@@ -22,11 +24,11 @@ export function createPlanet({
       color: new THREE.Color(1.2, 1.1, 0.9),
     });
   } else if (nightTexturePath) {
-    // Terre — matériau avec texture jour + émission nocturne
+    // Terre — matériau avec texture jour + émission nocturne (lumières humaines)
     mat = new THREE.MeshStandardMaterial({
       map: loader.load(texturePath),
       emissiveMap: loader.load(nightTexturePath),
-      emissive: new THREE.Color(2.0, 1.4, 0.6), // teinte chaude pour les lumières
+      emissive: new THREE.Color(2.0, 1.4, 0.6),
       emissiveIntensity: 0.8,
       roughness: roughness,
       metalness: 0.0,
@@ -44,6 +46,10 @@ export function createPlanet({
   scene.add(mesh);
   return mesh;
 }
+
+// #endregion
+
+// #region ── Anneaux de Saturne ───────────────────────────────────────────────
 
 export function createSaturnRings(
   saturnMesh,
@@ -71,7 +77,7 @@ export function createSaturnRings(
     map: loader.load("/textures/8k_saturn_ring_alpha.png"),
     side: THREE.DoubleSide,
     transparent: true,
-    alphaTest: 0.01, // ignore les pixels quasi-transparent
+    alphaTest: 0.01, // ignore les pixels quasi-transparents
     roughness: 0.8,
     metalness: 0.0,
   });
@@ -81,8 +87,11 @@ export function createSaturnRings(
   saturnMesh.add(ring);
 }
 
+// #endregion
+
+// #region ── Effets visuels du Soleil ─────────────────────────────────────────
+
 export function createLensFlare(sunMesh) {
-  // lensflare0 = texture avec vrais rayons
   loader.load("/textures/lensflare0.png", (tex) => {
     // Couche 1 — rayons proches, moyennement intenses
     const mat1 = new THREE.SpriteMaterial({
@@ -167,7 +176,7 @@ export function createSolarBoiling(sunMesh, radius) {
         );
       }
 
-      // FBM — plusieurs octaves pour les cellules
+      // FBM — plusieurs octaves pour les cellules de convection
       float fbm(vec2 p) {
         float v = 0.0;
         float a = 0.5;
@@ -192,16 +201,15 @@ export function createSolarBoiling(sunMesh, radius) {
 
         // Cellules de convection — zones chaudes/froides
         float hot = smoothstep(0.45, 0.75, cell);
-        //float hot = smoothstep(0.35, 0.65, cell);
 
-        // Couleur : orange chaud → jaune vif
+        // Couleur : rouge sombre (cellule froide) → jaune vif (cellule chaude)
         vec3 col = mix(
-          vec3(0.8, 0.1, 0.0),   // cellule froide — rouge sombre
-          vec3(1.0, 0.9, 0.3),   // cellule chaude — jaune vif
+          vec3(0.8, 0.1, 0.0),
+          vec3(1.0, 0.9, 0.3),
           hot
         );
 
-        float alpha = hot * 0.6;  // subtil — juste une texture de surface
+        float alpha = hot * 0.6;
 
         gl_FragColor = vec4(col * alpha, alpha);
       }
@@ -209,13 +217,17 @@ export function createSolarBoiling(sunMesh, radius) {
   });
 
   const overlay = new THREE.Mesh(
-    new THREE.SphereGeometry(radius * 1.008, 64, 64), // ← utilise le paramètre
+    new THREE.SphereGeometry(radius * 1.008, 64, 64),
     mat
   );
 
   scene.add(overlay);
   return overlay;
 }
+
+// #endregion
+
+// #region ── Atmosphères et nuages ────────────────────────────────────────────
 
 export function createAtmosphere(mesh, color, size) {
   const canvas = document.createElement("canvas");
@@ -224,12 +236,12 @@ export function createAtmosphere(mesh, color, size) {
   const ctx = canvas.getContext("2d");
 
   const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
-  gradient.addColorStop(0, `rgba(${color}, 0.12)`); // centre — léger
-  gradient.addColorStop(0.3, `rgba(${color}, 0.10)`); // milieu
-  gradient.addColorStop(0.6, `rgba(${color}, 0.06)`); // commence à diminuer
-  gradient.addColorStop(0.8, `rgba(${color}, 0.03)`); // fin progressive
-  gradient.addColorStop(0.92, `rgba(${color}, 0.01)`); // très fin
-  gradient.addColorStop(1.0, `rgba(${color}, 0.00)`); // bord transparent
+  gradient.addColorStop(0, `rgba(${color}, 0.12)`);
+  gradient.addColorStop(0.3, `rgba(${color}, 0.10)`);
+  gradient.addColorStop(0.6, `rgba(${color}, 0.06)`);
+  gradient.addColorStop(0.8, `rgba(${color}, 0.03)`);
+  gradient.addColorStop(0.92, `rgba(${color}, 0.01)`);
+  gradient.addColorStop(1.0, `rgba(${color}, 0.00)`);
 
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 512, 512);
@@ -248,7 +260,7 @@ export function createAtmosphere(mesh, color, size) {
 }
 
 export function createClouds(mesh, texturePath, radius, opacity) {
-  const geo = new THREE.SphereGeometry(radius * 1.02, 64, 64); // 2% plus grand
+  const geo = new THREE.SphereGeometry(radius * 1.02, 64, 64); // 2% plus grand que la planète
   const mat = new THREE.MeshStandardMaterial({
     map: loader.load(texturePath),
     transparent: true,
@@ -262,11 +274,16 @@ export function createClouds(mesh, texturePath, radius, opacity) {
   return cloudMesh;
 }
 
+// #endregion
+
+// #region ── Orbites ──────────────────────────────────────────────────────────
+
 export function createOrbit(
   orbitR,
   color = new THREE.Color(0.3, 0.6, 1.0),
   maxOrbitR
 ) {
+  // Résolution plus élevée pour les orbites lointaines (planètes naines)
   const segments = orbitR > 70 ? 4096 : 512;
   const positions = [];
   const colors = [];
@@ -299,20 +316,23 @@ export function createOrbit(
   return line;
 }
 
+// #endregion
+
+// #region ── Ceinture d'astéroïdes ────────────────────────────────────────────
+
 export function createAsteroidBelt({
   innerRadius,
   outerRadius,
-  count = 1800, // A tester niveau perfs
-  ySpread, // Epaisseur
+  count = 1800,
+  ySpread,
 }) {
-  // Création de 3 geométries différentes, dans l'idéale déformées
+  // 3 géométries de base déformées pour casser la sphéricité trop régulière
   const baseGeos = [
     new THREE.SphereGeometry(1, 7, 6),
     new THREE.SphereGeometry(1, 6, 5),
     new THREE.SphereGeometry(1, 8, 6),
   ];
 
-  // Déformation des vertices pour casser la forme sphérique trop régulière
   baseGeos.forEach((geo) => {
     const pos = geo.attributes.position;
     for (let i = 0; i < pos.count; i++) {
@@ -350,7 +370,7 @@ export function createAsteroidBelt({
     }),
   ];
 
-  // Répartition des types selon la réalité astronomique
+  // Répartition des types selon la réalité astronomique (C dominant, M rare)
   const typeWeights = [0.6, 0.3, 0.1];
   const counts = typeWeights.map((w) => Math.round(w * count));
 
@@ -378,10 +398,10 @@ export function createAsteroidBelt({
       const angle = Math.random() * Math.PI * 2;
       const rElliptic = r * (1 + eccentricity * Math.cos(angle));
 
-      // Inclinaison individuelle (Epaisseur de ceinture, on évite qu'lle soit plate)
+      // Inclinaison individuelle — donne de l'épaisseur à la ceinture
       const inclination = (Math.random() - 0.5) * ySpread;
 
-      // Taille : Logarithmique => Beaucoup de petits, peu de grands
+      // Taille logarithmique — beaucoup de petits, peu de grands
       const size = 0.025 + Math.pow(Math.random(), 2) * 0.04;
 
       dummy.position.set(
@@ -389,13 +409,11 @@ export function createAsteroidBelt({
         inclination,
         Math.sin(angle) * rElliptic
       );
-
       dummy.rotation.set(
         Math.random() * Math.PI,
         Math.random() * Math.PI,
         Math.random() * Math.PI
       );
-
       dummy.scale.setScalar(size);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
@@ -405,12 +423,11 @@ export function createAsteroidBelt({
         radius: rElliptic,
         baseRadius: r,
         inclination,
-        // Vitesse selon la loi Kepler
-        orbitSpeed: 0.27 / Math.sqrt(r / innerRadius),
+        orbitSpeed: 0.27 / Math.sqrt(r / innerRadius), // loi de Kepler
         rotSpeedX: (Math.random() - 0.5) * 0.02,
         rotSpeedY: (Math.random() - 0.5) * 0.02,
         rotSpeedZ: (Math.random() - 0.5) * 0.02,
-        rotX: Math.random() * Math.PI, // ← rotation initiale aléatoire
+        rotX: Math.random() * Math.PI,
         rotY: Math.random() * Math.PI,
         rotZ: Math.random() * Math.PI,
         size,
@@ -422,6 +439,7 @@ export function createAsteroidBelt({
     allInstances.push({ mesh, instanceData, typeIdx });
   });
 
-  // Retourné pour la mise à jour dans la boucle
   return allInstances;
 }
+
+// #endregion

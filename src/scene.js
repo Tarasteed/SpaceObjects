@@ -4,12 +4,18 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
+// #region ── Renderer ─────────────────────────────────────────────────────────
+
 const canvas = document.getElementById("canvas");
 export const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
+
+// #endregion
+
+// #region ── Scène, caméra et contrôles ───────────────────────────────────────
 
 export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera(
@@ -24,10 +30,20 @@ export const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 
+// #endregion
+
+// #region ── Lumières ─────────────────────────────────────────────────────────
+
 const sunLight = new THREE.PointLight(0xfffde0, 400, 0, 2.3);
 scene.add(sunLight);
+
+// Lumière de remplissage — adoucit les ombres sans directionnel visible
 const sunFill = new THREE.PointLight(0xfffde0, 0.4, 0, 0);
 scene.add(sunFill);
+
+// #endregion
+
+// #region ── Post-processing (bloom) ──────────────────────────────────────────
 
 const renderPass = new RenderPass(scene, camera);
 const bloomPass = new UnrealBloomPass(
@@ -41,6 +57,10 @@ composer.addPass(renderPass);
 composer.addPass(bloomPass);
 export { bloomPass };
 
+// #endregion
+
+// #region ── Resize ───────────────────────────────────────────────────────────
+
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -48,7 +68,11 @@ window.addEventListener("resize", () => {
   composer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// skipControlsUpdate est activé par camera.js en mode following
+// #endregion
+
+// #region ── Boucle de rendu ───────────────────────────────────────────────────
+
+// skipControlsUpdate est activé par camera.js en mode FOLLOWING
 // pour éviter que controls.update() écrase camera.position / lookAt
 export let skipControlsUpdate = false;
 export function setSkipControlsUpdate(v) {
@@ -60,8 +84,9 @@ export function startLoop(onFrame) {
     if (!skipControlsUpdate) {
       controls.update();
     }
-
     onFrame();
     composer.render();
   });
 }
+
+// #endregion

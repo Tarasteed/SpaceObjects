@@ -1,7 +1,9 @@
-// État global de la simulation
-// Importé par main.js (lecture) et ui.js (écriture)
+// #region ── État global de la simulation ─────────────────────────────────────
+
+// Importé par main.js (lecture dans la boucle) et ui.js (écriture via les boutons HUD).
 export const sim = {
   paused: false,
   speedFactor: 1.5,
-  zoomInitialized: false,
 };
+
+// #endregion
