@@ -543,6 +543,18 @@ startLoop(() => {
   updateOrbitTrails();
   updateCamera();
 
+  // Raycasting curseur — relancé à chaque frame pour détecter quand une planète
+  // sort de sous le pointeur immobile (le mousemove ne se déclenche pas dans ce cas)
+  if (_cursorOnCanvas) {
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObjects(clickableMeshes, false);
+    // Pas de pulse si on follow déjà la planète survolée
+    const onPlanet =
+      hits.length > 0 && hits[0].object.userData.id !== currentPlanetId;
+    document.body.classList.toggle("cursor-planet", onPlanet);
+    if (_cursorPulse) _cursorPulse.classList.toggle("active", onPlanet);
+  }
+
   // Vitesse orbitale live dans la tooltip — jitter ±JITTER_RANGE km/s/frame
   const orbitObj = OBJECTS.find((o) => o.id === currentPlanetId);
   updateTooltipSpeed(orbitObj, getCameraMode() === CameraMode.FOLLOWING);
@@ -627,6 +639,33 @@ const pointer = new THREE.Vector2();
 // Tous les meshes cliquables (planètes + soleil + lune)
 // On exclut les anneaux, atmosphères, nuages (pas dans meshById)
 const clickableMeshes = [...meshById.values()];
+
+// Détection survol planète — bascule cursor-planet + anime l'overlay #cursor-pulse.
+// Throttlé via RAF pour ne pas spammer le raycaster à chaque pixel.
+const _cursorPulse = document.getElementById("cursor-pulse");
+let _cursorRafPending = false;
+let _cursorOnCanvas = false; // true quand la souris est sur le canvas
+
+document.getElementById("canvas").addEventListener("mousemove", (e) => {
+  _cursorOnCanvas = true;
+
+  // Déplace l'overlay pulse à chaque mouvement (pas throttlé — doit être fluide)
+  if (_cursorPulse) {
+    _cursorPulse.style.left = e.clientX + "px";
+    _cursorPulse.style.top = e.clientY + "px";
+  }
+
+  // Met à jour pointer pour le raycasting statique de la boucle
+  const rect = e.target.getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+});
+
+document.getElementById("canvas").addEventListener("mouseleave", () => {
+  _cursorOnCanvas = false;
+  document.body.classList.remove("cursor-planet");
+  if (_cursorPulse) _cursorPulse.classList.remove("active");
+});
 
 document.getElementById("canvas").addEventListener("click", (e) => {
   if (isZooming()) return;

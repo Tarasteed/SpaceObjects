@@ -178,7 +178,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | HUDs sim/audio de largeurs différentes sur mobile |
 | ✅ Résolu | Impossible de naviguer de planète en planète sans passer par la sidebar |
 | ✅ Résolu | Sons contextuels qui redémarrent lors d'une navigation en pause |
-| [ ] | Clique sur la ceinture => mise en pause de la simu => retour au systeme => clique sur la ceinture => play => plus de son |
+| ✅ Résolu | Clique sur la ceinture => mise en pause de la simu => retour au systeme => clique sur la ceinture => play => plus de son |
 | [ ] | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | [ ] | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | [ ] | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
@@ -208,7 +208,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Tooltip réductible (bouton toggle − / +)
 - ✅ Vitesse orbitale réelle dans la tooltip (mode suivi, jitter live)
 - [ ] Étiquettes des planètes avec toggle dédié
-- [ ] Curseur custom style HUD militaire
+- ✅ Curseur custom style HUD
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile

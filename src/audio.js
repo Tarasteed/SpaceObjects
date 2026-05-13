@@ -162,12 +162,17 @@ export function startAsteroidHum() {
 
 export function stopAsteroidHum() {
   if (!asteroidSource) return;
-  asteroidGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
-  setTimeout(() => {
-    asteroidSource?.stop();
-    asteroidSource = null;
-    asteroidGain = null;
-  }, 1500);
+  // On résume l'audioCtx avant de stopper : s'il était suspendu (pause en cours),
+  // ne pas le résumer laisserait le contexte bloqué en "suspended" pour le prochain start.
+  audioCtx.resume().then(() => {
+    if (!asteroidGain) return;
+    asteroidGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
+    setTimeout(() => {
+      asteroidSource?.stop();
+      asteroidSource = null;
+      asteroidGain = null;
+    }, 1500);
+  });
 }
 
 export function pauseAsteroidHum() {

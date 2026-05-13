@@ -10,6 +10,7 @@ body {
   overflow: hidden;
   background: #06060f;
   font-family: system-ui, sans-serif;
+  cursor: none;
 }
 
 #canvas {
@@ -108,7 +109,6 @@ button {
   align-items: center;
   gap: 9px;
   padding: 7px 16px;
-  cursor: pointer;
   border-left: 2px solid transparent;
   transition: all 0.15s;
 }
@@ -485,7 +485,6 @@ button {
   border: 1px solid rgba(91, 143, 249, 0.4);
   border-radius: 5px;
   color: #7aaff9;
-  cursor: pointer;
   font-family: "Courier New", monospace;
   letter-spacing: 0.04em;
   transition: all 0.15s;
@@ -790,6 +789,65 @@ button {
   #splash-sub {
     font-size: 10px;
     letter-spacing: 0.15em;
+  }
+}
+
+/* #endregion */
+
+/* #region ── Curseur custom ─────────────────────────────────────────────────── */
+
+/* Trois états via classes sur body — posées par ui.js (survol UI) et main.js (survol planète).
+   Hotspot (2 2) = pointe de la flèche. !important écrase les cursor natifs. */
+
+body,
+body * {
+  cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 1000 1200 1200'><g transform='rotate(-135 648.15 1586.22)'><path fill='%237aaff9' d='M397.184,1586.222l-181.506,413.276l864.945-413.276l-864.945-413.277L397.184,1586.222z M289.461,1249.122l705.514,337.099H437.512L289.461,1249.122z'/></g></svg>")
+      2 2,
+    none !important;
+}
+
+body.cursor-ui,
+body.cursor-ui * {
+  cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 1000 1200 1200'><g transform='rotate(-135 648.15 1586.22)'><path fill='%23c8d4ee' d='M397.184,1586.222l-181.506,413.276l864.945-413.276l-864.945-413.277L397.184,1586.222z M289.461,1249.122l705.514,337.099H437.512L289.461,1249.122z'/></g></svg>")
+      2 2,
+    none !important;
+}
+
+body.cursor-planet,
+body.cursor-planet * {
+  cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 1000 1200 1200'><g transform='rotate(-135 648.15 1586.22)'><path fill='%23f9cb42' d='M397.184,1586.222l-181.506,413.276l864.945-413.276l-864.945-413.277L397.184,1586.222z M289.461,1249.122l705.514,337.099H437.512L289.461,1249.122z'/></g></svg>")
+      2 2,
+    none !important;
+}
+
+/* Overlay pulse — cercle doré qui pulse autour du pointeur au survol des planètes. */
+#cursor-pulse {
+  position: fixed;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid #f9cb42;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 0.15s;
+  z-index: 9999;
+}
+
+#cursor-pulse.active {
+  opacity: 0.7;
+  animation: cursor-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes cursor-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.2;
   }
 }
 

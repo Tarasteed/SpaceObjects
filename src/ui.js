@@ -1,6 +1,28 @@
 import { OBJECTS, TYPE_LABELS } from "./data.js";
 import { sim } from "./state.js";
 
+// #region ── Curseur custom — survol UI ──────────────────────────────────────
+
+// Délégation globale : survol de n'importe quel élément interactif UI
+// bascule body.cursor-ui (bleu clair). Le canvas gère cursor-planet lui-même via raycasting.
+// cursor-planet a priorité : on ne pose cursor-ui que si cursor-planet est absent.
+const UI_SELECTOR = "button, a, .sb-item, input[type=range]";
+
+document.addEventListener("mouseover", (e) => {
+  if (e.target.closest(UI_SELECTOR)) {
+    document.body.classList.remove("cursor-planet");
+    document.body.classList.add("cursor-ui");
+  }
+});
+
+document.addEventListener("mouseout", (e) => {
+  if (e.target.closest(UI_SELECTOR)) {
+    document.body.classList.remove("cursor-ui");
+  }
+});
+
+// #endregion
+
 // #region ── Sidebar — dépendants positionnels ─────────────────────────────────
 
 // Met à jour la CSS custom property --sidebar-width sur #sidebar,
