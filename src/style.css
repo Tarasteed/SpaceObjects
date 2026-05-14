@@ -267,6 +267,63 @@ button {
 
 /* #endregion */
 
+/* #region ── Étiquettes planètes ────────────────────────────────────────────── */
+
+/* CSS2DObject — div positionné par le CSS2DRenderer en coordonnées écran.
+   --label-color est injecté par createLabel() depuis obj.color. */
+.planet-label {
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label-color);
+  text-shadow: 0 0 8px var(--label-color);
+  background: rgba(6, 6, 20, 0.72);
+  padding: 3px 8px;
+  border: 1px solid color-mix(in srgb, var(--label-color) 40%, transparent);
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.92;
+  /* Centré sur la position world de la planète */
+  transform: translate(-50%, -50%);
+}
+
+/* #endregion */
+
+/* #region ── Bouton labels ──────────────────────────────────────────────────── */
+
+/* Positionné à droite de btn-orbits — left calculé selon sidebar + largeur btn-orbits */
+#btn-labels {
+  position: fixed;
+  top: 20px;
+  left: calc(var(--sidebar-width, 232px) + 112px);
+  padding: 8px 16px;
+  background: rgba(6, 6, 20, 0.85);
+  border: 1px solid rgba(91, 143, 249, 0.4);
+  border-radius: 6px;
+  color: #7aaff9;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: left 0.25s ease, background 0.2s;
+}
+
+#btn-labels.active {
+  background: rgba(91, 143, 249, 0.15);
+  border-color: rgba(91, 143, 249, 0.8);
+  color: #c8d4ee;
+}
+
+#btn-labels:hover {
+  background: rgba(91, 143, 249, 0.1);
+}
+
+/* #endregion */
+
 /* #region ── Tooltip ────────────────────────────────────────────────────────── */
 
 #tooltip {
@@ -645,29 +702,6 @@ button {
   margin-bottom: 16px;
 }
 
-#splash-title {
-  font-family: "Courier New", monospace;
-  font-size: 36px;
-  color: #c8d4ee;
-  letter-spacing: 0.15em;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-#splash-title span {
-  color: #5b8ff9;
-  font-weight: 700;
-}
-
-#splash-sub {
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  color: rgba(91, 143, 249, 0.7);
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  margin-bottom: 40px;
-}
-
 #splash-btn {
   padding: 12px 32px;
   background: transparent;
@@ -811,15 +845,6 @@ button {
   #splash-logo {
     width: 220px;
     height: 220px;
-  }
-
-  #splash-title {
-    font-size: 24px;
-  }
-
-  #splash-sub {
-    font-size: 10px;
-    letter-spacing: 0.15em;
   }
 }
 

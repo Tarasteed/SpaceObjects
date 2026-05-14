@@ -208,7 +208,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Tooltip réductible (bouton toggle − / +)
 - ✅ Vitesse orbitale réelle dans la tooltip (mode suivi, jitter live)
 - ✅ Curseur custom style HUD
-- [ ] Étiquettes des planètes avec toggle dédié
+- ✅ Étiquettes des planètes avec toggle dédié
 - ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée (Aura, pulse ?)
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel

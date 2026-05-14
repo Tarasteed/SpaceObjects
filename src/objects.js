@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
 import { loader } from "./loader.js";
 import { scene } from "./scene.js";
 
@@ -314,6 +315,31 @@ export function createOrbit(
   line.userData.maxOrbitR = maxOrbitR;
 
   return line;
+}
+
+// #endregion
+
+// #region ── Étiquettes ──────────────────────────────────────────────────────────
+
+// Crée une étiquette HTML positionnée dans la scène (pas dans le mesh).
+// Attachée à la scène pour éviter de tourner avec la rotation axiale du mesh.
+// Sa position world est mise à jour chaque frame dans main.js via updateLabels().
+// Retourne { label, mesh, radius } pour la mise à jour en boucle.
+export function createLabel(mesh, name, color, parentScene) {
+  const div = document.createElement("div");
+  div.className = "planet-label";
+  div.textContent = name;
+  div.style.setProperty("--label-color", color);
+
+  const label = new CSS2DObject(div);
+  label.position.set(0, 0, 0); // mis à jour chaque frame via getWorldPosition()
+  label.visible = false; // masqué par défaut — activé via le toggle
+
+  if (!mesh.geometry.boundingSphere) mesh.geometry.computeBoundingSphere();
+  const radius = mesh.geometry.boundingSphere?.radius ?? 0.5;
+
+  parentScene.add(label);
+  return { label, mesh, radius };
 }
 
 // #endregion

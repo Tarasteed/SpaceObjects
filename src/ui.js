@@ -305,6 +305,22 @@ export function buildOrbitToggle(onToggle) {
 
 // #endregion
 
+// #region ── Toggle étiquettes ────────────────────────────────────────────────
+
+export function buildLabelToggle(onToggle) {
+  const btn = document.createElement("button");
+  btn.id = "btn-labels";
+  btn.textContent = "⬡ Labels";
+  document.body.appendChild(btn);
+
+  btn.addEventListener("click", () => {
+    btn.classList.toggle("active");
+    onToggle(btn.classList.contains("active"));
+  });
+}
+
+// #endregion
+
 // #region ── HUD Simulation ───────────────────────────────────────────────────
 
 export function buildSimControls() {

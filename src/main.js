@@ -8,6 +8,7 @@ import {
   createClouds,
   createOrbit,
   createAsteroidBelt,
+  createLabel,
 } from "./objects.js";
 import {
   clearActiveItem,
@@ -21,6 +22,7 @@ import {
   buildOrbitToggle,
   buildAudioControls,
   updateTooltipSpeed,
+  buildLabelToggle,
 } from "./ui.js";
 import {
   updateCamera,
@@ -91,6 +93,9 @@ let wasSpeedZero = false;
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
 export const meshById = new Map();
+
+// Tous les CSS2DObject labels — pour le toggle global
+const allLabels = [];
 
 // #endregion
 
@@ -188,6 +193,19 @@ function clearHighlight() {
 }
 
 // Convertit un hex (#rrggbb) en "r, g, b" pour rgba()
+// Met à jour la position world de chaque label chaque frame.
+// Le label est dans la scène (pas dans le mesh) pour ne pas tourner avec lui.
+// On récupère la position world du mesh et on décale en Y de radius + marge.
+const _labelWorldPos = new THREE.Vector3();
+function updateLabels() {
+  allLabels.forEach(({ label, mesh, radius }) => {
+    if (!label.visible) return;
+    mesh.getWorldPosition(_labelWorldPos);
+    label.position.copy(_labelWorldPos);
+    // position.y += 0 — label centré sur la planète, le CSS gère le centrage visuel
+  });
+}
+
 function hexToRgb(hex) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -370,6 +388,7 @@ const pivots = planetsData.map((p) => {
   mesh.userData.name = p.name;
   mesh.userData.id = p.id;
   meshById.set(p.id, mesh);
+  allLabels.push(createLabel(mesh, p.name, p.color, scene));
 
   if (p.rings)
     createSaturnRings(mesh, p.radius, p.ringsInnerRatio, p.ringsOuterRatio);
@@ -426,6 +445,7 @@ const pivots = planetsData.map((p) => {
     moonMesh.userData.name = moonData.name;
     moonMesh.userData.id = moonData.id;
     meshById.set(moonData.id, moonMesh);
+    allLabels.push(createLabel(moonMesh, moonData.name, moonData.color, scene));
   }
 
   return {
@@ -635,6 +655,7 @@ startLoop(() => {
 
   updateOrbitTrails();
   updateCamera();
+  updateLabels();
 
   // Raycasting curseur — relancé à chaque frame pour détecter quand une planète
   // sort de sous le pointeur immobile (le mousemove ne se déclenche pas dans ce cas)
@@ -719,6 +740,7 @@ buildBackButton(() => {
   zoomToSystem();
   hideTooltip();
   clearActiveItem();
+  currentPlanetId = null;
 });
 
 buildSimControls();
@@ -726,6 +748,11 @@ buildSimControls();
 // Toggle orbites : active/désactive la visibilité de toutes les orbitLines d'un coup
 buildOrbitToggle((visible) => {
   orbitLines.forEach((line) => (line.visible = visible));
+});
+
+// Toggle étiquettes : active/désactive tous les CSS2DObject labels
+buildLabelToggle((visible) => {
+  allLabels.forEach(({ label }) => (label.visible = visible));
 });
 
 // #endregion
@@ -806,6 +833,7 @@ document.addEventListener("keydown", (e) => {
     zoomToSystem();
     hideTooltip();
     clearActiveItem();
+    currentPlanetId = null;
     document.getElementById("btn-back")?.classList.remove("visible");
   }
 });
