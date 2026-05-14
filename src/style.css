@@ -691,6 +691,30 @@ button {
   pointer-events: none;
 }
 
+#splash-headphone {
+  margin-top: 20px;
+  font-size: 14px;
+  color: rgba(91, 143, 249, 0.45);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#splash-headphone-icon {
+  font-size: 18px;
+  opacity: 0.6;
+}
+
+#splash-copyright {
+  margin-top: 12px;
+  font-size: 10px;
+  color: rgba(91, 143, 249, 0.3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 /* #endregion */
 
 /* #region ── Mobile ─────────────────────────────────────────────────────────── */

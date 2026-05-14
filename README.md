@@ -236,7 +236,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Splash screen animé avec logo SVG + loader
 - ✅ Favicon SVG
 - ✅ Raycasting — clic sur une planète pour zoomer
-- [ ] Logo indiquant qu'il faut porter un casque audio sur le spashscreen
+- ✅ Logo indiquant qu'il faut porter un casque audio sur le spashscreen
 - [ ] Ceinture de Kuiper
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
