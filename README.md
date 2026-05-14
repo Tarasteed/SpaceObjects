@@ -195,6 +195,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Cliquer sur une planète dans la scène pour zoomer (raycasting)
 - ✅ Navigation de planète en planète sans repasser par la vue système
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
+- [ ] Zoom molette depuis la vue système vers une planète (sans clic) ?
 
 ### Interface
 - ✅ Contrôle pause / vitesse de simulation (×0 à ×20)
@@ -211,12 +212,17 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Étiquettes des planètes avec toggle dédié
 - ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée (Aura, pulse ?)
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
+- [ ] Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre)
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile
 
 ### Données
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
+- [ ] Liens Wikipedia/NASA dans la tooltip
+- [ ] Ceinture de Kuiper
+- [ ] Anneaux d'Uranus - A tester de nouveau
+- [ ] Lunes supplémentaires — Phobos/Deimos (Mars), Io/Europe/Ganymède (Jupiter)
 - ✅ Ceinture d'astéroïdes (entre Mars et Jupiter) — textures C/S/M-type
 - ✅ Pluton et planètes naines à l'échelle
 - ✅ Vitesses orbitales réelles (km/s) dans data.js — source NASA Planetary Fact Sheets
@@ -237,10 +243,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Favicon SVG
 - ✅ Raycasting — clic sur une planète pour zoomer
 - ✅ Logo indiquant qu'il faut porter un casque audio sur le spashscreen
-- [ ] Ceinture de Kuiper
 - [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
-- ❌ Anneaux d'Uranus — trop discrets, rendu peu convaincant
 - ❌ Ombres portées — rapport perf/rendu défavorable avec PointLight
 - ❌ Halo lumineux autour de la Lune — artefact visuel indésirable
 - ❌ Ombre des anneaux de Saturne sur la planète — trop coûteux
@@ -253,7 +257,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Enum `CameraMode` pour les états caméra
 - [ ] Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
-- [ ] Mode plein écran
 
 ### Sound design
 - ✅ Musique ambiante spatiale (Scott Buckley — "Celestial", CC BY 4.0)
