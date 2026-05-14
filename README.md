@@ -179,7 +179,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Impossible de naviguer de planète en planète sans passer par la sidebar |
 | ✅ Résolu | Sons contextuels qui redémarrent lors d'une navigation en pause |
 | ✅ Résolu | Focus ceinture => pause => retour systeme => clique ceinture => play => plus de son |
-| | Les etiquettes passent par-dessus la sidebar |
+| ✅ Résolu | Les etiquettes passent par-dessus la sidebar |
 | | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |

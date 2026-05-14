@@ -22,6 +22,7 @@ export const OBJECTS = [
     emissive: true,
     rotSpeed: 0.037,
     atmosphere: null,
+    wikipedia: "https://fr.wikipedia.org/wiki/Soleil",
   },
   {
     id: "mercury",
@@ -45,6 +46,7 @@ export const OBJECTS = [
     inclination: 7.0,
     axialTilt: 0.03,
     atmosphere: null,
+    wikipedia: "https://fr.wikipedia.org/wiki/Mercure_(plan%C3%A8te)",
   },
   {
     id: "venus",
@@ -73,6 +75,7 @@ export const OBJECTS = [
       opacity: 0.5,
       speed: -0.3,
     },
+    wikipedia: "https://fr.wikipedia.org/wiki/V%C3%A9nus_(plan%C3%A8te)",
   },
   {
     id: "earth",
@@ -103,6 +106,7 @@ export const OBJECTS = [
       opacity: 0.6,
       speed: 0.8,
     },
+    wikipedia: "https://fr.wikipedia.org/wiki/Terre",
   },
   {
     id: "mars",
@@ -126,6 +130,7 @@ export const OBJECTS = [
     inclination: 1.85,
     axialTilt: 25.19,
     atmosphere: { color: "255,120,60", size: 1.3 },
+    wikipedia: "https://fr.wikipedia.org/wiki/Mars_(plan%C3%A8te)",
   },
   {
     id: "asteroid-belt",
@@ -139,6 +144,8 @@ export const OBJECTS = [
       largeur: "~225 millions km",
     },
     atmosphere: null,
+    wikipedia:
+      "https://fr.wikipedia.org/wiki/Ceinture_d%27ast%C3%A9ro%C3%AFdes",
   },
   {
     id: "jupiter",
@@ -162,6 +169,7 @@ export const OBJECTS = [
     inclination: 1.3,
     axialTilt: 3.13,
     atmosphere: { color: "220,180,120", size: 6.2 },
+    wikipedia: "https://fr.wikipedia.org/wiki/Jupiter_(plan%C3%A8te)",
   },
   {
     id: "saturn",
@@ -188,6 +196,7 @@ export const OBJECTS = [
     ringsInnerRatio: 1.24, // inner = radius × 1.24
     ringsOuterRatio: 2.26, // outer = radius × 2.26
     atmosphere: { color: "210,180,140", size: 5.3 },
+    wikipedia: "https://fr.wikipedia.org/wiki/Saturne_(plan%C3%A8te)",
   },
   {
     id: "uranus",
@@ -212,6 +221,7 @@ export const OBJECTS = [
     axialTilt: 97.77,
     atmosphere: { color: "150,220,210", size: 3.3 },
     uranusRings: true,
+    wikipedia: "https://fr.wikipedia.org/wiki/Uranus_(plan%C3%A8te)",
   },
   {
     id: "neptune",
@@ -235,6 +245,7 @@ export const OBJECTS = [
     inclination: 1.77,
     axialTilt: 28.32,
     atmosphere: { color: "80,120,255", size: 3.0 },
+    wikipedia: "https://fr.wikipedia.org/wiki/Neptune_(plan%C3%A8te)",
   },
   {
     id: "moon",
@@ -256,6 +267,7 @@ export const OBJECTS = [
     speedKms: 1.0,
     parentId: "earth",
     atmosphere: null,
+    wikipedia: "https://fr.wikipedia.org/wiki/Lune",
   },
   {
     id: "pluto",
@@ -279,6 +291,7 @@ export const OBJECTS = [
     inclination: 17.14,
     axialTilt: 122.5,
     atmosphere: null,
+    wikipedia: "https://fr.wikipedia.org/wiki/Pluton_(plan%C3%A8te_naine)",
   },
   {
     id: "eris",
@@ -302,6 +315,7 @@ export const OBJECTS = [
     inclination: 44.04,
     axialTilt: 78.3,
     atmosphere: null,
+    wikipedia: "https://fr.wikipedia.org/wiki/%C3%89ris_(plan%C3%A8te_naine)",
   },
   {
     id: "makemake",
@@ -325,6 +339,8 @@ export const OBJECTS = [
     inclination: 28.96,
     axialTilt: 29.0,
     atmosphere: null,
+    wikipedia:
+      "https://fr.wikipedia.org/wiki/Mak%C3%A9mak%C3%A9_(plan%C3%A8te_naine)",
   },
   {
     id: "haumea",
@@ -348,6 +364,7 @@ export const OBJECTS = [
     inclination: 28.19,
     axialTilt: 126.4,
     atmosphere: null,
+    wikipedia: "https://fr.wikipedia.org/wiki/Haumea_(plan%C3%A8te_naine)",
   },
 ];
 

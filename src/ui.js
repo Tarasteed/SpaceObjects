@@ -210,6 +210,12 @@ export function showTooltip(obj) {
     )
     .join("");
 
+  const wikiHTML = obj.wikipedia
+    ? `<a class="tt-wiki" href="${obj.wikipedia}" target="_blank" rel="noopener">
+        <span class="tt-wiki-icon">W</span> Wikipedia
+      </a>`
+    : "";
+
   const speedHTML =
     obj.speedKms != null
       ? `
@@ -234,6 +240,7 @@ export function showTooltip(obj) {
       <div class="tt-desc">${obj.desc}</div>
       <div class="tt-facts">${factsHTML}</div>
       ${speedHTML}
+      ${wikiHTML}
     </div>
   `;
 

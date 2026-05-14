@@ -673,7 +673,10 @@ startLoop(() => {
 
   // Vitesse orbitale live dans la tooltip — jitter ±JITTER_RANGE km/s/frame
   const orbitObj = OBJECTS.find((o) => o.id === currentPlanetId);
-  updateTooltipSpeed(orbitObj, getCameraMode() === CameraMode.FOLLOWING);
+  updateTooltipSpeed(
+    orbitObj,
+    getCameraMode() === CameraMode.FOLLOWING && !isSimStopped()
+  );
 
   // ── Transitions audio selon le mode caméra ───────────────────────────────
   // Déclenché uniquement au changement de mode (pas à chaque frame) via lastMode.

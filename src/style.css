@@ -267,6 +267,23 @@ button {
 
 /* #endregion */
 
+/* #region ── Label renderer ─────────────────────────────────────────────────── */
+
+/* Le CSS2DRenderer crée un div pleine page par-dessus tout.
+   On le clippe à droite de la sidebar via left + width pour que les étiquettes
+   ne s'affichent pas par-dessus la sidebar, quel que soit son état. */
+#label-renderer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* z-index sous la sidebar — les labels passent derrière au lieu de par-dessus */
+  z-index: 5;
+}
+
+/* #endregion */
+
 /* #region ── Étiquettes planètes ────────────────────────────────────────────── */
 
 /* CSS2DObject — div positionné par le CSS2DRenderer en coordonnées écran.
@@ -457,6 +474,38 @@ button {
   font-size: 12px;
   color: rgb(136 175 255 / 50%);
   letter-spacing: 0.06em;
+}
+
+/* ── Lien Wikipedia ── */
+.tt-wiki {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 10px;
+  border: 1px solid rgba(91, 143, 249, 0.25);
+  border-radius: 4px;
+  color: rgba(91, 143, 249, 0.6);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  font-family: "Courier New", monospace;
+}
+
+.tt-wiki:hover {
+  border-color: rgba(91, 143, 249, 0.6);
+  color: #7aaff9;
+  background: rgba(91, 143, 249, 0.08);
+}
+
+.tt-wiki-icon {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7aaff9;
+  font-family: serif; /* W de Wikipedia en serif pour le reconnaître */
 }
 
 /* ── Bouton collapse tooltip ── */
