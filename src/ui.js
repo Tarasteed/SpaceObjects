@@ -210,6 +210,25 @@ export function showTooltip(obj) {
     )
     .join("");
 
+  const simHTML = obj.sim
+    ? `<div class="tt-sim">
+        <div class="tt-sim-header">
+          <span class="tt-sim-icon">ⓘ</span>
+          <span class="tt-sim-title">Simulation</span>
+        </div>
+        ${Object.entries(obj.sim)
+          .map(
+            ([key, val]) => `
+          <div class="tt-fact tt-fact--sim">
+            <span class="tt-fact-label">${key}</span>
+            <span class="tt-fact-value tt-fact-value--sim">${val}</span>
+          </div>
+        `
+          )
+          .join("")}
+      </div>`
+    : "";
+
   const wikiHTML = obj.wikipedia
     ? `<a class="tt-wiki" href="${obj.wikipedia}" target="_blank" rel="noopener">
         <span class="tt-wiki-icon">W</span> Wikipedia
@@ -240,6 +259,7 @@ export function showTooltip(obj) {
       <div class="tt-desc">${obj.desc}</div>
       <div class="tt-facts">${factsHTML}</div>
       ${speedHTML}
+      ${simHTML}
       ${wikiHTML}
     </div>
   `;
