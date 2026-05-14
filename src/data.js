@@ -211,6 +211,7 @@ export const OBJECTS = [
     inclination: 0.77,
     axialTilt: 97.77,
     atmosphere: { color: "150,220,210", size: 3.3 },
+    uranusRings: true,
   },
   {
     id: "neptune",

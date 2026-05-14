@@ -90,6 +90,70 @@ export function createSaturnRings(
 
 // #endregion
 
+// #region ── Anneaux d'Uranus ────────────────────────────────────────────────────
+
+// 13 anneaux procéduraux basés sur les données NASA réelles.
+// Rayons et largeurs convertis depuis km vers unités 3D (radius Uranus = 1.1u = 25362km).
+// Les anneaux fins ont une largeur minimale de 0.012u pour rester visibles.
+// MeshBasicMaterial — indépendant de la PointLight solaire.
+// Opacités très basses (0.03–0.28) : les anneaux d'Uranus sont sombres et discrets.
+export function createUranusRings(uranusMesh, radius) {
+  // Données NASA : ζ, 6, 5, 4, α, β, η, γ, δ, λ, ε, ν, μ
+  // inner/outer = multiples du radius 3D (1.1u), opacity = 0..1
+  const rings = [
+    { inner: 1.6481, outer: 1.7566, opacity: 0.02 }, // ζ (zeta) — très diffus
+    { inner: 1.8146, outer: 1.8266, opacity: 0.05 }, // 6
+    { inner: 1.8318, outer: 1.8438, opacity: 0.05 }, // 5
+    { inner: 1.8464, outer: 1.8584, opacity: 0.045 }, // 4
+    { inner: 1.9395, outer: 1.9515, opacity: 0.065 }, // α
+    { inner: 1.9804, outer: 1.9924, opacity: 0.06 }, // β
+    { inner: 2.0461, outer: 2.0581, opacity: 0.04 }, // η
+    { inner: 2.0657, outer: 2.0777, opacity: 0.045 }, // γ
+    { inner: 2.0949, outer: 2.1069, opacity: 0.06 }, // δ
+    { inner: 2.1696, outer: 2.1816, opacity: 0.035 }, // λ — très fin
+    { inner: 2.2184, outer: 2.2304, opacity: 0.14 }, // ε — le plus large et brillant
+    { inner: 2.8669, outer: 3.0317, opacity: 0.01 }, // ν — diffus
+    { inner: 3.73, outer: 4.4673, opacity: 0.008 }, // μ — très diffus
+  ];
+
+  const group = new THREE.Group();
+
+  rings.forEach(({ inner, outer, opacity }) => {
+    const innerR = radius * inner;
+    const outerR = radius * outer;
+    const geo = new THREE.RingGeometry(innerR, outerR, 128);
+
+    // Fix UVs radiaux
+    const pos = geo.attributes.position;
+    const uv = geo.attributes.uv;
+    const v3 = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v3.fromBufferAttribute(pos, i);
+      uv.setXY(i, (v3.length() - innerR) / (outerR - innerR), 0);
+    }
+    uv.needsUpdate = true;
+
+    const mat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(0.3, 0.3, 0.32),
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+    });
+
+    group.add(new THREE.Mesh(geo, mat));
+  });
+
+  // rotation.x = PI/2 dans l'espace local du mesh —
+  // Uranus étant incliné à 97.77° via axialTilt, les anneaux
+  // apparaissent quasi verticaux dans la scène.
+  group.rotation.x = Math.PI / 2;
+  uranusMesh.add(group);
+  return group;
+}
+
+// #endregion
+
 // #region ── Effets visuels du Soleil ─────────────────────────────────────────
 
 export function createLensFlare(sunMesh) {
@@ -101,7 +165,7 @@ export function createLensFlare(sunMesh) {
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       depthTest: false,
-      opacity: 0.02,
+      opacity: 0.01,
       color: new THREE.Color(1.0, 0.8, 0.4),
     });
     const sprite1 = new THREE.Sprite(mat1);
@@ -115,7 +179,7 @@ export function createLensFlare(sunMesh) {
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       depthTest: false,
-      opacity: 0.07,
+      opacity: 0.035,
       color: new THREE.Color(1.0, 0.7, 0.3),
     });
     const sprite2 = new THREE.Sprite(mat2);
@@ -129,7 +193,7 @@ export function createLensFlare(sunMesh) {
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       depthTest: false,
-      opacity: 0.003,
+      opacity: 0.0015,
       color: new THREE.Color(1.0, 0.6, 0.2),
     });
     const sprite3 = new THREE.Sprite(mat3);

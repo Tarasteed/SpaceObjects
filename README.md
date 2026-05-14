@@ -217,15 +217,15 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile
 
 ### Données
-- [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
-- [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
-- [ ] Liens Wikipedia/NASA dans la tooltip
-- [ ] Ceinture de Kuiper
-- [ ] Anneaux d'Uranus - A tester de nouveau
-- [ ] Lunes supplémentaires — Phobos/Deimos (Mars), Io/Europe/Ganymède (Jupiter)
 - ✅ Ceinture d'astéroïdes (entre Mars et Jupiter) — textures C/S/M-type
+- ✅ Anneaux d'Uranus
 - ✅ Pluton et planètes naines à l'échelle
 - ✅ Vitesses orbitales réelles (km/s) dans data.js — source NASA Planetary Fact Sheets
+- [ ] Lunes supplémentaires — Phobos/Deimos (Mars), Io/Europe/Ganymède (Jupiter)
+- [ ] Liens Wikipedia/NASA dans la tooltip
+- [ ] Ceinture de Kuiper
+- [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
+- [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
 
 ### Visuel
 - ✅ Inclinaisons orbitales et axiales réalistes

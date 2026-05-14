@@ -9,6 +9,7 @@ import {
   createOrbit,
   createAsteroidBelt,
   createLabel,
+  createUranusRings,
 } from "./objects.js";
 import {
   clearActiveItem,
@@ -392,6 +393,7 @@ const pivots = planetsData.map((p) => {
 
   if (p.rings)
     createSaturnRings(mesh, p.radius, p.ringsInnerRatio, p.ringsOuterRatio);
+  if (p.uranusRings) createUranusRings(mesh, p.radius);
   if (p.atmosphere)
     createAtmosphere(mesh, p.atmosphere.color, p.atmosphere.size);
 
@@ -612,7 +614,7 @@ startLoop(() => {
       if (mode === CameraMode.FOLLOWING) {
         if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) resumeAtmoHum();
       }
-      resumeAsteroidHum();
+      if (currentPlanetId === "asteroid-belt") resumeAsteroidHum();
     }
   }
 
