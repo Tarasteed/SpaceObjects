@@ -223,7 +223,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Pluton et planètes naines à l'échelle
 - ✅ Vitesses orbitales réelles (km/s) dans data.js — source NASA Planetary Fact Sheets
 - [ ] Lunes supplémentaires — Phobos/Deimos (Mars), Io/Europe/Ganymède (Jupiter)
-- [ ] Liens Wikipedia/NASA dans la tooltip
+- ✅ Liens Wikipedia/NASA dans la tooltip
 - [ ] Ceinture de Kuiper
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
 - [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
