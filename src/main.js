@@ -102,6 +102,99 @@ function isSimStopped() {
   return sim.paused || sim.speedFactor === 0;
 }
 
+// Survol sidebar — glow emissive + sprite halo indépendant de la taille.
+//
+// Deux effets combinés :
+// 1. emissive boost sur le mesh → bloom amplifie en glow (grandes planètes)
+// 2. Sprite halo (gradient radial canvas) attaché au mesh → visible même sur
+//    les très petites planètes (Pluton, Éris...) où l'emissive serait trop discrète
+//
+// Le sprite est créé à la volée au mouseenter et détruit au mouseleave
+// pour ne pas polluer la scène avec des sprites permanents inutilisés.
+//
+// Désactivé si la planète est déjà suivie (currentPlanetId) — pas de glow
+// sur une planète qu'on a déjà sélectionnée et qui remplit l'écran.
+let _highlightedMesh = null;
+let _originalEmissive = null;
+let _haloSprite = null;
+
+function highlightPlanet(obj) {
+  // Pas de highlight si on follow déjà cette planète
+  if (obj.id === currentPlanetId) return;
+
+  clearHighlight();
+  const mesh = meshById.get(obj.id);
+  if (!mesh || !mesh.material) return;
+
+  _highlightedMesh = mesh;
+
+  // ── Glow emissive ────────────────────────────────────────────────────────
+  _originalEmissive = mesh.material.emissive?.clone() ?? null;
+  if (_originalEmissive !== null) {
+    mesh.material.emissive = new THREE.Color(obj.color);
+    mesh.material.emissiveIntensity = 0.1;
+  }
+
+  // ── Sprite halo ──────────────────────────────────────────────────────────
+  // Taille : proportionnelle au radius avec plancher à 2.5 pour les petites
+  const radius = mesh.geometry?.boundingSphere?.radius ?? obj.radius ?? 0.5;
+  const haloSize = Math.max(radius * 6, 2.5);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext("2d");
+  const col = obj.color;
+  const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0.0, `rgba(${hexToRgb(col)}, 0.0)`); // centre transparent
+  grad.addColorStop(0.45, `rgba(${hexToRgb(col)}, 0.0)`); // vide au centre
+  grad.addColorStop(0.6, `rgba(${hexToRgb(col)}, 0.35)`); // anneau coloré
+  grad.addColorStop(0.75, `rgba(${hexToRgb(col)}, 0.15)`); // fondu extérieur
+  grad.addColorStop(1.0, `rgba(${hexToRgb(col)}, 0.0)`); // bord transparent
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 128, 128);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({
+    map: tex,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  _haloSprite = new THREE.Sprite(mat);
+  _haloSprite.scale.set(haloSize, haloSize, 1);
+  mesh.add(_haloSprite);
+}
+
+function clearHighlight() {
+  if (_haloSprite) {
+    _haloSprite.parent?.remove(_haloSprite);
+    _haloSprite.material.map?.dispose();
+    _haloSprite.material.dispose();
+    _haloSprite = null;
+  }
+
+  if (_highlightedMesh) {
+    if (_originalEmissive) {
+      _highlightedMesh.material.emissive = _originalEmissive;
+    } else if (_highlightedMesh.material.emissive) {
+      _highlightedMesh.material.emissive = new THREE.Color(0, 0, 0);
+    }
+    _highlightedMesh.material.emissiveIntensity = 0;
+    _highlightedMesh = null;
+    _originalEmissive = null;
+  }
+}
+
+// Convertit un hex (#rrggbb) en "r, g, b" pour rgba()
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `${r}, ${g}, ${b}`;
+}
+
 // #endregion
 
 // #region ── Environnement (skybox + étoiles) ─────────────────────────────────
@@ -592,26 +685,32 @@ buildAudioControls(
 
 // La sidebar liste tous les objets de OBJECTS par type.
 // Au clic : affiche l'infobulle + zoom caméra vers la planète.
-buildSidebar((obj) => {
-  currentPlanetId = obj.id;
-  playPing();
-  stopAsteroidHum();
-  showTooltip(obj);
+buildSidebar(
+  (obj) => {
+    currentPlanetId = obj.id;
+    playPing();
+    stopAsteroidHum();
+    showTooltip(obj);
+    clearHighlight();
 
-  if (obj.id === "asteroid-belt") {
-    if (!isSimStopped()) startAsteroidHum();
-    zoomToBelt();
+    if (obj.id === "asteroid-belt") {
+      if (!isSimStopped()) startAsteroidHum();
+      zoomToBelt();
+      showBackButton();
+      return;
+    }
+
+    const mesh = meshById.get(obj.id);
+    if (!mesh) return;
+
+    prepareForNewTarget();
+    zoomTo(mesh);
     showBackButton();
-    return;
-  }
-
-  const mesh = meshById.get(obj.id);
-  if (!mesh) return;
-
-  prepareForNewTarget();
-  zoomTo(mesh);
-  showBackButton();
-});
+  },
+  (obj) => highlightPlanet(obj),
+  () => clearHighlight(),
+  (id) => id === currentPlanetId
+);
 
 // Bouton retour : dézoom vers la vue système solaire + cache l'infobulle
 buildBackButton(() => {

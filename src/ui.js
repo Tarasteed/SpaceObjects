@@ -97,7 +97,7 @@ export function clearActiveItem() {
 // Construit la sidebar depuis OBJECTS (groupés par type).
 // Les couleurs de groupe et de planète sont passées via CSS custom properties
 // pour éviter les styles inline.
-export function buildSidebar(onSelect) {
+export function buildSidebar(onSelect, onHover, onHoverEnd, isActive) {
   const sidebar = document.getElementById("sidebar");
 
   const groups = {};
@@ -150,10 +150,20 @@ export function buildSidebar(onSelect) {
 
   sidebar.querySelectorAll(".sb-item").forEach((el) => {
     el.addEventListener("click", () => {
+      if (isActive(el.dataset.id)) return; // déjà en follow — clic ignoré
       clearActiveItem();
       el.classList.add("active");
       const obj = OBJECTS.find((o) => o.id === el.dataset.id);
       if (obj) onSelect(obj);
+    });
+
+    el.addEventListener("mouseenter", () => {
+      const obj = OBJECTS.find((o) => o.id === el.dataset.id);
+      if (obj) onHover(obj);
+    });
+
+    el.addEventListener("mouseleave", () => {
+      onHoverEnd();
     });
   });
 
