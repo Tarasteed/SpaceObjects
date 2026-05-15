@@ -773,6 +773,34 @@ buildDisplayPanel(
   }
 );
 
+// #region Masquer tous les HUD au double clique
+
+const canvas = document.getElementById("canvas");
+
+function toggleHud() {
+  document.body.classList.toggle("hud-hidden");
+}
+
+// Double-clic desktop
+canvas.addEventListener("dblclick", toggleHud);
+
+// Double-tap mobile
+let _lastTap = 0;
+canvas.addEventListener(
+  "touchend",
+  (e) => {
+    const now = Date.now();
+    if (now - _lastTap < 300) {
+      e.preventDefault();
+      toggleHud();
+    }
+    _lastTap = now;
+  },
+  { passive: false }
+);
+
+// #endregion
+
 // #endregion
 
 // #region ── Raycasting ───────────────────────────────────────────────────────

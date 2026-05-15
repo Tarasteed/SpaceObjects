@@ -656,6 +656,44 @@ button {
 
 /* #endregion */
 
+/* #region ── Mode cinématique (masque tous les HUDs) ───────────────────────── */
+
+body.hud-hidden #sidebar,
+body.hud-hidden #display-panel-wrapper,
+body.hud-hidden #sim-hud,
+body.hud-hidden #audio-hud,
+body.hud-hidden #tooltip,
+body.hud-hidden #btn-back,
+body.hud-hidden #btn-cinematic {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+#btn-cinematic {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 20;
+  background: rgba(6, 6, 20, 0.85);
+  border: 1px solid rgba(91, 143, 249, 0.4);
+  border-radius: 6px;
+  color: #7aaff9;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  padding: 8px 16px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: opacity 0.6s ease, background 0.2s;
+}
+
+#btn-cinematic:hover {
+  background: rgba(91, 143, 249, 0.1);
+}
+
+/* #endregion */
+
 /* #region ── HUD Simulation ─────────────────────────────────────────────────── */
 
 #sim-hud {
@@ -884,7 +922,7 @@ button {
 
 #splash-headphone {
   margin-top: 20px;
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(91, 143, 249, 0.45);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -896,6 +934,41 @@ button {
 #splash-headphone-icon {
   font-size: 18px;
   opacity: 0.6;
+}
+
+#splash-shortcuts {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 400px;
+  border-top: 1px solid rgba(91, 143, 249, 0.1);
+  padding-top: 16px;
+}
+
+.splash-shortcut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: rgba(91, 143, 249, 0.4);
+  letter-spacing: 0.08em;
+}
+
+kbd {
+  background: rgba(91, 143, 249, 0.07);
+  border: 1px solid rgba(91, 143, 249, 0.2);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  color: rgba(91, 143, 249, 0.55);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 #splash-copyright {

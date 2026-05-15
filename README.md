@@ -215,7 +215,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Afficher / masquer les étiquettes de planètes/lunes
 - ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée (Aura, pulse ?)
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
-- [ ] Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre)
+- ✅ Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre) au double clique
+- ✅ Zone indiquant les différents raccourcis clavier ajouté au splashscreen
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile
 

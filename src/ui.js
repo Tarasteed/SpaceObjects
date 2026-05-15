@@ -317,6 +317,8 @@ export function showBackButton() {
   document.getElementById("btn-back").classList.add("visible");
 }
 
+//#endregion
+
 // #region ── Panel Affichage (orbites + labels) ───────────────────────────────
 
 // Remplace btn-orbits et btn-labels par un seul bouton avec dropdown.
