@@ -260,6 +260,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Enum `CameraMode` pour les états caméra
 - [ ] Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
+- [ ] Mode debug compteur de FPS
 
 ### Sound design
 - ✅ Musique ambiante spatiale (Scott Buckley — "Celestial", CC BY 4.0)
