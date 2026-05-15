@@ -140,7 +140,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Sidebar futuriste repliable avec objets regroupés par type + lien GitHub
 - Infobulles au clic avec données scientifiques + vitesse orbitale réelle (km/s) en temps réel
 - Tooltip réductible via bouton toggle — libère la surface de visualisation sur mobile
-- Contrôle pause / vitesse de simulation (×0 à ×20, défaut ×1.5)
+- Contrôle pause / vitesse de simulation (×0 à ×20, défaut ×0.5)
 - Mettre la vitesse à ×0 équivaut à une mise en pause complète (sons inclus)
 - Afficher / masquer les orbites
 - Traînes orbitales — dégradé vertex par vertex, longueur calée sur la vitesse angulaire réelle
