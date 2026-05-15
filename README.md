@@ -183,6 +183,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Les etiquettes passent par-dessus la sidebar |
 | ✅ Résolu | Tritton orbite en vague, surement à cause de l'axialTilt |
 | ✅ Résolu | La vitesse de roation de Titan est identique à celle de Neptune |
+| [ ] | Rétablir les lumières de l'activité humaine |
 | | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
