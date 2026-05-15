@@ -86,13 +86,21 @@ function fadeInAtmo(duration) {
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     atmoHum.volume = start + (target - start) * progress;
-    if (progress < 1) atmoFadeRaf = requestAnimationFrame(step);
+    if (progress < 1) {
+      atmoFadeRaf = requestAnimationFrame(step);
+    } else {
+      _atmoFading = false; // ← fade terminé, setAtmoVolume reprend la main
+      atmoFadeRaf = null;
+    }
   }
   atmoFadeRaf = requestAnimationFrame(step);
 }
 
+let _atmoFading = false;
+
 export function startAtmoHum() {
   cancelAtmoFade();
+  _atmoFading = true; // ← bloque setAtmoVolume pendant le fade in
   if (atmoHum.paused) {
     atmoHum.currentTime = 0;
     atmoHum.play().catch(() => {});
@@ -126,6 +134,11 @@ export function pauseAtmoHum() {
 export function resumeAtmoHum() {
   atmoHum.play().catch(() => {});
   fadeInAtmo(800);
+}
+
+export function setAtmoVolume(v) {
+  if (_atmoFading || atmoHum.paused) return; // ← ne pas interférer avec le fade
+  atmoHum.volume = Math.max(0, Math.min(1, v));
 }
 
 // #endregion

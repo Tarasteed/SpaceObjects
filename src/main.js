@@ -47,6 +47,7 @@ import {
   stopAtmoHum,
   pauseAtmoHum,
   resumeAtmoHum,
+  setAtmoVolume,
   startAsteroidHum,
   stopAsteroidHum,
   pauseAsteroidHum,
@@ -685,6 +686,29 @@ startLoop(() => {
     orbitObj,
     getCameraMode() === CameraMode.FOLLOWING && !isSimStopped()
   );
+
+  // ── Volume hum atmosphérique variable selon distance ─────────────────────
+  // Actif uniquement en FOLLOWING sur une planète avec atmosphère, simulation running.
+  if (getCameraMode() === CameraMode.FOLLOWING && !isSimStopped()) {
+    const atmoObj = ATMO_PLANETS.find((o) => o.id === currentPlanetId);
+    if (atmoObj) {
+      const planetMesh = meshById.get(currentPlanetId);
+      if (planetMesh) {
+        const planetPos = new THREE.Vector3();
+        planetMesh.getWorldPosition(planetPos);
+        const dist = camera.position.distanceTo(planetPos);
+        const radius = planetMesh.geometry.boundingSphere?.radius ?? 1;
+
+        const minDist = radius * 1.5;
+        const maxDist = radius * 1.5 + radius * 12; // ← était 6 fixe, maintenant proportionnel
+        const t = Math.max(
+          0,
+          Math.min(1, 1 - (dist - minDist) / (maxDist - minDist))
+        );
+        setAtmoVolume(t * 0.25);
+      }
+    }
+  }
 
   // ── Transitions audio selon le mode caméra ───────────────────────────────
   // Déclenché uniquement au changement de mode (pas à chaque frame) via lastMode.

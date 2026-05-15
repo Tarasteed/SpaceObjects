@@ -268,7 +268,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Crépitement ceinture d'astéroïdes suspendu/repris proprement à la pause et vitesse ×0
 - ✅ Ping sonar au clic sidebar / raycasting
 - ✅ Swoosh retour système solaire
-- [ ] Volume hum atmosphérique variable selon distance à la planète ?
+- ✅ Volume hum atmosphérique variable selon distance à la planète
 - [ ] Son différencié selon type de planète (gazeuse / rocheuse / naine) ?
 - ❌ Whoosh zoom vers planète — trop difficile à timer correctement
 
