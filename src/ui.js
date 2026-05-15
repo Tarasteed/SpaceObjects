@@ -31,7 +31,7 @@ document.addEventListener("mouseout", (e) => {
 function updateSidebarDependents(isCollapsed) {
   const sidebarWidth = isCollapsed ? 52 : 232;
 
-  // La custom property est lue par btn-orbits via CSS (left: var(--sidebar-width))
+  // La custom property est lue par btn-display via CSS (left: var(--sidebar-width))
   // et par les éléments mobiles ci-dessous via JS (les overrides inline sont nécessaires
   // sur mobile car les positions varient selon l'état collapsed)
   document
@@ -314,36 +314,82 @@ export function showBackButton() {
   document.getElementById("btn-back").classList.add("visible");
 }
 
-export function buildOrbitToggle(onToggle) {
-  const btn = document.createElement("button");
-  btn.id = "btn-orbits";
-  btn.textContent = "⬡ Orbites";
-  document.body.appendChild(btn);
+// #region ── Panel Affichage (orbites + labels) ───────────────────────────────
 
-  // Initialise la position via la custom property au moment de la création
+// Remplace btn-orbits et btn-labels par un seul bouton avec dropdown.
+// onOrbit(bool), onLabelPlanets(bool), onLabelMoons(bool) — callbacks des 3 toggles.
+export function buildDisplayPanel(onOrbit, onLabelPlanets, onLabelMoons) {
+  const wrapper = document.createElement("div");
+  wrapper.id = "display-panel-wrapper";
+
+  const btn = document.createElement("button");
+  btn.id = "btn-display";
+  btn.textContent = "⬡ Affichage";
+  wrapper.appendChild(btn);
+
+  const panel = document.createElement("div");
+  panel.id = "display-panel";
+  panel.hidden = true;
+
+  const items = [
+    { id: "toggle-orbits", label: "Orbites", cb: onOrbit, state: false },
+    {
+      id: "toggle-label-planets",
+      label: "Labels planètes",
+      cb: onLabelPlanets,
+      state: false,
+    },
+    {
+      id: "toggle-label-moons",
+      label: "Labels lunes",
+      cb: onLabelMoons,
+      state: false,
+    },
+  ];
+
+  items.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "dp-item";
+
+    const label = document.createElement("span");
+    label.textContent = item.label;
+
+    const toggle = document.createElement("span");
+    toggle.className = "dp-toggle";
+    toggle.id = item.id;
+
+    row.appendChild(label);
+    row.appendChild(toggle);
+    panel.appendChild(row);
+
+    row.addEventListener("click", (e) => {
+      e.stopPropagation(); // ne ferme pas le panel au clic sur un toggle
+      item.state = !item.state;
+      toggle.classList.toggle("on", item.state);
+      item.cb(item.state);
+    });
+  });
+
+  wrapper.appendChild(panel);
+  document.body.appendChild(wrapper);
+
+  // Ouvre/ferme le panel au clic sur le bouton
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = !panel.hidden;
+    panel.hidden = isOpen;
+    btn.classList.toggle("active", !isOpen);
+  });
+
+  // Ferme en cliquant ailleurs
+  document.addEventListener("click", () => {
+    panel.hidden = true;
+    btn.classList.remove("active");
+  });
+
+  // Repositionne selon la sidebar
   const sidebar = document.getElementById("sidebar");
   updateSidebarDependents(sidebar.classList.contains("collapsed"));
-
-  btn.addEventListener("click", () => {
-    btn.classList.toggle("active");
-    onToggle(btn.classList.contains("active"));
-  });
-}
-
-// #endregion
-
-// #region ── Toggle étiquettes ────────────────────────────────────────────────
-
-export function buildLabelToggle(onToggle) {
-  const btn = document.createElement("button");
-  btn.id = "btn-labels";
-  btn.textContent = "⬡ Labels";
-  document.body.appendChild(btn);
-
-  btn.addEventListener("click", () => {
-    btn.classList.toggle("active");
-    onToggle(btn.classList.contains("active"));
-  });
 }
 
 // #endregion
@@ -356,8 +402,8 @@ export function buildSimControls() {
   hud.innerHTML = `
     <button id="btn-pause">⏸</button>
     <div id="speed-control">
-      <span id="speed-label">×0.5</span>
-      <input type="range" id="speed-slider" min="0" max="100" step="1" value="35"/>
+      <span id="speed-label">×1.5</span>
+      <input type="range" id="speed-slider" min="0" max="100" step="1" value="66"/>
     </div>
   `;
   document.body.appendChild(hud);
@@ -388,7 +434,7 @@ export function buildSimControls() {
   }
 
   // Si speedFactor=0, le clic remet la dernière vitesse non-nulle
-  let lastNonZeroSlider = 35; // correspond à ~0.5
+  let lastNonZeroSlider = 66; // correspond à ~1.5
 
   btnPause.addEventListener("click", () => {
     if (sim.speedFactor === 0) {

@@ -20,10 +20,9 @@ import {
   buildBackButton,
   showBackButton,
   buildSimControls,
-  buildOrbitToggle,
+  buildDisplayPanel,
   buildAudioControls,
   updateTooltipSpeed,
-  buildLabelToggle,
 } from "./ui.js";
 import {
   updateCamera,
@@ -757,15 +756,22 @@ buildBackButton(() => {
 
 buildSimControls();
 
-// Toggle orbites : active/désactive la visibilité de toutes les orbitLines d'un coup
-buildOrbitToggle((visible) => {
-  orbitLines.forEach((line) => (line.visible = visible));
-});
-
-// Toggle étiquettes : active/désactive tous les CSS2DObject labels
-buildLabelToggle((visible) => {
-  allLabels.forEach(({ label }) => (label.visible = visible));
-});
+// Panel Affichage — orbites, labels planètes, labels lunes
+buildDisplayPanel(
+  (visible) => {
+    orbitLines.forEach((line) => (line.visible = visible));
+  },
+  (visible) => {
+    allLabels
+      .filter(({ mesh }) => !extraMoons.some((m) => m.id === mesh.userData.id))
+      .forEach(({ label }) => (label.visible = visible));
+  },
+  (visible) => {
+    allLabels
+      .filter(({ mesh }) => extraMoons.some((m) => m.id === mesh.userData.id))
+      .forEach(({ label }) => (label.visible = visible));
+  }
+);
 
 // #endregion
 

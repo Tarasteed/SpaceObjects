@@ -235,38 +235,6 @@ button {
 
 /* #endregion */
 
-/* #region ── Bouton orbites ─────────────────────────────────────────────────── */
-
-/* left est piloté par --sidebar-width (custom property posée sur #sidebar par ui.js) */
-#btn-orbits {
-  position: fixed;
-  top: 20px;
-  left: var(--sidebar-width, 232px);
-  padding: 8px 16px;
-  background: rgba(6, 6, 20, 0.85);
-  border: 1px solid rgba(91, 143, 249, 0.4);
-  border-radius: 6px;
-  color: #7aaff9;
-  font-family: "Courier New", monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: left 0.25s ease, background 0.2s;
-}
-
-#btn-orbits.active {
-  background: rgba(91, 143, 249, 0.15);
-  border-color: rgba(91, 143, 249, 0.8);
-  color: #c8d4ee;
-}
-
-#btn-orbits:hover {
-  background: rgba(91, 143, 249, 0.1);
-}
-
-/* #endregion */
-
 /* #region ── Label renderer ─────────────────────────────────────────────────── */
 
 /* Le CSS2DRenderer crée un div pleine page par-dessus tout.
@@ -309,13 +277,16 @@ button {
 
 /* #endregion */
 
-/* #region ── Bouton labels ──────────────────────────────────────────────────── */
+/* #region ── Panel Affichage ────────────────────────────────────────────────── */
 
-/* Positionné à droite de btn-orbits — left calculé selon sidebar + largeur btn-orbits */
-#btn-labels {
+#display-panel-wrapper {
   position: fixed;
   top: 20px;
-  left: calc(var(--sidebar-width, 232px) + 112px);
+  left: var(--sidebar-width, 232px);
+  z-index: 15;
+}
+
+#btn-display {
   padding: 8px 16px;
   background: rgba(6, 6, 20, 0.85);
   border: 1px solid rgba(91, 143, 249, 0.4);
@@ -326,17 +297,89 @@ button {
   letter-spacing: 0.06em;
   cursor: pointer;
   backdrop-filter: blur(8px);
-  transition: left 0.25s ease, background 0.2s;
+  transition: background 0.2s;
+  white-space: nowrap;
 }
 
-#btn-labels.active {
+#btn-display:hover {
+  background: rgba(91, 143, 249, 0.1);
+}
+
+#btn-display.active {
   background: rgba(91, 143, 249, 0.15);
   border-color: rgba(91, 143, 249, 0.8);
   color: #c8d4ee;
 }
 
-#btn-labels:hover {
-  background: rgba(91, 143, 249, 0.1);
+#display-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: rgba(4, 8, 20, 0.95);
+  border: 1px solid rgba(91, 143, 249, 0.3);
+  border-radius: 6px;
+  backdrop-filter: blur(14px);
+  font-family: "Courier New", monospace;
+  min-width: 180px;
+  overflow: hidden;
+  z-index: 20;
+}
+
+.dp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: rgba(200, 212, 238, 0.75);
+  border-bottom: 1px solid rgba(91, 143, 249, 0.1);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.12s;
+  gap: 20px;
+}
+
+.dp-item:last-child {
+  border-bottom: none;
+}
+
+.dp-item:hover {
+  background: rgba(91, 143, 249, 0.07);
+  color: #c8d4ee;
+}
+
+.dp-toggle {
+  width: 40px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(91, 143, 249, 0.15);
+  border: 1px solid rgba(91, 143, 249, 0.25);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.dp-toggle::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(91, 143, 249, 0.4);
+  top: 1px;
+  left: 1px;
+  transition: left 0.15s, background 0.15s;
+}
+
+.dp-toggle.on {
+  background: rgba(91, 143, 249, 0.4);
+  border-color: #5b8ff9;
+}
+
+.dp-toggle.on::after {
+  left: 21px;
+  background: #c8d4ee;
 }
 
 /* #endregion */
@@ -877,9 +920,12 @@ button {
     font-size: 12px;
   }
 
-  #btn-orbits {
+  #display-panel-wrapper {
     left: 52px;
     top: 12px;
+  }
+
+  #btn-display {
     font-size: 11px;
     padding: 6px 12px;
   }
