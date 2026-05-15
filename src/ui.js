@@ -402,8 +402,8 @@ export function buildSimControls() {
   hud.innerHTML = `
     <button id="btn-pause">⏸</button>
     <div id="speed-control">
-      <span id="speed-label">×1.5</span>
-      <input type="range" id="speed-slider" min="0" max="100" step="1" value="66"/>
+      <span id="speed-label">×0.5</span>
+      <input type="range" id="speed-slider" min="0" max="100" step="1" value="35"/>
     </div>
   `;
   document.body.appendChild(hud);
@@ -414,7 +414,7 @@ export function buildSimControls() {
 
   // Mapping logarithmique : slider 0..100 → speed 0..20
   // slider=0 → speed=0, slider=1..100 → log scale 0.01..20
-  // Midpoint (~66) ≈ 1.5 (vitesse par défaut)
+  // Midpoint (~35) ≈ 0.5 (vitesse par défaut)
   function sliderToSpeed(s) {
     if (s === 0) return 0;
     return parseFloat((0.01 * Math.pow(20 / 0.01, s / 100)).toFixed(3));
@@ -434,7 +434,7 @@ export function buildSimControls() {
   }
 
   // Si speedFactor=0, le clic remet la dernière vitesse non-nulle
-  let lastNonZeroSlider = 66; // correspond à ~1.5
+  let lastNonZeroSlider = 35; // correspond à ~0.5
 
   btnPause.addEventListener("click", () => {
     if (sim.speedFactor === 0) {
