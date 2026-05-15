@@ -356,8 +356,8 @@ export function buildSimControls() {
   hud.innerHTML = `
     <button id="btn-pause">⏸</button>
     <div id="speed-control">
-      <span id="speed-label">×1.5</span>
-      <input type="range" id="speed-slider" min="0" max="20" step="0.1" value="1.5"/>
+      <span id="speed-label">×0.5</span>
+      <input type="range" id="speed-slider" min="0" max="100" step="1" value="35"/>
     </div>
   `;
   document.body.appendChild(hud);
@@ -366,21 +366,35 @@ export function buildSimControls() {
   const speedSlider = document.getElementById("speed-slider");
   const speedLabel = document.getElementById("speed-label");
 
+  // Mapping logarithmique : slider 0..100 → speed 0..20
+  // slider=0 → speed=0, slider=1..100 → log scale 0.01..20
+  // Midpoint (~66) ≈ 1.5 (vitesse par défaut)
+  function sliderToSpeed(s) {
+    if (s === 0) return 0;
+    return parseFloat((0.01 * Math.pow(20 / 0.01, s / 100)).toFixed(3));
+  }
+
+  function formatSpeed(v) {
+    if (v === 0) return "×0";
+    if (v < 0.1) return `×${v.toFixed(3)}`;
+    if (v < 1) return `×${v.toFixed(2)}`;
+    return `×${v.toFixed(1)}`;
+  }
+
   function updatePauseBtn() {
     const stopped = sim.paused || sim.speedFactor === 0;
     btnPause.textContent = stopped ? "▶" : "⏸";
     btnPause.classList.toggle("active", stopped);
   }
 
-  // Si speedFactor=0, le clic remet la dernière vitesse non-nulle plutôt que de
-  // toggler sim.paused — évite l'état incohérent pause+vitesse zéro simultanés
-  let lastNonZeroSpeed = sim.speedFactor;
+  // Si speedFactor=0, le clic remet la dernière vitesse non-nulle
+  let lastNonZeroSlider = 35; // correspond à ~0.5
 
   btnPause.addEventListener("click", () => {
     if (sim.speedFactor === 0) {
-      sim.speedFactor = lastNonZeroSpeed || 1.5;
-      speedSlider.value = sim.speedFactor;
-      speedLabel.textContent = `×${sim.speedFactor.toFixed(1)}`;
+      speedSlider.value = lastNonZeroSlider;
+      sim.speedFactor = sliderToSpeed(lastNonZeroSlider);
+      speedLabel.textContent = formatSpeed(sim.speedFactor);
     } else {
       sim.paused = !sim.paused;
     }
@@ -388,10 +402,11 @@ export function buildSimControls() {
   });
 
   speedSlider.addEventListener("input", (e) => {
-    const v = parseFloat(e.target.value);
-    if (v > 0) lastNonZeroSpeed = v;
+    const s = parseInt(e.target.value);
+    const v = sliderToSpeed(s);
+    if (v > 0) lastNonZeroSlider = s;
     sim.speedFactor = v;
-    speedLabel.textContent = `×${v.toFixed(1)}`;
+    speedLabel.textContent = formatSpeed(v);
     updatePauseBtn();
   });
 }
