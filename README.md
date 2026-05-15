@@ -149,6 +149,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - Contrôle volume + pause/play musique dans le HUD
 - Son atmosphérique suspendu/repris proprement lors de la pause ou vitesse ×0 de la simulation
 - Crépitement ceinture d'astéroïdes suspendu/repris proprement lors de la pause ou vitesse ×0
+- Animation du soleil et des étoiles suspendu/repris proprement lors de la pause ou vitesse ×0
 - Ping sonar au clic sidebar / raycasting
 - Swoosh au retour système solaire
 - Favicon SVG + logo animé
@@ -180,8 +181,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Sons contextuels qui redémarrent lors d'une navigation en pause |
 | ✅ Résolu | Focus ceinture => pause => retour systeme => clique ceinture => play => plus de son |
 | ✅ Résolu | Les etiquettes passent par-dessus la sidebar |
-| | Tritton orbite en vague, surement à cause de l'axialTilt |
-| | La vitesse de roation de Titan est identique à celle de Neptune |
+| ✅ Résolu | Tritton orbite en vague, surement à cause de l'axialTilt |
+| ✅ Résolu | La vitesse de roation de Titan est identique à celle de Neptune |
 | | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
@@ -214,9 +215,10 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Curseur custom style HUD
 - ✅ Afficher / masquer les étiquettes de planètes/lunes
 - ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée (Aura, pulse ?)
-- [ ] Boutons d'échelle (système interne / complet / galaxie)
 - ✅ Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre) au double clique
 - ✅ Zone indiquant les différents raccourcis clavier ajouté au splashscreen
+
+- [ ] Boutons d'échelle (système interne / complet / galaxie)
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile
 
@@ -228,8 +230,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Lunes supplémentaires — Mars (Phobos, Deimos), Jupiter (Io, Europe, Ganymède, Callisto), Saturne (Titan) et Neptune (Triton)
 - ✅ Liens Wikipedia/NASA dans la tooltip
 - [ ] Ceinture de Kuiper
-- [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
-- [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
 
 ### Visuel
 - ✅ Inclinaisons orbitales et axiales réalistes
@@ -247,7 +247,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Favicon SVG
 - ✅ Raycasting — clic sur une planète pour zoomer
 - ✅ Logo indiquant qu'il faut porter un casque audio sur le spashscreen
-- [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
 - ❌ Ombres portées — rapport perf/rendu défavorable avec PointLight
 - ❌ Halo lumineux autour de la Lune — artefact visuel indésirable
@@ -272,6 +271,11 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - [ ] Volume hum atmosphérique variable selon distance à la planète ?
 - [ ] Son différencié selon type de planète (gazeuse / rocheuse / naine) ?
 - ❌ Whoosh zoom vers planète — trop difficile à timer correctement
+
+### BONUS
+- [ ] Modèles 3D GLTF pour les sondes (NASA 3D Models)
+- [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
+- [ ] Sondes historiques (Voyager 1 & 2, New Horizons, Juno) via satellite.js
 
 ---
 

@@ -573,10 +573,6 @@ startLoop(() => {
   if (!sim.paused) {
     t += 0.005 * sim.speedFactor;
 
-    if (solarBoiling.material.uniforms) {
-      solarBoiling.material.uniforms.uTime.value = Date.now() * 0.001;
-    }
-
     cloudMeshes.forEach(({ mesh, speed }) => {
       mesh.rotation.y += 0.0001 * speed * sim.speedFactor;
     });
@@ -600,6 +596,10 @@ startLoop(() => {
       });
       mesh.instanceMatrix.needsUpdate = true;
     });
+  }
+
+  if (solarBoiling.material.uniforms) {
+    solarBoiling.material.uniforms.uTime.value = Date.now() * 0.001;
   }
 
   // ── Gestion pause/reprise audio ──────────────────────────────────────────
@@ -646,8 +646,10 @@ startLoop(() => {
 
   // ── Animations continues (indépendantes de la pause) ────────────────────
   const now = Date.now() * 0.001;
-  starsGroup.rotation.y = now * 0.003;
-  bloomPass.threshold = 0.82 + Math.sin(now * 0.4) * 0.06;
+  if (!isSimStopped()) {
+    starsGroup.rotation.y = now * 0.003;
+    bloomPass.threshold = 0.82 + Math.sin(now * 0.4) * 0.06;
+  }
 
   pivots.forEach(({ pivot, speed, rotSpeed, mesh }) => {
     pivot.rotation.y = t * speed;
@@ -881,6 +883,19 @@ document.addEventListener("keydown", (e) => {
     clearActiveItem();
     currentPlanetId = null;
     document.getElementById("btn-back")?.classList.remove("visible");
+  }
+
+  // Espace — pause/reprise simulation (même comportement que le bouton ⏸)
+  if (e.key === " ") {
+    e.preventDefault(); // évite le scroll navigateur
+    if (sim.speedFactor === 0) return; // vitesse zéro — espace sans effet
+    sim.paused = !sim.paused;
+    // Sync visuel du bouton pause
+    const btn = document.getElementById("btn-pause");
+    if (btn) {
+      btn.textContent = sim.paused ? "▶" : "⏸";
+      btn.classList.toggle("active", sim.paused);
+    }
   }
 });
 
