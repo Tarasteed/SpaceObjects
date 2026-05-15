@@ -34,12 +34,15 @@ function updateSidebarDependents(isCollapsed) {
   // La custom property est lue par btn-display via CSS (left: var(--sidebar-width))
   // et par les éléments mobiles ci-dessous via JS (les overrides inline sont nécessaires
   // sur mobile car les positions varient selon l'état collapsed)
-  document
-    .getElementById("sidebar")
-    .style.setProperty("--sidebar-width", `${sidebarWidth}px`);
+  document.documentElement.style.setProperty(
+    "--sidebar-width",
+    `${sidebarWidth}px`
+  );
 
   if (window.innerWidth <= 768) {
     const left = `${sidebarWidth}px`;
+    const displayWrapper = document.getElementById("display-panel-wrapper");
+    if (displayWrapper) displayWrapper.style.left = left;
     const audioHud = document.getElementById("audio-hud");
     const simHud = document.getElementById("sim-hud");
     const tooltip = document.getElementById("tooltip");

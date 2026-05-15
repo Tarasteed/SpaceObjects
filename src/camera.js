@@ -24,6 +24,7 @@ const state = {
   isDragging: false,
   lastMouseX: 0,
   lastMouseY: 0,
+  pinchDist: undefined,
 };
 
 // #endregion
@@ -62,6 +63,71 @@ canvas.addEventListener("mouseup", () => {
 canvas.addEventListener("mouseleave", () => {
   state.isDragging = false;
 });
+
+// #region ── Touch events (mobile) en mode FOLLOWING ─────────────────────────
+
+canvas.addEventListener(
+  "touchstart",
+  (e) => {
+    if (state.mode !== CameraMode.FOLLOWING) return;
+    if (e.touches.length === 1) {
+      state.isDragging = true;
+      state.lastMouseX = e.touches[0].clientX;
+      state.lastMouseY = e.touches[0].clientY;
+    } else if (e.touches.length === 2) {
+      // Pinch : on mémorise la distance initiale
+      state.isDragging = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      state.pinchDist = Math.hypot(dx, dy);
+    }
+  },
+  { passive: true }
+);
+
+canvas.addEventListener(
+  "touchmove",
+  (e) => {
+    if (state.mode !== CameraMode.FOLLOWING) return;
+
+    if (e.touches.length === 1 && state.isDragging) {
+      const dx = e.touches[0].clientX - state.lastMouseX;
+      const dy = e.touches[0].clientY - state.lastMouseY;
+      state.lastMouseX = e.touches[0].clientX;
+      state.lastMouseY = e.touches[0].clientY;
+      state.spherical.theta -= dx * 0.005;
+      state.spherical.phi -= dy * 0.005;
+      state.spherical.phi = Math.max(
+        0.05,
+        Math.min(Math.PI - 0.05, state.spherical.phi)
+      );
+    } else if (e.touches.length === 2 && state.pinchDist !== undefined) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const newDist = Math.hypot(dx, dy);
+      const scale = state.pinchDist / newDist; // > 1 = pinch in = zoom out
+      state.pinchDist = newDist;
+      state.spherical.radius *= scale;
+      const r = state.targetMesh?.geometry?.boundingSphere?.radius ?? 1;
+      state.spherical.radius = Math.max(
+        r * 1.5,
+        Math.min(r * 20, state.spherical.radius)
+      );
+    }
+  },
+  { passive: true }
+);
+
+canvas.addEventListener(
+  "touchend",
+  () => {
+    state.isDragging = false;
+    state.pinchDist = undefined;
+  },
+  { passive: true }
+);
+
+// #endregion
 
 canvas.addEventListener(
   "wheel",
