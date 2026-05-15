@@ -22,6 +22,7 @@ export const OBJECTS = [
     emissive: true,
     rotSpeed: 0.037,
     atmosphere: null,
+
     sim: {
       taille:
         "Fortement réduite pour la lisibilité (réel : 109× le diamètre terrestre)",
@@ -103,7 +104,6 @@ export const OBJECTS = [
     inclination: 0,
     axialTilt: 23.44,
     nightTexturePath: "/textures/8k_earth_nightmap.jpg",
-    hasMoon: true,
     atmosphere: { color: "100,180,255", size: 1.6 },
     clouds: {
       texture: "/textures/8k_earth_clouds.jpg",
@@ -134,6 +134,7 @@ export const OBJECTS = [
     inclination: 1.85,
     axialTilt: 25.19,
     atmosphere: { color: "255,120,60", size: 1.3 },
+
     sim: {
       lunes: "Phobos et Deimos non représentées (trop petites à cette échelle)",
     },
@@ -151,6 +152,7 @@ export const OBJECTS = [
       largeur: "~225 millions km",
     },
     atmosphere: null,
+
     sim: {
       instances: "2 000 corps sur ~1,1 million réels",
       tailles: "Exagérées pour la visibilité",
@@ -180,6 +182,7 @@ export const OBJECTS = [
     inclination: 1.3,
     axialTilt: 3.13,
     atmosphere: { color: "220,180,120", size: 6.2 },
+
     sim: {
       lunes: "4 lunes sur 95 représentées (Io, Europe, Ganymède, Callisto)",
     },
@@ -210,6 +213,7 @@ export const OBJECTS = [
     ringsInnerRatio: 1.24, // inner = radius × 1.24
     ringsOuterRatio: 2.26, // outer = radius × 2.26
     atmosphere: { color: "210,180,140", size: 5.3 },
+
     sim: {
       lunes: "Titan uniquement sur 146 lunes",
       anneaux: "Structure simplifiée en texture unique",
@@ -239,6 +243,7 @@ export const OBJECTS = [
     axialTilt: 97.77,
     atmosphere: { color: "150,220,210", size: 3.3 },
     uranusRings: true,
+
     sim: {
       anneaux: "13 anneaux procéduraux (approximation)",
       lunes: "Non représentées",
@@ -267,6 +272,7 @@ export const OBJECTS = [
     inclination: 1.77,
     axialTilt: 28.32,
     atmosphere: { color: "80,120,255", size: 3.0 },
+
     sim: {
       lunes: "Triton uniquement sur 16 lunes",
     },
@@ -286,13 +292,181 @@ export const OBJECTS = [
     radius: 0.14,
     texturePath: "/textures/8k_moon.jpg",
     roughness: 0.75,
-    orbitR: 1.1,
+    orbitR: 0.9,
     orbitalSpeed: 6,
     rotSpeed: 6,
     speedKms: 1.0,
     parentId: "earth",
     atmosphere: null,
     wikipedia: "https://fr.wikipedia.org/wiki/Lune",
+  },
+  {
+    id: "phobos",
+    name: "Phobos",
+    type: "satellite",
+    color: "#b8a898",
+    desc: "La plus grande et la plus proche des deux lunes de Mars. Elle orbite si bas qu'elle se lève à l'ouest et se couche à l'est.",
+    facts: {
+      distance: "9 376 km de Mars",
+      rayon: "11 km",
+      orbite: "7h 39min",
+    },
+    radius: 0.04,
+    texturePath: "/textures/4k_Phobos.png",
+    roughness: 0.95,
+    orbitR: 0.63,
+    orbitalSpeed: 18,
+    rotSpeed: 18,
+    speedKms: 2.1,
+    parentId: "mars",
+    atmosphere: null,
+  },
+  {
+    id: "deimos",
+    name: "Deimos",
+    type: "satellite",
+    color: "#a09888",
+    desc: "La plus petite et la plus éloignée des lunes de Mars. Probablement un astéroïde capturé de la ceinture principale.",
+    facts: {
+      distance: "23 463 km de Mars",
+      rayon: "6 km",
+      orbite: "30h 18min",
+    },
+    radius: 0.03,
+    texturePath: "/textures/4k_Deimos.png",
+    roughness: 0.95,
+    orbitR: 2.0,
+    orbitalSpeed: 6,
+    rotSpeed: 6,
+    speedKms: 1.35,
+    parentId: "mars",
+    atmosphere: null,
+  },
+  {
+    id: "io",
+    name: "Io",
+    type: "satellite",
+    color: "#e8c840",
+    desc: "Le corps le plus volcaniquement actif du système solaire. Ses éruptions projettent de la matière jusqu'à 500 km d'altitude.",
+    facts: {
+      distance: "421 800 km de Jupiter",
+      rayon: "1 821 km",
+      orbite: "1,77 jours",
+    },
+    radius: 0.143,
+    texturePath: "/textures/4k_Io.png",
+    roughness: 0.7,
+    orbitR: 3.96,
+    orbitalSpeed: 4.2,
+    rotSpeed: 4.2,
+    speedKms: 17.3,
+    parentId: "jupiter",
+    atmosphere: null,
+  },
+  {
+    id: "europe",
+    name: "Europe",
+    type: "satellite",
+    color: "#c8b898",
+    desc: "Recouverte d'une croûte de glace, Europe abrite probablement un océan liquide sous sa surface — candidate majeure à la vie extraterrestre.",
+    facts: {
+      distance: "671 100 km de Jupiter",
+      rayon: "1 560 km",
+      orbite: "3,55 jours",
+    },
+    radius: 0.122,
+    texturePath: "/textures/4k_Europa.png",
+    roughness: 0.3,
+    orbitR: 4.223,
+    orbitalSpeed: 2.2,
+    rotSpeed: 2.2,
+    speedKms: 13.7,
+    parentId: "jupiter",
+    atmosphere: null,
+  },
+  {
+    id: "ganymede",
+    name: "Ganymède",
+    type: "satellite",
+    color: "#a89888",
+    desc: "La plus grande lune du système solaire, plus grande que Mercure. Possède son propre champ magnétique.",
+    facts: {
+      distance: "1 070 400 km de Jupiter",
+      rayon: "2 634 km",
+      orbite: "7,15 jours",
+    },
+    radius: 0.207,
+    texturePath: "/textures/2k_Ganymede.png",
+    roughness: 0.8,
+    orbitR: 4.644,
+    orbitalSpeed: 1.1,
+    rotSpeed: 1.1,
+    speedKms: 10.9,
+    parentId: "jupiter",
+    atmosphere: null,
+  },
+  {
+    id: "callisto",
+    name: "Callisto",
+    type: "satellite",
+    color: "#887868",
+    desc: "La surface la plus cratérisée du système solaire. Possède également un océan souterrain potentiel.",
+    facts: {
+      distance: "1 882 700 km de Jupiter",
+      rayon: "2 410 km",
+      orbite: "16,69 jours",
+    },
+    radius: 0.189,
+    texturePath: "/textures/4k_Callisto.png",
+    roughness: 0.9,
+    orbitR: 5.5,
+    orbitalSpeed: 0.6,
+    rotSpeed: 0.6,
+    speedKms: 8.2,
+    parentId: "jupiter",
+    atmosphere: null,
+  },
+  {
+    id: "titan",
+    name: "Titan",
+    type: "satellite",
+    color: "#d4a050",
+    desc: "La seule lune du système solaire avec une atmosphère dense. Possède des lacs et rivières de méthane liquide.",
+    facts: {
+      distance: "1 221 870 km de Saturne",
+      rayon: "2 575 km",
+      orbite: "15,95 jours",
+    },
+    radius: 0.202,
+    texturePath: "/textures/2k_Titan.png",
+    roughness: 0.6,
+    orbitR: 4.6,
+    orbitalSpeed: 0.65,
+    rotSpeed: 0.65,
+    speedKms: 5.6,
+    parentId: "saturn",
+    atmosphere: { color: "210,160,80", size: 0.7 },
+  },
+  {
+    id: "triton",
+    name: "Triton",
+    type: "satellite",
+    color: "#a0b8c8",
+    desc: "Seule grande lune du système solaire à orbiter en sens rétrograde. Probablement capturée de la ceinture de Kuiper.",
+    facts: {
+      distance: "354 759 km de Neptune",
+      rayon: "1 353 km",
+      orbite: "5,88 jours",
+    },
+    radius: 0.106,
+    texturePath: "/textures/4k_Tritton.png",
+    roughness: 0.5,
+    orbitR: 1.8,
+    orbitalSpeed: -1.8, // rétrograde
+    rotSpeed: -1.8,
+    speedKms: 4.4,
+    parentId: "neptune",
+    atmosphere: null,
   },
   {
     id: "pluto",
@@ -316,6 +490,7 @@ export const OBJECTS = [
     inclination: 17.14,
     axialTilt: 122.5,
     atmosphere: null,
+
     sim: {
       taille: "Exagérée pour la visibilité à l'échelle du système",
     },
@@ -343,6 +518,7 @@ export const OBJECTS = [
     inclination: 44.04,
     axialTilt: 78.3,
     atmosphere: null,
+
     sim: {
       taille: "Exagérée pour la visibilité à l'échelle du système",
     },
@@ -370,6 +546,7 @@ export const OBJECTS = [
     inclination: 28.96,
     axialTilt: 29.0,
     atmosphere: null,
+
     sim: {
       taille: "Exagérée pour la visibilité à l'échelle du système",
     },
@@ -398,6 +575,7 @@ export const OBJECTS = [
     inclination: 28.19,
     axialTilt: 126.4,
     atmosphere: null,
+
     sim: {
       taille: "Exagérée pour la visibilité à l'échelle du système",
     },

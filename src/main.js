@@ -77,7 +77,8 @@ const planetsData = OBJECTS.filter(
   (o) => o.type === "planet" || o.type === "dwarf"
 );
 const sunData = OBJECTS.find((o) => o.id === "sun");
-const moonData = OBJECTS.find((o) => o.id === "moon");
+// Lunes — toutes gérées via extraMoons (parentId)
+const extraMoons = OBJECTS.filter((o) => o.parentId); // inclut la Lune — plus de cas spécial
 const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
 
 // #endregion
@@ -94,6 +95,9 @@ let wasSpeedZero = false;
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
 export const meshById = new Map();
+
+// Pivots des lunes supplémentaires — animés dans la boucle
+const extraMoonPivots = [];
 
 // Tous les CSS2DObject labels — pour le toggle global
 const allLabels = [];
@@ -335,8 +339,7 @@ const orbitLines = []; // toutes les LineLoop d'orbite (planètes + lune)
 //   scène
 //   └── pivot (tourne en Y) ← inclinaison orbitale sur X
 //       └── mesh planète (décalé en X, tourne en Y pour la rotation axiale)
-//           └── moonPivot (tourne en Y, pour la Lune)
-//               └── moonMesh
+//           └── pivot lune (via extraMoons, même pattern)
 const maxOrbitR = Math.max(...planetsData.map((p) => p.orbitR));
 
 const pivots = planetsData.map((p) => {
@@ -407,57 +410,59 @@ const pivots = planetsData.map((p) => {
     cloudMeshes.push({ mesh: cloud, speed: p.clouds.speed });
   }
 
-  // ── Lune ──────────────────────────────────────────────────────────────────
-  // La Lune est enfant d'un moonPivot lui-même attaché au mesh Terre.
-  // Elle hérite donc des transformations de la Terre (position orbitale, rotation axiale).
-  // Résultat : la Lune orbite autour de la Terre, qui orbite autour du Soleil.
-  //
-  // moonOrbit (l'ellipse visuelle) est aussi attachée à la Terre — elle se déplace
-  // avec elle dans la scène tout en restant correctement positionnée autour d'elle.
-  let moonPivot = null;
-  let moonMesh = null;
+  return { pivot, speed: p.speed, rotSpeed: p.rotSpeed, mesh };
+});
 
-  if (p.hasMoon) {
-    moonPivot = new THREE.Object3D();
-    mesh.add(moonPivot);
+// #endregion
 
-    moonMesh = createPlanet({
-      radius: moonData.radius,
-      texturePath: moonData.texturePath,
-      position: [moonData.orbitR, 0, 0],
-    });
-    scene.remove(moonMesh);
-    moonPivot.add(moonMesh);
+// #region ── Lunes supplémentaires ────────────────────────────────────────────
 
-    const moonOrbit = createOrbit(
-      moonData.orbitR,
-      new THREE.Color(0.5, 0.5, 0.6),
-      maxOrbitR
-    );
+// Construites après le loop planètes pour que meshById soit peuplé.
+// Chaque lune est enfant d'un pivot attaché au mesh parent (même pattern que la Lune).
+// L'orbite (orbitLine) est attachée au mesh parent — elle se déplace avec lui.
+// Tous les meshes cliquables — peuplé ici après meshById, complété par extraMoons
+const clickableMeshes = [...meshById.values()];
 
-    // Pour la traîne : on référence moonPivot (angle local) plutôt que le pivot Terre
-    // Les vertices de moonOrbit sont dans l'espace local de la Terre → même logique que les planètes
-    moonOrbit.userData.moonPivotRef = moonPivot;
-    moonOrbit.userData.speed = moonData.orbitalSpeed;
+extraMoons.forEach((moonDef) => {
+  const parentMesh = meshById.get(moonDef.parentId);
+  if (!parentMesh) return;
 
-    moonOrbit.visible = false;
-    mesh.add(moonOrbit);
-    orbitLines.push(moonOrbit);
+  const pivot = new THREE.Object3D();
+  parentMesh.add(pivot);
 
-    moonMesh.userData.name = moonData.name;
-    moonMesh.userData.id = moonData.id;
-    meshById.set(moonData.id, moonMesh);
-    allLabels.push(createLabel(moonMesh, moonData.name, moonData.color, scene));
-  }
+  const orbitColor = new THREE.Color(0.4, 0.4, 0.5);
+  const moonOrbit = createOrbit(moonDef.orbitR, orbitColor, maxOrbitR);
+  moonOrbit.userData.moonPivotRef = pivot;
+  moonOrbit.userData.speed = moonDef.orbitalSpeed;
+  moonOrbit.visible = false;
+  parentMesh.add(moonOrbit);
+  orbitLines.push(moonOrbit);
 
-  return {
+  const mesh = createPlanet({
+    radius: moonDef.radius,
+    texturePath: moonDef.texturePath,
+    position: [moonDef.orbitR, 0, 0],
+    roughness: moonDef.roughness ?? 0.8,
+  });
+  scene.remove(mesh);
+  pivot.add(mesh);
+
+  if (moonDef.atmosphere)
+    createAtmosphere(mesh, moonDef.atmosphere.color, moonDef.atmosphere.size);
+
+  mesh.userData.name = moonDef.name;
+  mesh.userData.id = moonDef.id;
+  meshById.set(moonDef.id, mesh);
+  allLabels.push(createLabel(mesh, moonDef.name, moonDef.color, scene));
+  clickableMeshes.push(mesh);
+
+  // Rotation dans la boucle — on stocke pivot + speed pour l'animer
+  extraMoonPivots.push({
     pivot,
-    speed: p.speed,
-    rotSpeed: p.rotSpeed,
+    speed: moonDef.orbitalSpeed,
+    rotSpeed: moonDef.rotSpeed,
     mesh,
-    moonPivot,
-    moonMesh,
-  };
+  });
 });
 
 // #endregion
@@ -645,15 +650,17 @@ startLoop(() => {
   starsGroup.rotation.y = now * 0.003;
   bloomPass.threshold = 0.82 + Math.sin(now * 0.4) * 0.06;
 
-  pivots.forEach(({ pivot, speed, rotSpeed, mesh, moonPivot, moonMesh }) => {
+  pivots.forEach(({ pivot, speed, rotSpeed, mesh }) => {
     pivot.rotation.y = t * speed;
     mesh.rotation.y = t * rotSpeed;
-
-    if (moonPivot) moonPivot.rotation.y = t * moonData.orbitalSpeed;
-    if (moonMesh) moonMesh.rotation.y = t * moonData.rotSpeed;
   });
 
   sunMesh.rotation.y = t * 0.037;
+
+  extraMoonPivots.forEach(({ pivot, speed, rotSpeed, mesh }) => {
+    pivot.rotation.y = t * speed;
+    mesh.rotation.y = t * rotSpeed;
+  });
 
   updateOrbitTrails();
   updateCamera();
@@ -769,7 +776,7 @@ const pointer = new THREE.Vector2();
 
 // Tous les meshes cliquables (planètes + soleil + lune)
 // On exclut les anneaux, atmosphères, nuages (pas dans meshById)
-const clickableMeshes = [...meshById.values()];
+// clickableMeshes déclaré plus haut
 
 // Détection survol planète — bascule cursor-planet + anime l'overlay #cursor-pulse.
 // Throttlé via RAF pour ne pas spammer le raycaster à chaque pixel.

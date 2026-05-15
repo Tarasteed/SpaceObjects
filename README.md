@@ -180,6 +180,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Sons contextuels qui redémarrent lors d'une navigation en pause |
 | ✅ Résolu | Focus ceinture => pause => retour systeme => clique ceinture => play => plus de son |
 | ✅ Résolu | Les etiquettes passent par-dessus la sidebar |
+| | Tritton orbite en vague, surement à cause de l'axialTilt |
+| | La vitesse de roation de Titan est identique à celle de Neptune |
 | | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
 | | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
@@ -222,7 +224,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Anneaux d'Uranus
 - ✅ Pluton et planètes naines à l'échelle
 - ✅ Vitesses orbitales réelles (km/s) dans data.js — source NASA Planetary Fact Sheets
-- [ ] Lunes supplémentaires — Phobos/Deimos (Mars), Io/Europe/Ganymède (Jupiter)
+- ✅ Lunes supplémentaires — Mars (Phobos, Deimos), Jupiter (Io, Europe, Ganymède, Callisto), Saturne (Titan) et Neptune (Triton)
 - ✅ Liens Wikipedia/NASA dans la tooltip
 - [ ] Ceinture de Kuiper
 - [ ] Récupérer les données depuis NASA Horizons plutôt que data.js
