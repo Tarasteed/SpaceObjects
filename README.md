@@ -273,7 +273,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Swoosh retour système solaire
 - ✅ Volume hum atmosphérique variable selon distance à la planète
 - ✅ Bruitage à la mise en pause/reprise de la simulation
-- [ ] Son de zoom — drone qui monte pendant le lerp ZOOMING, fade out en FOLLOWING : A tester
+- ❌ Son de zoom — drone qui monte pendant le lerp ZOOMING, fade out en FOLLOWING : tests non concluant
 - [ ] Son différencié selon type de planète (gazeuse / rocheuse / naine) ?
 
 ### BONUS
