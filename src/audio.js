@@ -55,10 +55,10 @@ const whoosh = new Audio("/audio/whooshBack.mp3");
 whoosh.volume = 0.2;
 
 const pauseSound = new Audio("/audio/pause.mp3");
-pauseSound.volume = 0.3;
+pauseSound.volume = 0.4;
 
 const unpauseSound = new Audio("/audio/unpause.mp3");
-unpauseSound.volume = 0.3;
+unpauseSound.volume = 0.4;
 
 export function playPing() {
   ping.currentTime = 0;
