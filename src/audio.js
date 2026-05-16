@@ -11,7 +11,10 @@ function fadeToVolume(target, duration) {
   const startTime = performance.now();
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
-    bgMusic.volume = start + (target - start) * progress;
+    bgMusic.volume = Math.max(
+      0,
+      Math.min(1, start + (target - start) * progress)
+    );
     if (progress < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -86,7 +89,7 @@ atmoHum.loop = true;
 atmoHum.volume = 0;
 
 let atmoFadeRaf = null;
-let _atmoFading = false; // true pendant le fade in — bloque setAtmoVolume
+let _atmoFading = false; // true pendant le fade in — bloque setAtmoVolume et setAtmoFadeRatio
 
 function cancelAtmoFade() {
   if (atmoFadeRaf) {
@@ -121,6 +124,15 @@ export function startAtmoHum() {
     atmoHum.play().catch(() => {});
   }
   fadeInAtmo(1500);
+}
+
+// Démarre l'atmo en silence sans fade — utilisé par triggerPause lors de la reprise
+// progressive pour que _fadeRatioTarget dans la boucle Three.js contrôle le volume.
+export function startAtmoHumSilent() {
+  cancelAtmoFade();
+  _atmoFading = false;
+  atmoHum.volume = 0;
+  if (atmoHum.paused) atmoHum.play().catch(() => {});
 }
 
 export function stopAtmoHum() {
@@ -160,9 +172,9 @@ export function setAtmoVolume(v) {
   atmoHum.volume = Math.max(0, Math.min(1, v));
 }
 
-// Appelée par triggerPause() dans main.js à chaque frame de l'animation.
+// Appelée depuis la boucle Three.js pendant _isPausingSlowly.
 // ratio = 0 → silence, ratio = 1 → volume normal (0.25).
-// Ignorée pendant _atmoFading pour ne pas interférer avec le fade in initial.
+// Ne fait rien si _atmoFading est actif (fade in en cours).
 export function setAtmoFadeRatio(ratio) {
   if (_atmoFading || atmoHum.paused) return;
   atmoHum.volume = Math.max(0, Math.min(1, 0.25 * ratio));
@@ -239,14 +251,18 @@ export function resumeAsteroidHum() {
   }
 }
 
-// Appelée par triggerPause() dans main.js à chaque frame de l'animation.
+// Appelée depuis la boucle Three.js pendant _isPausingSlowly.
 // ratio = 0 → silence, ratio = 1 → volume normal (0.04).
-// Utilise setValueAtTime pour un changement immédiat sans scheduling conflict.
+// cancelScheduledValues + setValueAtTime anchor évitent les conflits avec les ramps
+// existantes. La micro-ramp de 30ms lisse les changements frame à frame.
 export function setAsteroidFadeRatio(ratio) {
   if (!asteroidGain) return;
-  asteroidGain.gain.setValueAtTime(
+  const t = audioCtx.currentTime;
+  asteroidGain.gain.cancelScheduledValues(t);
+  asteroidGain.gain.setValueAtTime(asteroidGain.gain.value, t);
+  asteroidGain.gain.linearRampToValueAtTime(
     Math.max(0, 0.04 * ratio),
-    audioCtx.currentTime
+    t + 0.03
   );
 }
 

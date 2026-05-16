@@ -49,6 +49,7 @@ import {
   playPause,
   playUnpause,
   startAtmoHum,
+  startAtmoHumSilent,
   stopAtmoHum,
   pauseAtmoHum,
   resumeAtmoHum,
@@ -262,10 +263,19 @@ function hexToRgb(hex) {
 // #region ── Pause avec ralentissement progressif ─────────────────────────────
 
 // triggerPause — gère la mise en pause et la reprise.
-// À la pause : anime sim.speedFactor vers 0 sur 2s (ease-out) puis pose sim.paused = true.
-// À la reprise : restaure la vitesse mémorisée avant la pause.
-// Le slider et le label sont synchronisés à chaque frame de l'animation.
+// À la pause : anime sim.speedFactor vers 0 sur 1s (ease-out) puis pose sim.paused = true.
+// À la reprise : anime sim.speedFactor vers speedBeforePause sur 1s (ease-in).
+// Le slider, le label et le bouton sont synchronisés à chaque frame de l'animation.
+//
+// _isPausingSlowly — bloque le tracker wasPaused dans la boucle pendant l'animation
+// pour éviter que pauseAtmoHum/resumeAtmoHum interfèrent avec le fade volume.
+//
+// _fadeRatioTarget — ratio 0→1 lu par la boucle Three.js pour appliquer le fade
+// audio en un seul endroit, évitant les conflits entre deux boucles RAF distinctes.
+
 let _pauseRaf = null;
+let _isPausingSlowly = false;
+let _fadeRatioTarget = 1; // ratio courant du fade — appliqué dans la boucle Three.js
 
 function syncPauseBtn() {
   const btn = document.getElementById("btn-pause");
@@ -284,13 +294,13 @@ function syncSlider(speed) {
 
 function triggerPause() {
   if (_pauseRaf) {
-    // Annule un ralentissement en cours — reprend directement
+    // Annule une animation en cours — restaure la vitesse d'avant et reprend directement
     cancelAnimationFrame(_pauseRaf);
     _pauseRaf = null;
+    _isPausingSlowly = false;
+    _fadeRatioTarget = 1;
     sim.speedFactor = sim.speedBeforePause;
     syncSlider(sim.speedFactor);
-    setAtmoFadeRatio(1);
-    setAsteroidFadeRatio(1);
     sim.paused = false;
     syncPauseBtn();
     playUnpause();
@@ -298,13 +308,23 @@ function triggerPause() {
   }
 
   if (sim.paused) {
-    // Reprise — remonte la vitesse progressivement sur 1s
+    // Reprise — remonte la vitesse progressivement sur 1s (ease-in quadratique)
     sim.paused = false;
+    _isPausingSlowly = true;
+    _fadeRatioTarget = 0; // part de silence — monte vers 1 dans stepResume
     syncPauseBtn();
     playUnpause();
 
+    // Redémarre l'atmo en silence pour que _fadeRatioTarget monte le volume progressivement
+    const mode = getCameraMode();
+    if (mode === CameraMode.FOLLOWING) {
+      if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
+        startAtmoHumSilent();
+      }
+    }
+
     const targetSpeed = sim.speedBeforePause;
-    const duration = 1000; // ← 1 seconde
+    const duration = 1000;
     const startTime = performance.now();
 
     function stepResume(now) {
@@ -314,26 +334,26 @@ function triggerPause() {
       sim.speedFactor = targetSpeed * eased;
       syncSlider(sim.speedFactor);
 
-      // Fade volume synchronisé avec la vitesse
-      const ratio = sim.speedFactor / targetSpeed;
-      setAtmoFadeRatio(ratio);
-      setAsteroidFadeRatio(ratio);
+      // _fadeRatioTarget est lu par la boucle Three.js — pas d'appel audio ici
+      _fadeRatioTarget = eased;
 
       if (progress < 1) {
         _pauseRaf = requestAnimationFrame(stepResume);
       } else {
         sim.speedFactor = targetSpeed;
         syncSlider(targetSpeed);
-        setAtmoFadeRatio(1);
-        setAsteroidFadeRatio(1);
+        _fadeRatioTarget = 1;
         _pauseRaf = null;
+        _isPausingSlowly = false;
       }
     }
 
     _pauseRaf = requestAnimationFrame(stepResume);
   } else {
-    // Mise en pause — ralentissement progressif sur 2s
+    // Mise en pause — ralentissement progressif sur 1s (ease-out quadratique)
     sim.speedBeforePause = sim.speedFactor;
+    _isPausingSlowly = true;
+    _fadeRatioTarget = 1; // part du volume normal — descend vers 0 dans step
     playPause();
     syncPauseBtn();
 
@@ -343,26 +363,24 @@ function triggerPause() {
 
     function step(now) {
       const progress = Math.min((now - startTime) / duration, 1);
+      // Ease-out quadratique : démarre vite, finit doucement
       const eased = 1 - (1 - progress) * (1 - progress);
       sim.speedFactor = startSpeed * (1 - eased);
       syncSlider(sim.speedFactor);
 
-      // Fade volume synchronisé avec la vitesse
-      const ratio = startSpeed > 0 ? sim.speedFactor / startSpeed : 0;
-      setAtmoFadeRatio(ratio);
-      setAsteroidFadeRatio(ratio);
+      // _fadeRatioTarget est lu par la boucle Three.js — pas d'appel audio ici
+      _fadeRatioTarget = 1 - eased;
 
       if (progress < 1) {
         _pauseRaf = requestAnimationFrame(step);
       } else {
         sim.speedFactor = 0;
         sim.paused = true;
+        _isPausingSlowly = false;
         _pauseRaf = null;
+        _fadeRatioTarget = 1; // remet à 1 pour la prochaine reprise
         syncSlider(0);
         syncPauseBtn();
-        // Remet le volume à 1 pour la prochaine reprise
-        setAtmoFadeRatio(1);
-        setAsteroidFadeRatio(1);
       }
     }
 
@@ -607,6 +625,7 @@ extraMoons.forEach((moonDef) => {
   allLabels.push(createLabel(mesh, moonDef.name, moonDef.color, scene));
   clickableMeshes.push(mesh);
 
+  // Rotation dans la boucle — on stocke pivot + speed pour l'animer
   extraMoonPivots.push({
     pivot,
     speed: moonDef.orbitalSpeed,
@@ -647,9 +666,11 @@ function updateOrbitTrails() {
     const maxR = line.userData.maxOrbitR;
     const colorAttr = line.geometry.getAttribute("color");
 
+    // moonPivotRef pour la lune (espace local Terre), pivot pour les planètes (espace monde)
     const pivotRef = line.userData.moonPivotRef ?? line.userData.pivot;
     if (!pivotRef) return;
 
+    // Conversion : rotation Y Three.js → angle dans le repère des vertices (antihoraire)
     let planetAngle = -pivotRef.rotation.y;
     planetAngle = ((planetAngle % TWO_PI) + TWO_PI) % TWO_PI;
 
@@ -660,14 +681,18 @@ function updateOrbitTrails() {
       Math.PI
     );
 
+    // Opacité de base dégradée selon la distance : les orbites lointaines sont plus discrètes
     const baseOpacity = 0.45 - (orbitR / maxR) * 0.25;
 
     for (let i = 0; i <= segments; i++) {
       const vertAngle = (i / segments) * TWO_PI;
 
+      // delta = distance angulaire entre ce vertex et la planète,
+      // normalisé entre 0 et 2π : delta=0 → planète, delta=trailLength → fin de traîne
       let delta = vertAngle - planetAngle;
       delta = ((delta % TWO_PI) + TWO_PI) % TWO_PI;
 
+      // Augmente l'opacité du fantôme selon la distance (orbites lointaines plus visibles)
       const ghostBoost = 0.08 + (orbitR / maxR) * 0.2;
       const ghostAlpha = baseOpacity * ghostBoost;
 
@@ -675,6 +700,7 @@ function updateOrbitTrails() {
       if (delta <= trailLength) {
         const frac = 1 - delta / trailLength;
         const trailAlpha = frac * frac * baseOpacity * 2.2;
+        // Crossfade sur les derniers 20% de la traîne pour éviter le "trou" d'opacité
         const blend = Math.min(1, (trailLength - delta) / (trailLength * 0.2));
         alpha = trailAlpha * blend + ghostAlpha * (1 - blend);
       } else {
@@ -793,8 +819,9 @@ startLoop(() => {
 
   // ── Gestion pause/reprise audio ──────────────────────────────────────────
   // Détecte les transitions sim.paused ↔ running à chaque frame via wasPaused.
+  // Bloqué pendant _isPausingSlowly — triggerPause gère le volume via _fadeRatioTarget.
   // On utilise pause/resume (pas stop/start) pour éviter de recréer les sources audio.
-  if (sim.paused !== wasPaused) {
+  if (sim.paused !== wasPaused && !_isPausingSlowly) {
     wasPaused = sim.paused;
     const mode = getCameraMode();
 
@@ -810,6 +837,15 @@ startLoop(() => {
         currentPlanetId === "kuiper-belt";
       if (isBelt) resumeAsteroidHum();
     }
+  }
+
+  // ── Fade audio pendant ralentissement/accélération ───────────────────────
+  // _fadeRatioTarget est posé par triggerPause à chaque frame RAF.
+  // On applique ici depuis la boucle Three.js — une seule boucle touche au volume,
+  // évitant les conflits entre deux RAF indépendants.
+  if (_isPausingSlowly) {
+    setAtmoFadeRatio(_fadeRatioTarget);
+    setAsteroidFadeRatio(_fadeRatioTarget);
   }
 
   // ── Animations continues (gelées en pause) ───────────────────────────────
@@ -840,6 +876,7 @@ startLoop(() => {
   if (_cursorOnCanvas) {
     raycaster.setFromCamera(pointer, camera);
     const hits = raycaster.intersectObjects(clickableMeshes, false);
+    // Pas de pulse si on follow déjà la planète survolée
     const onPlanet =
       hits.length > 0 && hits[0].object.userData.id !== currentPlanetId;
     document.body.classList.toggle("cursor-planet", onPlanet);
@@ -855,7 +892,12 @@ startLoop(() => {
 
   // ── Volume hum atmosphérique variable selon distance ─────────────────────
   // Actif uniquement en FOLLOWING sur une planète avec atmosphère, simulation running.
-  if (getCameraMode() === CameraMode.FOLLOWING && !isSimStopped()) {
+  // Ignoré pendant _isPausingSlowly — le fade est géré par _fadeRatioTarget.
+  if (
+    getCameraMode() === CameraMode.FOLLOWING &&
+    !isSimStopped() &&
+    !_isPausingSlowly
+  ) {
     const atmoObj = ATMO_PLANETS.find((o) => o.id === currentPlanetId);
     if (atmoObj) {
       const planetMesh = meshById.get(currentPlanetId);
@@ -878,6 +920,8 @@ startLoop(() => {
 
   // ── Transitions audio + effet zoom ───────────────────────────────────────
   // Déclenché uniquement au changement de mode (pas à chaque frame) via lastMode.
+  // ZOOMING est ignoré pour l'audio — on attend FOLLOWING pour les sons contextuels,
+  // évitant un déclenchement prématuré pendant le lerp de zoom.
   const mode = getCameraMode();
   if (mode !== lastMode) {
     if (mode === CameraMode.ZOOMING) {
@@ -992,13 +1036,14 @@ function toggleHud() {
 
 canvas.addEventListener("dblclick", toggleHud);
 
+// Double-tap mobile — détection via delta de temps entre deux touchend
 let _lastTap = 0;
 canvas.addEventListener(
   "touchend",
   (e) => {
     const now = Date.now();
     if (now - _lastTap < 300) {
-      e.preventDefault();
+      e.preventDefault(); // évite le zoom natif du navigateur sur double-tap
       toggleHud();
     }
     _lastTap = now;
@@ -1015,6 +1060,9 @@ canvas.addEventListener(
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
+// Détection survol planète — bascule cursor-planet + anime l'overlay #cursor-pulse.
+// Relancé à chaque frame dans la boucle pour détecter quand une planète sort
+// de sous le pointeur immobile (le mousemove ne se déclenche pas dans ce cas).
 const _cursorPulse = document.getElementById("cursor-pulse");
 let _cursorRafPending = false;
 let _cursorOnCanvas = false;
@@ -1022,11 +1070,13 @@ let _cursorOnCanvas = false;
 document.getElementById("canvas").addEventListener("mousemove", (e) => {
   _cursorOnCanvas = true;
 
+  // Déplace l'overlay pulse à chaque mouvement (pas throttlé — doit être fluide)
   if (_cursorPulse) {
     _cursorPulse.style.left = e.clientX + "px";
     _cursorPulse.style.top = e.clientY + "px";
   }
 
+  // Met à jour pointer pour le raycasting statique de la boucle
   const rect = e.target.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -1054,6 +1104,7 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   const obj = OBJECTS.find((o) => o.id === id);
   if (!obj) return;
 
+  // Déjà en follow sur cette planète — on ignore le clic
   if (id === currentPlanetId) return;
 
   currentPlanetId = id;
@@ -1086,7 +1137,7 @@ document.addEventListener("keydown", (e) => {
 
   // Espace — pause/reprise avec ralentissement progressif
   if (e.key === " ") {
-    e.preventDefault();
+    e.preventDefault(); // évite le scroll navigateur
     triggerPause();
   }
 
