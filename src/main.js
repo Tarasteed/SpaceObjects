@@ -29,6 +29,7 @@ import {
   zoomTo,
   zoomToSystem,
   zoomToBelt,
+  zoomToKuiper,
   isZooming,
   getCameraMode,
   CameraMode,
@@ -558,12 +559,26 @@ function updateOrbitTrails() {
 const asteroidBeltInstances = createAsteroidBelt({
   innerRadius: 25,
   outerRadius: 28,
-  count: 2000,
+  count: window.innerWidth <= 768 ? 1000 : 2000,
   ySpread: 0.6,
 });
 
 // Object3D réutilisé chaque frame pour mettre à jour les matrices des instances
 const _dummy = new THREE.Object3D();
+
+// #endregion
+
+// #region ── Ceinture de Kuiper ────────────────────────────────────────────────
+
+// Neptune : orbitR=66, Éris : orbitR=96 — Kuiper commence à ~100u
+// Plus épaisse, plus diffuse, objets plus petits que la ceinture principale
+const kuiperBeltInstances = createAsteroidBelt({
+  innerRadius: 100,
+  outerRadius: 145,
+  count: window.innerWidth <= 768 ? 1000 : 4000,
+  ySpread: 3.0,
+  sizeScale: 2,
+});
 
 // #endregion
 
@@ -584,6 +599,26 @@ startLoop(() => {
     });
 
     asteroidBeltInstances.forEach(({ mesh, instanceData }) => {
+      instanceData.forEach((ast, i) => {
+        ast.angle += ast.orbitSpeed * 0.005 * sim.speedFactor;
+        ast.rotX += ast.rotSpeedX * sim.speedFactor;
+        ast.rotY += ast.rotSpeedY * sim.speedFactor;
+        ast.rotZ += ast.rotSpeedZ * sim.speedFactor;
+
+        _dummy.position.set(
+          Math.cos(ast.angle) * ast.radius,
+          ast.inclination,
+          Math.sin(ast.angle) * ast.radius
+        );
+        _dummy.rotation.set(ast.rotX, ast.rotY, ast.rotZ);
+        _dummy.scale.setScalar(ast.size);
+        _dummy.updateMatrix();
+        mesh.setMatrixAt(i, _dummy.matrix);
+      });
+      mesh.instanceMatrix.needsUpdate = true;
+    });
+
+    kuiperBeltInstances.forEach(({ mesh, instanceData }) => {
       instanceData.forEach((ast, i) => {
         ast.angle += ast.orbitSpeed * 0.005 * sim.speedFactor;
         ast.rotX += ast.rotSpeedX * sim.speedFactor;
@@ -744,6 +779,13 @@ buildSidebar(
     if (obj.id === "asteroid-belt") {
       if (!isSimStopped()) startAsteroidHum();
       zoomToBelt();
+      showBackButton();
+      return;
+    }
+
+    if (obj.id === "kuiper-belt") {
+      if (!isSimStopped()) startAsteroidHum(); // même son que la ceinture principale
+      zoomToKuiper();
       showBackButton();
       return;
     }

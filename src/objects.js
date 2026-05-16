@@ -415,6 +415,7 @@ export function createAsteroidBelt({
   outerRadius,
   count = 1800,
   ySpread,
+  sizeScale = 1.0,
 }) {
   // 3 géométries de base déformées pour casser la sphéricité trop régulière
   const baseGeos = [
@@ -492,7 +493,7 @@ export function createAsteroidBelt({
       const inclination = (Math.random() - 0.5) * ySpread;
 
       // Taille logarithmique — beaucoup de petits, peu de grands
-      const size = 0.025 + Math.pow(Math.random(), 2) * 0.04;
+      const size = (0.025 + Math.pow(Math.random(), 2) * 0.04) * sizeScale;
 
       dummy.position.set(
         Math.cos(angle) * rElliptic,

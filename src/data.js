@@ -161,6 +161,25 @@ export const OBJECTS = [
       "https://fr.wikipedia.org/wiki/Ceinture_d%27ast%C3%A9ro%C3%AFdes",
   },
   {
+    id: "kuiper-belt",
+    name: "Ceinture de Kuiper",
+    type: "belt",
+    color: "#7a8a9a",
+    desc: "Vaste région s'étendant au-delà de Neptune, peuplée de corps glacés. Source des comètes à courte période et berceau des planètes naines.",
+    facts: {
+      distance: "4,5–7,5 Md km du Soleil",
+      objets: "~100 000 objets > 100 km",
+      largeur: "~3 Md km",
+    },
+    atmosphere: null,
+
+    sim: {
+      instances: "2 000 corps sur ~100 000 réels",
+      tailles: "Exagérées pour la visibilité",
+    },
+    wikipedia: "https://fr.wikipedia.org/wiki/Ceinture_de_Kuiper",
+  },
+  {
     id: "jupiter",
     name: "Jupiter",
     type: "planet",

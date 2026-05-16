@@ -230,7 +230,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Vitesses orbitales réelles (km/s) dans data.js — source NASA Planetary Fact Sheets
 - ✅ Lunes supplémentaires — Mars (Phobos, Deimos), Jupiter (Io, Europe, Ganymède, Callisto), Saturne (Titan) et Neptune (Triton)
 - ✅ Liens Wikipedia/NASA dans la tooltip
-- [ ] Ceinture de Kuiper
+- ✅ Ceinture de Kuiper
 
 ### Visuel
 - ✅ Inclinaisons orbitales et axiales réalistes
