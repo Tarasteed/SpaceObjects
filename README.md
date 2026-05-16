@@ -219,7 +219,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre) au double clique
 - ✅ Zone indiquant les différents raccourcis clavier ajouté au splashscreen
 - ✅ Ajout du nom de la pnaète suivi dans le titre de l'onglet du navigateur
-- [ ] Compteur de distance au Soleil en UA dans la tooltip (mode FOLLOWING, temps réel)
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile
@@ -249,7 +248,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Favicon SVG
 - ✅ Raycasting — clic sur une planète pour zoomer
 - ✅ Logo indiquant qu'il faut porter un casque audio sur le spashscreen
-- [ ] Effet d'aberration chromatique au début du zoom (se résorbe en ~0.5s en FOLLOWING) : A tester
+- ✅ Effet de vitesse en mode ZOOMING via FOV + blur CSS
 - [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
 - ❌ Ombres portées — rapport perf/rendu défavorable avec PointLight
 - ❌ Halo lumineux autour de la Lune — artefact visuel indésirable

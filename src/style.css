@@ -17,6 +17,11 @@ body {
   display: block;
   width: 100vw;
   height: 100vh;
+  transition: filter 0.4s ease;
+}
+
+body.zooming #canvas {
+  filter: blur(0.2px);
 }
 
 #ui {

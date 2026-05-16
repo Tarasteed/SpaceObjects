@@ -151,6 +151,10 @@ export function updateCamera() {
   if (state.mode === CameraMode.FREE) return;
 
   if (state.mode === CameraMode.ZOOMING) {
+    // Augmente le FOV pendant le zoom — effet d'accélération
+    camera.fov += (70 - camera.fov) * 0.05; // monte vers 75°
+    camera.updateProjectionMatrix();
+
     const worldPos = new THREE.Vector3();
     state.targetMesh.getWorldPosition(worldPos);
 
@@ -195,6 +199,10 @@ export function updateCamera() {
   }
 
   if (state.mode === CameraMode.FOLLOWING) {
+    // Ramène le FOV à la normale
+    camera.fov += (55 - camera.fov) * 0.08; // revient vers 55°
+    camera.updateProjectionMatrix();
+
     const planetPos = new THREE.Vector3();
     state.targetMesh.getWorldPosition(planetPos);
     const offset = new THREE.Vector3().setFromSpherical(state.spherical);

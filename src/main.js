@@ -699,6 +699,12 @@ startLoop(() => {
   // évitant un déclenchement prématuré pendant le lerp de zoom.
   const mode = getCameraMode();
   if (mode !== lastMode) {
+    if (mode === CameraMode.ZOOMING) {
+      document.body.classList.add("zooming");
+    } else {
+      document.body.classList.remove("zooming");
+    }
+
     if (mode === CameraMode.FOLLOWING) {
       if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) {
         if (!isSimStopped()) startAtmoHum();
