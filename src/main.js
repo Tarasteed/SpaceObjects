@@ -127,9 +127,24 @@ function isSimStopped() {
 // Désactivé si la planète est déjà suivie (currentPlanetId) — pas de glow
 // sur une planète qu'on a déjà sélectionnée et qui remplit l'écran.
 let _highlightedMesh = null;
+let _beltMeshes = null;
 let _originalEmissive = null;
 let _originalEmissiveIntensity = 0;
 let _haloSprite = null;
+
+function highlightBelt(obj) {
+  if (obj.id === currentPlanetId) return;
+  clearHighlight();
+
+  const instances =
+    obj.id === "kuiper-belt" ? kuiperBeltInstances : asteroidBeltInstances;
+
+  _beltMeshes = instances.map(({ mesh }) => mesh);
+  _beltMeshes.forEach((mesh) => {
+    mesh.material.emissive = new THREE.Color(obj.color);
+    mesh.material.emissiveIntensity = 0.6;
+  });
+}
 
 function highlightPlanet(obj) {
   // Pas de highlight si on follow déjà cette planète
@@ -182,7 +197,23 @@ function highlightPlanet(obj) {
   mesh.add(_haloSprite);
 }
 
+function highlightObject(obj) {
+  if (obj.type === "belt") {
+    highlightBelt(obj);
+    return;
+  }
+  highlightPlanet(obj); // inchangée
+}
+
 function clearHighlight() {
+  if (_beltMeshes) {
+    _beltMeshes.forEach((mesh) => {
+      mesh.material.emissive = new THREE.Color(0, 0, 0);
+      mesh.material.emissiveIntensity = 0;
+    });
+    _beltMeshes = null;
+  }
+
   if (_haloSprite) {
     _haloSprite.parent?.remove(_haloSprite);
     _haloSprite.material.map?.dispose();
@@ -573,8 +604,8 @@ const _dummy = new THREE.Object3D();
 // Neptune : orbitR=66, Éris : orbitR=96 — Kuiper commence à ~100u
 // Plus épaisse, plus diffuse, objets plus petits que la ceinture principale
 const kuiperBeltInstances = createAsteroidBelt({
-  innerRadius: 100,
-  outerRadius: 145,
+  innerRadius: 70,
+  outerRadius: 85,
   count: window.innerWidth <= 768 ? 1000 : 4000,
   ySpread: 3.0,
   sizeScale: 2,
@@ -797,7 +828,7 @@ buildSidebar(
     zoomTo(mesh);
     showBackButton();
   },
-  (obj) => highlightPlanet(obj),
+  (obj) => highlightObject(obj),
   () => clearHighlight(),
   (id) => id === currentPlanetId
 );

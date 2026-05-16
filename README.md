@@ -215,7 +215,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Vitesse orbitale réelle dans la tooltip (mode suivi, jitter live)
 - ✅ Curseur custom style HUD
 - ✅ Afficher / masquer les étiquettes de planètes/lunes
-- ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée (Aura, pulse ?)
+- ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée via halo (V2 - via bloom ? glow ?)
+- ✅ Au survol des ceintures dans la sidebar, mettre en évidence via augmentation de l'émissivité
 - ✅ Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre) au double clique
 - ✅ Zone indiquant les différents raccourcis clavier ajouté au splashscreen
 - ✅ Ajout du nom de la pnaète suivi dans le titre de l'onglet du navigateur
