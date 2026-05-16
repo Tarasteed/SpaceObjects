@@ -324,7 +324,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - **Son différencié par type de planète** — hum grave pour les gazeuses (Jupiter, Saturne, Uranus, Neptune), hum minéral/sec pour les rocheuses. Deux fichiers audio suffisent.
 
 ### Données & réalisme
-- **Partage URL** — `?planet=earth` dans l'URL pour arriver directement sur une planète. Utile pour partager une vue spécifique.
+- **Partage URL** — `?planet=earth` dans l'URL pour arriver directement sur une planète. Utile pour partager une vue spécifique. (Voir pour arriver avec une position camera aussi)
 - **Mode réaliste** — distances, tailles et vitesses à l'échelle réelle avec sprites de substitution pour les planètes trop petites à l'écran (à la NASA Eyes)
 
 ### Interface
