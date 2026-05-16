@@ -139,6 +139,22 @@ canvas.addEventListener(
       r * 1.5,
       Math.min(r * 20, state.spherical.radius)
     );
+
+    // Dézoom max — délock de la planète sans retour vue système
+    if (state.spherical.radius >= r * 20 && e.deltaY > 0) {
+      controls.connect(document.getElementById("canvas"));
+      controls.enabled = true;
+      setSkipControlsUpdate(false);
+      // Repositionne le target d'OrbitControls sur la planète pour une transition douce
+      const planetPos = new THREE.Vector3();
+      // targetMesh encore valide ici — on le lit avant de le nullifier
+      const mesh = state.targetMesh;
+      mesh.getWorldPosition(planetPos);
+      controls.target.copy(planetPos);
+      controls.update();
+      state.mode = CameraMode.FREE;
+      state.targetMesh = null;
+    }
   },
   { passive: true }
 );
