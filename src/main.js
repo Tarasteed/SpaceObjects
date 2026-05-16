@@ -23,6 +23,8 @@ import {
   buildDisplayPanel,
   buildAudioControls,
   updateTooltipSpeed,
+  speedToSlider,
+  formatSpeed,
 } from "./ui.js";
 import {
   updateCamera,
@@ -51,10 +53,12 @@ import {
   pauseAtmoHum,
   resumeAtmoHum,
   setAtmoVolume,
+  setAtmoFadeRatio,
   startAsteroidHum,
   stopAsteroidHum,
   pauseAsteroidHum,
   resumeAsteroidHum,
+  setAsteroidFadeRatio,
 } from "./audio.js";
 
 // #region ── Splash screen ────────────────────────────────────────────────────
@@ -202,7 +206,7 @@ function highlightObject(obj) {
     highlightBelt(obj);
     return;
   }
-  highlightPlanet(obj); // inchangée
+  highlightPlanet(obj);
 }
 
 function clearHighlight() {
@@ -234,25 +238,136 @@ function clearHighlight() {
   }
 }
 
-// Convertit un hex (#rrggbb) en "r, g, b" pour rgba()
 // Met à jour la position world de chaque label chaque frame.
 // Le label est dans la scène (pas dans le mesh) pour ne pas tourner avec lui.
-// On récupère la position world du mesh et on décale en Y de radius + marge.
 const _labelWorldPos = new THREE.Vector3();
 function updateLabels() {
-  allLabels.forEach(({ label, mesh, radius }) => {
+  allLabels.forEach(({ label, mesh }) => {
     if (!label.visible) return;
     mesh.getWorldPosition(_labelWorldPos);
     label.position.copy(_labelWorldPos);
-    // position.y += 0 — label centré sur la planète, le CSS gère le centrage visuel
   });
 }
 
+// Convertit un hex (#rrggbb) en "r, g, b" pour rgba()
 function hexToRgb(hex) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `${r}, ${g}, ${b}`;
+}
+
+// #endregion
+
+// #region ── Pause avec ralentissement progressif ─────────────────────────────
+
+// triggerPause — gère la mise en pause et la reprise.
+// À la pause : anime sim.speedFactor vers 0 sur 2s (ease-out) puis pose sim.paused = true.
+// À la reprise : restaure la vitesse mémorisée avant la pause.
+// Le slider et le label sont synchronisés à chaque frame de l'animation.
+let _pauseRaf = null;
+
+function syncPauseBtn() {
+  const btn = document.getElementById("btn-pause");
+  if (btn) {
+    btn.textContent = sim.paused ? "▶" : "⏸";
+    btn.classList.toggle("active", sim.paused);
+  }
+}
+
+function syncSlider(speed) {
+  const slider = document.getElementById("speed-slider");
+  const label = document.getElementById("speed-label");
+  if (slider) slider.value = speedToSlider(speed);
+  if (label) label.textContent = formatSpeed(speed);
+}
+
+function triggerPause() {
+  if (_pauseRaf) {
+    // Annule un ralentissement en cours — reprend directement
+    cancelAnimationFrame(_pauseRaf);
+    _pauseRaf = null;
+    sim.speedFactor = sim.speedBeforePause;
+    syncSlider(sim.speedFactor);
+    setAtmoFadeRatio(1);
+    setAsteroidFadeRatio(1);
+    sim.paused = false;
+    syncPauseBtn();
+    playUnpause();
+    return;
+  }
+
+  if (sim.paused) {
+    // Reprise — remonte la vitesse progressivement sur 1s
+    sim.paused = false;
+    syncPauseBtn();
+    playUnpause();
+
+    const targetSpeed = sim.speedBeforePause;
+    const duration = 1000; // ← 1 seconde
+    const startTime = performance.now();
+
+    function stepResume(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      // Ease-in quadratique : démarre doucement, finit vite
+      const eased = progress * progress;
+      sim.speedFactor = targetSpeed * eased;
+      syncSlider(sim.speedFactor);
+
+      // Fade volume synchronisé avec la vitesse
+      const ratio = sim.speedFactor / targetSpeed;
+      setAtmoFadeRatio(ratio);
+      setAsteroidFadeRatio(ratio);
+
+      if (progress < 1) {
+        _pauseRaf = requestAnimationFrame(stepResume);
+      } else {
+        sim.speedFactor = targetSpeed;
+        syncSlider(targetSpeed);
+        setAtmoFadeRatio(1);
+        setAsteroidFadeRatio(1);
+        _pauseRaf = null;
+      }
+    }
+
+    _pauseRaf = requestAnimationFrame(stepResume);
+  } else {
+    // Mise en pause — ralentissement progressif sur 2s
+    sim.speedBeforePause = sim.speedFactor;
+    playPause();
+    syncPauseBtn();
+
+    const duration = 1000;
+    const startSpeed = sim.speedFactor;
+    const startTime = performance.now();
+
+    function step(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - (1 - progress) * (1 - progress);
+      sim.speedFactor = startSpeed * (1 - eased);
+      syncSlider(sim.speedFactor);
+
+      // Fade volume synchronisé avec la vitesse
+      const ratio = startSpeed > 0 ? sim.speedFactor / startSpeed : 0;
+      setAtmoFadeRatio(ratio);
+      setAsteroidFadeRatio(ratio);
+
+      if (progress < 1) {
+        _pauseRaf = requestAnimationFrame(step);
+      } else {
+        sim.speedFactor = 0;
+        sim.paused = true;
+        _pauseRaf = null;
+        syncSlider(0);
+        syncPauseBtn();
+        // Remet le volume à 1 pour la prochaine reprise
+        setAtmoFadeRatio(1);
+        setAsteroidFadeRatio(1);
+      }
+    }
+
+    _pauseRaf = requestAnimationFrame(step);
+  }
 }
 
 // #endregion
@@ -457,7 +572,6 @@ const pivots = planetsData.map((p) => {
 // Construites après le loop planètes pour que meshById soit peuplé.
 // Chaque lune est enfant d'un pivot attaché au mesh parent (même pattern que la Lune).
 // L'orbite (orbitLine) est attachée au mesh parent — elle se déplace avec lui.
-// Tous les meshes cliquables — peuplé ici après meshById, complété par extraMoons
 const clickableMeshes = [...meshById.values()];
 
 extraMoons.forEach((moonDef) => {
@@ -493,7 +607,6 @@ extraMoons.forEach((moonDef) => {
   allLabels.push(createLabel(mesh, moonDef.name, moonDef.color, scene));
   clickableMeshes.push(mesh);
 
-  // Rotation dans la boucle — on stocke pivot + speed pour l'animer
   extraMoonPivots.push({
     pivot,
     speed: moonDef.orbitalSpeed,
@@ -534,11 +647,9 @@ function updateOrbitTrails() {
     const maxR = line.userData.maxOrbitR;
     const colorAttr = line.geometry.getAttribute("color");
 
-    // moonPivotRef pour la lune (espace local Terre), pivot pour les planètes (espace monde)
     const pivotRef = line.userData.moonPivotRef ?? line.userData.pivot;
     if (!pivotRef) return;
 
-    // Conversion : rotation Y Three.js → angle dans le repère des vertices (antihoraire)
     let planetAngle = -pivotRef.rotation.y;
     planetAngle = ((planetAngle % TWO_PI) + TWO_PI) % TWO_PI;
 
@@ -549,18 +660,14 @@ function updateOrbitTrails() {
       Math.PI
     );
 
-    // Opacité de base dégradée selon la distance : les orbites lointaines sont plus discrètes
     const baseOpacity = 0.45 - (orbitR / maxR) * 0.25;
 
     for (let i = 0; i <= segments; i++) {
       const vertAngle = (i / segments) * TWO_PI;
 
-      // delta = distance angulaire entre ce vertex et la planète,
-      // normalisé entre 0 et 2π : delta=0 → planète, delta=trailLength → fin de traîne
       let delta = vertAngle - planetAngle;
       delta = ((delta % TWO_PI) + TWO_PI) % TWO_PI;
 
-      // Augmente l'opacité du fantôme selon la distance (orbites lointaines plus visibles)
       const ghostBoost = 0.08 + (orbitR / maxR) * 0.2;
       const ghostAlpha = baseOpacity * ghostBoost;
 
@@ -568,7 +675,6 @@ function updateOrbitTrails() {
       if (delta <= trailLength) {
         const frac = 1 - delta / trailLength;
         const trailAlpha = frac * frac * baseOpacity * 2.2;
-        // Crossfade sur les derniers 20% de la traîne pour éviter le "trou" d'opacité
         const blend = Math.min(1, (trailLength - delta) / (trailLength * 0.2));
         alpha = trailAlpha * blend + ghostAlpha * (1 - blend);
       } else {
@@ -584,9 +690,9 @@ function updateOrbitTrails() {
 
 // #endregion
 
-// #region ── Ceinture d'astéroïdes ────────────────────────────────────────────
+// #region ── Ceintures ────────────────────────────────────────────────────────
 
-// Mars : orbitR=22 — Jupiter : orbitR=32 → la ceinture est bien entre les deux
+// Ceinture principale — entre Mars (orbitR=22) et Jupiter (orbitR=32)
 const asteroidBeltInstances = createAsteroidBelt({
   innerRadius: 25,
   outerRadius: 28,
@@ -594,15 +700,7 @@ const asteroidBeltInstances = createAsteroidBelt({
   ySpread: 0.6,
 });
 
-// Object3D réutilisé chaque frame pour mettre à jour les matrices des instances
-const _dummy = new THREE.Object3D();
-
-// #endregion
-
-// #region ── Ceinture de Kuiper ────────────────────────────────────────────────
-
-// Neptune : orbitR=66, Éris : orbitR=96 — Kuiper commence à ~100u
-// Plus épaisse, plus diffuse, objets plus petits que la ceinture principale
+// Ceinture de Kuiper — au-delà de Neptune (orbitR=66), englobe les planètes naines
 const kuiperBeltInstances = createAsteroidBelt({
   innerRadius: 70,
   outerRadius: 85,
@@ -610,6 +708,9 @@ const kuiperBeltInstances = createAsteroidBelt({
   ySpread: 3.0,
   sizeScale: 2,
 });
+
+// Object3D réutilisé chaque frame pour mettre à jour les matrices des instances
+const _dummy = new THREE.Object3D();
 
 // #endregion
 
@@ -633,15 +734,15 @@ const beltLabelData = [
 ];
 
 const beltLabels = beltLabelData.map(({ name, color, r }) => {
-  // Object3D invisible servant d'ancre pour le CSS2DObject
   const anchor = new THREE.Object3D();
   anchor.position.set(r, 0.5, 0);
   scene.add(anchor);
   const labelData = createLabel(anchor, name, color, scene);
-  allLabels.push(labelData); // intégré dans updateLabels() automatiquement
+  allLabels.push(labelData);
   return labelData;
 });
 
+// Set pour filtrage rapide dans buildDisplayPanel — exclut les ceintures du toggle planètes
 const beltLabelSet = new Set(beltLabels.map(({ label }) => label));
 
 // #endregion
@@ -662,7 +763,7 @@ startLoop(() => {
       mesh.rotation.y += 0.0001 * speed * sim.speedFactor;
     });
 
-    // Boucle sur les deux instances de ceinture pour éviter de dupliquer le code par ceinture
+    // Boucle sur les deux ceintures — même logique, évite la duplication
     [...asteroidBeltInstances, ...kuiperBeltInstances].forEach(
       ({ mesh, instanceData }) => {
         instanceData.forEach((ast, i) => {
@@ -693,8 +794,6 @@ startLoop(() => {
   // ── Gestion pause/reprise audio ──────────────────────────────────────────
   // Détecte les transitions sim.paused ↔ running à chaque frame via wasPaused.
   // On utilise pause/resume (pas stop/start) pour éviter de recréer les sources audio.
-  // La ceinture utilise audioCtx.suspend()/resume() car BufferSource ne supporte
-  // pas la pause native ; l'atmo utilise HTMLAudioElement.pause()/play().
   if (sim.paused !== wasPaused) {
     wasPaused = sim.paused;
     const mode = getCameraMode();
@@ -706,7 +805,6 @@ startLoop(() => {
       if (mode === CameraMode.FOLLOWING) {
         if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) resumeAtmoHum();
       }
-
       const isBelt =
         currentPlanetId === "asteroid-belt" ||
         currentPlanetId === "kuiper-belt";
@@ -742,7 +840,6 @@ startLoop(() => {
   if (_cursorOnCanvas) {
     raycaster.setFromCamera(pointer, camera);
     const hits = raycaster.intersectObjects(clickableMeshes, false);
-    // Pas de pulse si on follow déjà la planète survolée
     const onPlanet =
       hits.length > 0 && hits[0].object.userData.id !== currentPlanetId;
     document.body.classList.toggle("cursor-planet", onPlanet);
@@ -770,19 +867,17 @@ startLoop(() => {
 
         const minDist = radius * 1.5;
         const maxDist = radius * 1.5 + radius * 12;
-        const t = Math.max(
+        const tVol = Math.max(
           0,
           Math.min(1, 1 - (dist - minDist) / (maxDist - minDist))
         );
-        setAtmoVolume(t * 0.25);
+        setAtmoVolume(tVol * 0.25);
       }
     }
   }
 
-  // ── Transitions audio selon le mode caméra ───────────────────────────────
+  // ── Transitions audio + effet zoom ───────────────────────────────────────
   // Déclenché uniquement au changement de mode (pas à chaque frame) via lastMode.
-  // ZOOMING est ignoré — on attend FOLLOWING pour démarrer les sons contextuels,
-  // évitant un déclenchement prématuré pendant le lerp de zoom.
   const mode = getCameraMode();
   if (mode !== lastMode) {
     if (mode === CameraMode.ZOOMING) {
@@ -860,10 +955,10 @@ buildBackButton(() => {
   document.title = "3D Space Objects";
 });
 
-// onPause — joue le son Pause.mp3 à chaque toggle bouton
-buildSimControls((isPaused) => (isPaused ? playPause() : playUnpause()));
+// Pause — délègue à triggerPause pour le ralentissement progressif
+buildSimControls(() => triggerPause());
 
-// Panel Affichage — orbites, labels planètes, labels lunes
+// Panel Affichage — orbites, labels planètes, labels lunes, labels ceintures
 buildDisplayPanel(
   (visible) => {
     orbitLines.forEach((line) => (line.visible = visible));
@@ -887,7 +982,7 @@ buildDisplayPanel(
   }
 );
 
-// #region Masquer tous les HUD au double clique
+// #region ── Masquer tous les HUD au double clic ──────────────────────────────
 
 const canvas = document.getElementById("canvas");
 
@@ -895,10 +990,8 @@ function toggleHud() {
   document.body.classList.toggle("hud-hidden");
 }
 
-// Double-clic desktop
 canvas.addEventListener("dblclick", toggleHud);
 
-// Double-tap mobile
 let _lastTap = 0;
 canvas.addEventListener(
   "touchend",
@@ -922,26 +1015,18 @@ canvas.addEventListener(
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-// Tous les meshes cliquables (planètes + soleil + lune)
-// On exclut les anneaux, atmosphères, nuages (pas dans meshById)
-// clickableMeshes déclaré plus haut
-
-// Détection survol planète — bascule cursor-planet + anime l'overlay #cursor-pulse.
-// Throttlé via RAF pour ne pas spammer le raycaster à chaque pixel.
 const _cursorPulse = document.getElementById("cursor-pulse");
 let _cursorRafPending = false;
-let _cursorOnCanvas = false; // true quand la souris est sur le canvas
+let _cursorOnCanvas = false;
 
 document.getElementById("canvas").addEventListener("mousemove", (e) => {
   _cursorOnCanvas = true;
 
-  // Déplace l'overlay pulse à chaque mouvement (pas throttlé — doit être fluide)
   if (_cursorPulse) {
     _cursorPulse.style.left = e.clientX + "px";
     _cursorPulse.style.top = e.clientY + "px";
   }
 
-  // Met à jour pointer pour le raycasting statique de la boucle
   const rect = e.target.getBoundingClientRect();
   pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -969,7 +1054,6 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   const obj = OBJECTS.find((o) => o.id === id);
   if (!obj) return;
 
-  // Déjà en follow sur cette planète — on ignore le clic
   if (id === currentPlanetId) return;
 
   currentPlanetId = id;
@@ -1000,27 +1084,23 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("btn-back")?.classList.remove("visible");
   }
 
-  // Espace — pause/reprise simulation
+  // Espace — pause/reprise avec ralentissement progressif
   if (e.key === " ") {
-    e.preventDefault(); // évite le scroll navigateur
-    sim.paused = !sim.paused;
-    sim.paused ? playPause() : playUnpause();
-    const btn = document.getElementById("btn-pause");
-    if (btn) {
-      btn.textContent = sim.paused ? "▶" : "⏸";
-      btn.classList.toggle("active", sim.paused);
-    }
+    e.preventDefault();
+    triggerPause();
   }
 
-  // P — log position caméra dans la console
+  // P — log position caméra dans la console (debug)
   if (e.key === "p" || e.key === "P") {
     const p = camera.position;
-    const t = controls.target;
+    const tgt = controls.target;
     console.log(
       `position: set(${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)})`
     );
     console.log(
-      `lookAt:   set(${t.x.toFixed(1)}, ${t.y.toFixed(1)}, ${t.z.toFixed(1)})`
+      `lookAt:   set(${tgt.x.toFixed(1)}, ${tgt.y.toFixed(1)}, ${tgt.z.toFixed(
+        1
+      )})`
     );
   }
 });

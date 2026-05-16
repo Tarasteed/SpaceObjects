@@ -160,6 +160,14 @@ export function setAtmoVolume(v) {
   atmoHum.volume = Math.max(0, Math.min(1, v));
 }
 
+// Appelée par triggerPause() dans main.js à chaque frame de l'animation.
+// ratio = 0 → silence, ratio = 1 → volume normal (0.25).
+// Ignorée pendant _atmoFading pour ne pas interférer avec le fade in initial.
+export function setAtmoFadeRatio(ratio) {
+  if (_atmoFading || atmoHum.paused) return;
+  atmoHum.volume = Math.max(0, Math.min(1, 0.25 * ratio));
+}
+
 // #endregion
 
 // #region ── Hum ceinture d'astéroïdes ────────────────────────────────────────
@@ -229,6 +237,17 @@ export function resumeAsteroidHum() {
     // Pas de source active — on démarre depuis zéro
     startAsteroidHum();
   }
+}
+
+// Appelée par triggerPause() dans main.js à chaque frame de l'animation.
+// ratio = 0 → silence, ratio = 1 → volume normal (0.04).
+// Utilise setValueAtTime pour un changement immédiat sans scheduling conflict.
+export function setAsteroidFadeRatio(ratio) {
+  if (!asteroidGain) return;
+  asteroidGain.gain.setValueAtTime(
+    Math.max(0, 0.04 * ratio),
+    audioCtx.currentTime
+  );
 }
 
 // #endregion

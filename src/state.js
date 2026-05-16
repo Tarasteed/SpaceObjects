@@ -4,6 +4,7 @@
 export const sim = {
   paused: false,
   speedFactor: 0.5,
+  speedBeforePause: 0.5, // ← mémorise la vitesse avant la pause
 };
 
 // #endregion

@@ -100,6 +100,7 @@ export function clearActiveItem() {
 // Construit la sidebar depuis OBJECTS (groupés par type).
 // Les couleurs de groupe et de planète sont passées via CSS custom properties
 // pour éviter les styles inline.
+// Groupes repliables via clic sur sb-group-label — chevron indique l'état.
 export function buildSidebar(onSelect, onHover, onHoverEnd, isActive) {
   const sidebar = document.getElementById("sidebar");
 
@@ -175,6 +176,8 @@ export function buildSidebar(onSelect, onHover, onHoverEnd, isActive) {
     });
   });
 
+  // Toggle repliage des groupes — stopPropagation pour ne pas interférer
+  // avec le clic sur les items à l'intérieur
   sidebar.querySelectorAll(".sb-group-label").forEach((label) => {
     label.addEventListener("click", () => {
       const group = label.closest(".sb-group");
@@ -332,12 +335,13 @@ export function showBackButton() {
   document.getElementById("btn-back").classList.add("visible");
 }
 
-//#endregion
+// #endregion
 
 // #region ── Panel Affichage (orbites + labels) ───────────────────────────────
 
 // Remplace btn-orbits et btn-labels par un seul bouton avec dropdown.
-// onOrbit(bool), onLabelPlanets(bool), onLabelMoons(bool) — callbacks des 3 toggles.
+// 4 toggles : Orbites / Labels planètes / Labels lunes / Labels ceintures
+// stopPropagation sur les rows — panel reste ouvert au toggle, ferme au clic dehors.
 export function buildDisplayPanel(
   onOrbit,
   onLabelPlanets,
@@ -427,8 +431,34 @@ export function buildDisplayPanel(
 
 // #region ── HUD Simulation ───────────────────────────────────────────────────
 
-// onPause(isPaused) — callback appelé au toggle pause (bouton uniquement).
-// La pause n'est plus déclenchable via le slider — vitesse min = 0.01 (slider=1).
+// Mapping logarithmique slider ↔ vitesse — exporté pour que main.js puisse
+// synchroniser le slider pendant le ralentissement progressif de triggerPause().
+// Plage : slider 1..100 → speed 0.01..20
+// min=1 garanti — le slider ne peut plus atteindre 0 → pas de vitesse zéro via slider.
+// Midpoint (~35) ≈ 0.5 (vitesse par défaut au démarrage).
+export function sliderToSpeed(s) {
+  return parseFloat((0.01 * Math.pow(20 / 0.01, s / 100)).toFixed(3));
+}
+
+// Inverse de sliderToSpeed — utilisé par syncSlider() dans main.js
+// pour repositionner le curseur quand triggerPause() restaure la vitesse.
+export function speedToSlider(v) {
+  if (v <= 0) return 0;
+  return Math.round((Math.log(v / 0.01) / Math.log(20 / 0.01)) * 100);
+}
+
+// Formate la vitesse pour l'affichage dans le label du slider.
+// Adapte les décimales selon la plage : ×0.003 / ×0.50 / ×1.5
+export function formatSpeed(v) {
+  if (v <= 0) return "×0";
+  if (v < 0.1) return `×${v.toFixed(3)}`;
+  if (v < 1) return `×${v.toFixed(2)}`;
+  return `×${v.toFixed(1)}`;
+}
+
+// onPause() — callback appelé au clic sur le bouton pause.
+// Délègue entièrement à triggerPause() dans main.js — ne gère plus sim.paused ici.
+// Le slider ne touche jamais sim.paused — la pause est exclusivement via bouton ou Espace.
 export function buildSimControls(onPause) {
   const hud = document.createElement("div");
   hud.id = "sim-hud";
@@ -445,31 +475,11 @@ export function buildSimControls(onPause) {
   const speedSlider = document.getElementById("speed-slider");
   const speedLabel = document.getElementById("speed-label");
 
-  // Mapping logarithmique : slider 1..100 → speed 0.01..20
-  // min=1 garanti — le slider ne peut plus atteindre 0 → pas de vitesse zéro via slider
-  // Midpoint (~35) ≈ 0.5 (vitesse par défaut)
-  function sliderToSpeed(s) {
-    return parseFloat((0.01 * Math.pow(20 / 0.01, s / 100)).toFixed(3));
-  }
-
-  function formatSpeed(v) {
-    if (v < 0.1) return `×${v.toFixed(3)}`;
-    if (v < 1) return `×${v.toFixed(2)}`;
-    return `×${v.toFixed(1)}`;
-  }
-
-  function updatePauseBtn() {
-    btnPause.textContent = sim.paused ? "▶" : "⏸";
-    btnPause.classList.toggle("active", sim.paused);
-  }
-
-  // Mémorise la dernière position slider pour la restaurer après une pause
-  let lastSlider = 35; // correspond à ~0.5
+  // Mémorise la dernière position slider non-nulle pour la restaurer après une pause
+  let lastSlider = 35; // correspond à ~×0.5 (valeur par défaut)
 
   btnPause.addEventListener("click", () => {
-    sim.paused = !sim.paused;
-    updatePauseBtn();
-    if (onPause) onPause(sim.paused);
+    if (onPause) onPause();
   });
 
   speedSlider.addEventListener("input", (e) => {
@@ -477,7 +487,7 @@ export function buildSimControls(onPause) {
     lastSlider = s;
     sim.speedFactor = sliderToSpeed(s);
     speedLabel.textContent = formatSpeed(sim.speedFactor);
-    // Le slider ne touche jamais sim.paused
+    // Le slider ne touche jamais sim.paused — la pause est exclusivement via bouton ou Espace
   });
 }
 

@@ -204,7 +204,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 
 ### Interface
 - ✅ Contrôle pause / vitesse de simulation (×0 à ×20)
-- ✅ Vitesse ×0 équivalente à la pause (sons + comportement cohérent)
+- ✅ Effet de ralentis avant la mise en pause/reprise
 - ✅ Afficher / masquer les orbites
 - ✅ Afficher / masquer les étiquettes de planète, lunes et ceintures
 - ✅ Contrôle musique (volume + pause/play)
