@@ -325,6 +325,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 
 ### Données & réalisme
 - **Partage URL** — `?planet=earth` dans l'URL pour arriver directement sur une planète. Utile pour partager une vue spécifique.
+- **Mode réaliste** — distances, tailles et vitesses à l'échelle réelle avec sprites de substitution pour les planètes trop petites à l'écran (à la NASA Eyes)
 
 ### Interface
 - **Minimap du système** — un petit indicateur en coin montrant la position relative de la caméra dans le système solaire. Aide à se repérer lors des zooms lointains.
