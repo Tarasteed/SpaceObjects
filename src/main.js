@@ -109,6 +109,8 @@ const extraMoonPivots = [];
 // Tous les CSS2DObject labels — pour le toggle global
 const allLabels = [];
 
+let _starsRotation = 0;
+
 // #endregion
 
 // #region ── Utilitaires ──────────────────────────────────────────────────────
@@ -851,7 +853,9 @@ startLoop(() => {
   // ── Animations continues (gelées en pause) ───────────────────────────────
   const now = Date.now() * 0.001;
   if (!isSimStopped()) {
-    starsGroup.rotation.y = now * 0.003;
+    // Rotation accumulée via delta × speedFactor — ralentit avec la simulation
+    _starsRotation += 0.00003 * sim.speedFactor;
+    starsGroup.rotation.y = _starsRotation;
     bloomPass.threshold = 0.82 + Math.sin(now * 0.4) * 0.06;
   }
 
