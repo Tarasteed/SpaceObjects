@@ -184,7 +184,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 | ✅ Résolu | Tritton orbite en vague, surement à cause de l'axialTilt |
 | ✅ Résolu | La vitesse de roation de Titan est identique à celle de Neptune |
 | ✅ Résolu | La caméra peut traverser la planète au lieu de la suivre par l'extérieur |
-| | Rétablir les lumières de l'activité humaine (Elles disparaissent en cliquant via sidebar) |
+| ✅ Résolu | Rétablir les lumières de l'activité humaine (Elles disparaissent en cliquant via sidebar) |
 | | Petit snap en fin de zoom lié au déplacement de la planète pendant le lerp |
 | | Traînes des planètes naines légèrement en avance (vitesse trop faible pour la résolution vertex) |
 
@@ -271,8 +271,8 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Ping sonar au clic sidebar / raycasting
 - ✅ Swoosh retour système solaire
 - ✅ Volume hum atmosphérique variable selon distance à la planète
+- ✅ Bruitage à la mise en pause/reprise de la simulation
 - [ ] Son différencié selon type de planète (gazeuse / rocheuse / naine) ?
-- [ ] Bruitage à la mise en pause/reprise de la simulation
 - ❌ Whoosh zoom vers planète — trop difficile à timer correctement
 
 ### BONUS

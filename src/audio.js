@@ -51,6 +51,12 @@ ping.volume = 0.05;
 const whoosh = new Audio("/audio/whooshBack.mp3");
 whoosh.volume = 0.2;
 
+const pauseSound = new Audio("/audio/pause.mp3");
+pauseSound.volume = 0.3;
+
+const unpauseSound = new Audio("/audio/unpause.mp3");
+unpauseSound.volume = 0.3;
+
 export function playPing() {
   ping.currentTime = 0;
   ping.play().catch(() => {});
@@ -59,6 +65,16 @@ export function playPing() {
 export function playWhoosh() {
   whoosh.currentTime = 0;
   whoosh.play().catch(() => {});
+}
+
+export function playPause() {
+  pauseSound.currentTime = 0;
+  pauseSound.play().catch(() => {});
+}
+
+export function playUnpause() {
+  unpauseSound.currentTime = 0;
+  unpauseSound.play().catch(() => {});
 }
 
 // #endregion
@@ -70,6 +86,7 @@ atmoHum.loop = true;
 atmoHum.volume = 0;
 
 let atmoFadeRaf = null;
+let _atmoFading = false; // true pendant le fade in — bloque setAtmoVolume
 
 function cancelAtmoFade() {
   if (atmoFadeRaf) {
@@ -80,6 +97,7 @@ function cancelAtmoFade() {
 
 // Fade in vers 0.25 depuis le volume courant — pas de reset brutal
 function fadeInAtmo(duration) {
+  _atmoFading = true;
   const start = atmoHum.volume;
   const target = 0.25;
   const startTime = performance.now();
@@ -89,18 +107,15 @@ function fadeInAtmo(duration) {
     if (progress < 1) {
       atmoFadeRaf = requestAnimationFrame(step);
     } else {
-      _atmoFading = false; // ← fade terminé, setAtmoVolume reprend la main
+      _atmoFading = false; // fade terminé — setAtmoVolume reprend la main
       atmoFadeRaf = null;
     }
   }
   atmoFadeRaf = requestAnimationFrame(step);
 }
 
-let _atmoFading = false;
-
 export function startAtmoHum() {
   cancelAtmoFade();
-  _atmoFading = true; // ← bloque setAtmoVolume pendant le fade in
   if (atmoHum.paused) {
     atmoHum.currentTime = 0;
     atmoHum.play().catch(() => {});
@@ -110,6 +125,7 @@ export function startAtmoHum() {
 
 export function stopAtmoHum() {
   cancelAtmoFade();
+  _atmoFading = false;
   const start = atmoHum.volume;
   const duration = 1000;
   const startTime = performance.now();
@@ -128,6 +144,7 @@ export function stopAtmoHum() {
 
 export function pauseAtmoHum() {
   cancelAtmoFade();
+  _atmoFading = false;
   atmoHum.pause();
 }
 
@@ -136,8 +153,10 @@ export function resumeAtmoHum() {
   fadeInAtmo(800);
 }
 
+// Appelée chaque frame en mode FOLLOWING pour adapter le volume à la distance.
+// Ne fait rien pendant le fade in initial (évite d'écraser le fondu).
 export function setAtmoVolume(v) {
-  if (_atmoFading || atmoHum.paused) return; // ← ne pas interférer avec le fade
+  if (_atmoFading || atmoHum.paused) return;
   atmoHum.volume = Math.max(0, Math.min(1, v));
 }
 

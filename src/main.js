@@ -43,6 +43,8 @@ import {
   toggleMusic,
   playPing,
   playWhoosh,
+  playPause,
+  playUnpause,
   startAtmoHum,
   stopAtmoHum,
   pauseAtmoHum,
@@ -88,10 +90,9 @@ const ATMO_PLANETS = OBJECTS.filter((o) => o.atmosphere !== null);
 let lastMode = CameraMode.FREE;
 let currentPlanetId = null;
 
-// Trackers de transition — détectent les changements dans la boucle
+// Tracker de transition pause — détecte les changements dans la boucle
 // sans brancher de listener sur les boutons
 let wasPaused = false;
-let wasSpeedZero = false;
 
 // Map id → mesh 3D — permet de cibler une planète depuis la sidebar ou le raycaster
 export const meshById = new Map();
@@ -106,10 +107,10 @@ const allLabels = [];
 
 // #region ── Utilitaires ──────────────────────────────────────────────────────
 
-// Retourne true si la simulation est effectivement à l'arrêt
-// (pause réelle OU vitesse zéro) — source de vérité pour bloquer les sons contextuels
+// Retourne true si la simulation est effectivement à l'arrêt (pause réelle)
+// source de vérité pour bloquer les sons contextuels et les animations
 function isSimStopped() {
-  return sim.paused || sim.speedFactor === 0;
+  return sim.paused;
 }
 
 // Survol sidebar — glow emissive + sprite halo indépendant de la taille.
@@ -126,6 +127,7 @@ function isSimStopped() {
 // sur une planète qu'on a déjà sélectionnée et qui remplit l'écran.
 let _highlightedMesh = null;
 let _originalEmissive = null;
+let _originalEmissiveIntensity = 0;
 let _haloSprite = null;
 
 function highlightPlanet(obj) {
@@ -140,6 +142,8 @@ function highlightPlanet(obj) {
 
   // ── Glow emissive ────────────────────────────────────────────────────────
   _originalEmissive = mesh.material.emissive?.clone() ?? null;
+  _originalEmissiveIntensity = mesh.material.emissiveIntensity ?? 0;
+
   if (_originalEmissive !== null) {
     mesh.material.emissive = new THREE.Color(obj.color);
     mesh.material.emissiveIntensity = 0.1;
@@ -191,9 +195,10 @@ function clearHighlight() {
     } else if (_highlightedMesh.material.emissive) {
       _highlightedMesh.material.emissive = new THREE.Color(0, 0, 0);
     }
-    _highlightedMesh.material.emissiveIntensity = 0;
+    _highlightedMesh.material.emissiveIntensity = _originalEmissiveIntensity;
     _highlightedMesh = null;
     _originalEmissive = null;
+    _originalEmissiveIntensity = 0;
   }
 }
 
@@ -599,7 +604,7 @@ startLoop(() => {
     });
   }
 
-  if (solarBoiling.material.uniforms) {
+  if (!isSimStopped() && solarBoiling.material.uniforms) {
     solarBoiling.material.uniforms.uTime.value = Date.now() * 0.001;
   }
 
@@ -623,29 +628,7 @@ startLoop(() => {
     }
   }
 
-  // ── Gestion vitesse zéro ─────────────────────────────────────────────────
-  // speedFactor=0 arrête la simulation visuellement mais ne change pas sim.paused.
-  // On le traite comme une pause audio pour cohérence.
-  const isSpeedZero = sim.speedFactor === 0;
-  if (isSpeedZero !== wasSpeedZero) {
-    wasSpeedZero = isSpeedZero;
-    const mode = getCameraMode();
-
-    if (isSpeedZero) {
-      if (mode === CameraMode.FOLLOWING) pauseAtmoHum();
-      pauseAsteroidHum();
-    } else {
-      if (mode === CameraMode.FOLLOWING) {
-        if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) resumeAtmoHum();
-      }
-      if (currentPlanetId === "asteroid-belt") {
-        resumeAsteroidHum();
-        startAsteroidHum();
-      }
-    }
-  }
-
-  // ── Animations continues (indépendantes de la pause) ────────────────────
+  // ── Animations continues (gelées en pause) ───────────────────────────────
   const now = Date.now() * 0.001;
   if (!isSimStopped()) {
     starsGroup.rotation.y = now * 0.003;
@@ -700,7 +683,7 @@ startLoop(() => {
         const radius = planetMesh.geometry.boundingSphere?.radius ?? 1;
 
         const minDist = radius * 1.5;
-        const maxDist = radius * 1.5 + radius * 12; // ← était 6 fixe, maintenant proportionnel
+        const maxDist = radius * 1.5 + radius * 12;
         const t = Math.max(
           0,
           Math.min(1, 1 - (dist - minDist) / (maxDist - minDist))
@@ -780,7 +763,8 @@ buildBackButton(() => {
   currentPlanetId = null;
 });
 
-buildSimControls();
+// onPause — joue le son Pause.mp3 à chaque toggle bouton
+buildSimControls((isPaused) => (isPaused ? playPause() : playUnpause()));
 
 // Panel Affichage — orbites, labels planètes, labels lunes
 buildDisplayPanel(
@@ -897,8 +881,8 @@ document.getElementById("canvas").addEventListener("click", (e) => {
 
 // #region ── Raccourcis clavier ───────────────────────────────────────────────
 
-// Touche Échap — retour vue système depuis n'importe quel mode caméra
 document.addEventListener("keydown", (e) => {
+  // Échap — retour vue système depuis n'importe quel mode caméra
   if (e.key === "Escape") {
     playWhoosh();
     stopAsteroidHum();
@@ -909,12 +893,11 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("btn-back")?.classList.remove("visible");
   }
 
-  // Espace — pause/reprise simulation (même comportement que le bouton ⏸)
+  // Espace — pause/reprise simulation
   if (e.key === " ") {
     e.preventDefault(); // évite le scroll navigateur
-    if (sim.speedFactor === 0) return; // vitesse zéro — espace sans effet
     sim.paused = !sim.paused;
-    // Sync visuel du bouton pause
+    sim.paused ? playPause() : playUnpause();
     const btn = document.getElementById("btn-pause");
     if (btn) {
       btn.textContent = sim.paused ? "▶" : "⏸";

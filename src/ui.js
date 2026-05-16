@@ -25,7 +25,7 @@ document.addEventListener("mouseout", (e) => {
 
 // #region ── Sidebar — dépendants positionnels ─────────────────────────────────
 
-// Met à jour la CSS custom property --sidebar-width sur #sidebar,
+// Met à jour la CSS custom property --sidebar-width sur :root,
 // et repositionne les éléments dépendants sur mobile.
 // Les positions desktop sont gérées entièrement en CSS.
 function updateSidebarDependents(isCollapsed) {
@@ -401,14 +401,16 @@ export function buildDisplayPanel(onOrbit, onLabelPlanets, onLabelMoons) {
 
 // #region ── HUD Simulation ───────────────────────────────────────────────────
 
-export function buildSimControls() {
+// onPause(isPaused) — callback appelé au toggle pause (bouton uniquement).
+// La pause n'est plus déclenchable via le slider — vitesse min = 0.01 (slider=1).
+export function buildSimControls(onPause) {
   const hud = document.createElement("div");
   hud.id = "sim-hud";
   hud.innerHTML = `
     <button id="btn-pause">⏸</button>
     <div id="speed-control">
       <span id="speed-label">×0.5</span>
-      <input type="range" id="speed-slider" min="0" max="100" step="1" value="35"/>
+      <input type="range" id="speed-slider" min="1" max="100" step="1" value="35"/>
     </div>
   `;
   document.body.appendChild(hud);
@@ -417,48 +419,39 @@ export function buildSimControls() {
   const speedSlider = document.getElementById("speed-slider");
   const speedLabel = document.getElementById("speed-label");
 
-  // Mapping logarithmique : slider 0..100 → speed 0..20
-  // slider=0 → speed=0, slider=1..100 → log scale 0.01..20
+  // Mapping logarithmique : slider 1..100 → speed 0.01..20
+  // min=1 garanti — le slider ne peut plus atteindre 0 → pas de vitesse zéro via slider
   // Midpoint (~35) ≈ 0.5 (vitesse par défaut)
   function sliderToSpeed(s) {
-    if (s === 0) return 0;
     return parseFloat((0.01 * Math.pow(20 / 0.01, s / 100)).toFixed(3));
   }
 
   function formatSpeed(v) {
-    if (v === 0) return "×0";
     if (v < 0.1) return `×${v.toFixed(3)}`;
     if (v < 1) return `×${v.toFixed(2)}`;
     return `×${v.toFixed(1)}`;
   }
 
   function updatePauseBtn() {
-    const stopped = sim.paused || sim.speedFactor === 0;
-    btnPause.textContent = stopped ? "▶" : "⏸";
-    btnPause.classList.toggle("active", stopped);
+    btnPause.textContent = sim.paused ? "▶" : "⏸";
+    btnPause.classList.toggle("active", sim.paused);
   }
 
-  // Si speedFactor=0, le clic remet la dernière vitesse non-nulle
-  let lastNonZeroSlider = 35; // correspond à ~0.5
+  // Mémorise la dernière position slider pour la restaurer après une pause
+  let lastSlider = 35; // correspond à ~0.5
 
   btnPause.addEventListener("click", () => {
-    if (sim.speedFactor === 0) {
-      speedSlider.value = lastNonZeroSlider;
-      sim.speedFactor = sliderToSpeed(lastNonZeroSlider);
-      speedLabel.textContent = formatSpeed(sim.speedFactor);
-    } else {
-      sim.paused = !sim.paused;
-    }
+    sim.paused = !sim.paused;
     updatePauseBtn();
+    if (onPause) onPause(sim.paused);
   });
 
   speedSlider.addEventListener("input", (e) => {
     const s = parseInt(e.target.value);
-    const v = sliderToSpeed(s);
-    if (v > 0) lastNonZeroSlider = s;
-    sim.speedFactor = v;
-    speedLabel.textContent = formatSpeed(v);
-    updatePauseBtn();
+    lastSlider = s;
+    sim.speedFactor = sliderToSpeed(s);
+    speedLabel.textContent = formatSpeed(sim.speedFactor);
+    // Le slider ne touche jamais sim.paused
   });
 }
 
