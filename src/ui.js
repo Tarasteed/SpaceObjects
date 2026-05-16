@@ -338,7 +338,12 @@ export function showBackButton() {
 
 // Remplace btn-orbits et btn-labels par un seul bouton avec dropdown.
 // onOrbit(bool), onLabelPlanets(bool), onLabelMoons(bool) — callbacks des 3 toggles.
-export function buildDisplayPanel(onOrbit, onLabelPlanets, onLabelMoons) {
+export function buildDisplayPanel(
+  onOrbit,
+  onLabelPlanets,
+  onLabelMoons,
+  onLabelBelts
+) {
   const wrapper = document.createElement("div");
   wrapper.id = "display-panel-wrapper";
 
@@ -363,6 +368,12 @@ export function buildDisplayPanel(onOrbit, onLabelPlanets, onLabelMoons) {
       id: "toggle-label-moons",
       label: "Labels lunes",
       cb: onLabelMoons,
+      state: false,
+    },
+    {
+      id: "toggle-label-belts",
+      label: "Labels ceintures",
+      cb: onLabelBelts,
       state: false,
     },
   ];

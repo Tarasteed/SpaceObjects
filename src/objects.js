@@ -399,8 +399,11 @@ export function createLabel(mesh, name, color, parentScene) {
   label.position.set(0, 0, 0); // mis à jour chaque frame via getWorldPosition()
   label.visible = false; // masqué par défaut — activé via le toggle
 
-  if (!mesh.geometry.boundingSphere) mesh.geometry.computeBoundingSphere();
-  const radius = mesh.geometry.boundingSphere?.radius ?? 0.5;
+  let radius = 0;
+  if (mesh.geometry) {
+    if (!mesh.geometry.boundingSphere) mesh.geometry.computeBoundingSphere();
+    radius = mesh.geometry.boundingSphere?.radius ?? 0;
+  }
 
   parentScene.add(label);
   return { label, mesh, radius };

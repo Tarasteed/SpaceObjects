@@ -206,6 +206,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Contrôle pause / vitesse de simulation (×0 à ×20)
 - ✅ Vitesse ×0 équivalente à la pause (sons + comportement cohérent)
 - ✅ Afficher / masquer les orbites
+- ✅ Afficher / masquer les étiquettes de planète, lunes et ceintures
 - ✅ Contrôle musique (volume + pause/play)
 - ✅ Cliquer sur la ceinture d'astéroïdes dans la sidebar
 - ✅ Lien GitHub dans la sidebar

@@ -613,6 +613,39 @@ const kuiperBeltInstances = createAsteroidBelt({
 
 // #endregion
 
+// #region ── Labels ceintures ─────────────────────────────────────────────────
+
+// Ancres fictives au bord droit de chaque ceinture — même pattern que les planètes.
+// Position X = rayon moyen de la ceinture, Y légèrement au-dessus du plan orbital.
+const beltLabelData = [
+  {
+    id: "asteroid-belt",
+    name: "Ceinture d'astéroïdes",
+    color: "#8a7a6a",
+    r: (25 + 28) / 2,
+  },
+  {
+    id: "kuiper-belt",
+    name: "Ceinture de Kuiper",
+    color: "#7a8a9a",
+    r: (70 + 85) / 2,
+  },
+];
+
+const beltLabels = beltLabelData.map(({ name, color, r }) => {
+  // Object3D invisible servant d'ancre pour le CSS2DObject
+  const anchor = new THREE.Object3D();
+  anchor.position.set(r, 0.5, 0);
+  scene.add(anchor);
+  const labelData = createLabel(anchor, name, color, scene);
+  allLabels.push(labelData); // intégré dans updateLabels() automatiquement
+  return labelData;
+});
+
+const beltLabelSet = new Set(beltLabels.map(({ label }) => label));
+
+// #endregion
+
 // #region ── Boucle d'animation ───────────────────────────────────────────────
 
 // t est un compteur de temps global qui grandit à chaque frame (sauf en pause).
@@ -629,45 +662,28 @@ startLoop(() => {
       mesh.rotation.y += 0.0001 * speed * sim.speedFactor;
     });
 
-    asteroidBeltInstances.forEach(({ mesh, instanceData }) => {
-      instanceData.forEach((ast, i) => {
-        ast.angle += ast.orbitSpeed * 0.005 * sim.speedFactor;
-        ast.rotX += ast.rotSpeedX * sim.speedFactor;
-        ast.rotY += ast.rotSpeedY * sim.speedFactor;
-        ast.rotZ += ast.rotSpeedZ * sim.speedFactor;
+    // Boucle sur les deux instances de ceinture pour éviter de dupliquer le code par ceinture
+    [...asteroidBeltInstances, ...kuiperBeltInstances].forEach(
+      ({ mesh, instanceData }) => {
+        instanceData.forEach((ast, i) => {
+          ast.angle += ast.orbitSpeed * 0.005 * sim.speedFactor;
+          ast.rotX += ast.rotSpeedX * sim.speedFactor;
+          ast.rotY += ast.rotSpeedY * sim.speedFactor;
+          ast.rotZ += ast.rotSpeedZ * sim.speedFactor;
 
-        _dummy.position.set(
-          Math.cos(ast.angle) * ast.radius,
-          ast.inclination,
-          Math.sin(ast.angle) * ast.radius
-        );
-        _dummy.rotation.set(ast.rotX, ast.rotY, ast.rotZ);
-        _dummy.scale.setScalar(ast.size);
-        _dummy.updateMatrix();
-        mesh.setMatrixAt(i, _dummy.matrix);
-      });
-      mesh.instanceMatrix.needsUpdate = true;
-    });
-
-    kuiperBeltInstances.forEach(({ mesh, instanceData }) => {
-      instanceData.forEach((ast, i) => {
-        ast.angle += ast.orbitSpeed * 0.005 * sim.speedFactor;
-        ast.rotX += ast.rotSpeedX * sim.speedFactor;
-        ast.rotY += ast.rotSpeedY * sim.speedFactor;
-        ast.rotZ += ast.rotSpeedZ * sim.speedFactor;
-
-        _dummy.position.set(
-          Math.cos(ast.angle) * ast.radius,
-          ast.inclination,
-          Math.sin(ast.angle) * ast.radius
-        );
-        _dummy.rotation.set(ast.rotX, ast.rotY, ast.rotZ);
-        _dummy.scale.setScalar(ast.size);
-        _dummy.updateMatrix();
-        mesh.setMatrixAt(i, _dummy.matrix);
-      });
-      mesh.instanceMatrix.needsUpdate = true;
-    });
+          _dummy.position.set(
+            Math.cos(ast.angle) * ast.radius,
+            ast.inclination,
+            Math.sin(ast.angle) * ast.radius
+          );
+          _dummy.rotation.set(ast.rotX, ast.rotY, ast.rotZ);
+          _dummy.scale.setScalar(ast.size);
+          _dummy.updateMatrix();
+          mesh.setMatrixAt(i, _dummy.matrix);
+        });
+        mesh.instanceMatrix.needsUpdate = true;
+      }
+    );
   }
 
   if (!isSimStopped() && solarBoiling.material.uniforms) {
@@ -690,7 +706,11 @@ startLoop(() => {
       if (mode === CameraMode.FOLLOWING) {
         if (ATMO_PLANETS.some((o) => o.id === currentPlanetId)) resumeAtmoHum();
       }
-      if (currentPlanetId === "asteroid-belt") resumeAsteroidHum();
+
+      const isBelt =
+        currentPlanetId === "asteroid-belt" ||
+        currentPlanetId === "kuiper-belt";
+      if (isBelt) resumeAsteroidHum();
     }
   }
 
@@ -850,13 +870,20 @@ buildDisplayPanel(
   },
   (visible) => {
     allLabels
-      .filter(({ mesh }) => !extraMoons.some((m) => m.id === mesh.userData.id))
+      .filter(
+        ({ label, mesh }) =>
+          !beltLabelSet.has(label) &&
+          !extraMoons.some((m) => m.id === mesh.userData.id)
+      )
       .forEach(({ label }) => (label.visible = visible));
   },
   (visible) => {
     allLabels
       .filter(({ mesh }) => extraMoons.some((m) => m.id === mesh.userData.id))
       .forEach(({ label }) => (label.visible = visible));
+  },
+  (visible) => {
+    beltLabels.forEach(({ label }) => (label.visible = visible));
   }
 );
 
