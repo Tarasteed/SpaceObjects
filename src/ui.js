@@ -123,24 +123,29 @@ export function buildSidebar(onSelect, onHover, onHoverEnd, isActive) {
       ${Object.entries(groups)
         .map(
           ([type, items]) => `
-        <div class="sb-group">
-          <div class="sb-group-label" style="color:${TYPE_LABELS[type].color}">
-            <span class="sb-group-line"></span>
-            ${TYPE_LABELS[type].label}
-          </div>
-          ${items
-            .map(
-              (obj) => `
-            <div class="sb-item" data-id="${obj.id}" style="--planet-color:${obj.color}">
-              <span class="sb-dot"></span>
-              <span class="sb-name">${obj.name}</span>
-              <span class="sb-arrow">›</span>
+          <div class="sb-group">
+            <div class="sb-group-label" data-type="${type}" style="color:${
+            TYPE_LABELS[type].color
+          }">
+              <span class="sb-group-line"></span>
+              ${TYPE_LABELS[type].label}
+              <span class="sb-group-chevron">›</span>
             </div>
-          `
-            )
-            .join("")}
-        </div>
-      `
+            <div class="sb-group-items">
+            ${items
+              .map(
+                (obj) => `
+              <div class="sb-item" data-id="${obj.id}" style="--planet-color:${obj.color}">
+                <span class="sb-dot"></span>
+                <span class="sb-name">${obj.name}</span>
+                <span class="sb-arrow">›</span>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+          </div>
+`
         )
         .join("")}
     </div>`;
@@ -167,6 +172,16 @@ export function buildSidebar(onSelect, onHover, onHoverEnd, isActive) {
 
     el.addEventListener("mouseleave", () => {
       onHoverEnd();
+    });
+  });
+
+  sidebar.querySelectorAll(".sb-group-label").forEach((label) => {
+    label.addEventListener("click", () => {
+      const group = label.closest(".sb-group");
+      group.classList.toggle("collapsed");
+      const chevron = label.querySelector(".sb-group-chevron");
+      if (chevron)
+        chevron.textContent = group.classList.contains("collapsed") ? "+" : "›";
     });
   });
 

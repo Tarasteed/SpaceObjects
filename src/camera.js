@@ -280,9 +280,10 @@ export function zoomToKuiper() {
     controls.connect(document.getElementById("canvas"));
   }
   // Vue de dessus légèrement inclinée — la Kuiper est à 100-145u
-  // On se place à ~80u sur Z pour voir l'anneau complet
-   state.targetPosition.set(0, 60, 90);
-   state.targetLookAt.set(0, 0, 120);
+  // (Raccourci "P" pour afficher la position de la camera dans la console)
+  state.targetPosition.set(-8.2, 6.3, 105.4);
+  state.targetLookAt.set(-7.1, 3.5, 81.1);
+
   state.mode = CameraMode.RETURNING;
   state.targetMesh = null;
   controls.enabled = false;

@@ -90,8 +90,10 @@ button {
 }
 
 .sb-group-label {
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   font-size: 10px;
   font-weight: 700;
@@ -99,7 +101,22 @@ button {
   text-transform: uppercase;
   padding: 8px 16px 5px;
   opacity: 0.8;
+  user-select: none;
   /* color injecté inline depuis TYPE_LABELS — dépend du type, pas extractible en classe statique */
+}
+
+.sb-group-chevron {
+  font-size: 11px;
+  opacity: 0.5;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.sb-group-items {
+  overflow: hidden;
+  max-height: 500px; /* valeur suffisamment grande */
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
 }
 
 .sb-group-line {
@@ -107,6 +124,11 @@ button {
   height: 1px;
   background: currentColor;
   opacity: 0.25;
+}
+
+.sb-group.collapsed .sb-group-items {
+  max-height: 0;
+  opacity: 0;
 }
 
 .sb-item {

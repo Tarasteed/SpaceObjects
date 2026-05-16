@@ -1,4 +1,4 @@
-import { scene, startLoop, bloomPass, camera } from "./scene.js";
+import { scene, startLoop, bloomPass, camera, controls } from "./scene.js";
 import {
   createPlanet,
   createSaturnRings,
@@ -803,23 +803,19 @@ buildSidebar(
     currentPlanetId = obj.id;
     document.title = `3D Space Objects - ${obj.name}`;
     playPing();
-    stopAsteroidHum();
     showTooltip(obj);
     clearHighlight();
 
-    if (obj.id === "asteroid-belt") {
+    if (obj.id === "asteroid-belt" || obj.id === "kuiper-belt") {
+      // Ne stoppe pas si déjà en train de jouer — évite le cut entre ceintures
       if (!isSimStopped()) startAsteroidHum();
-      zoomToBelt();
+      obj.id === "kuiper-belt" ? zoomToKuiper() : zoomToBelt();
       showBackButton();
       return;
     }
 
-    if (obj.id === "kuiper-belt") {
-      if (!isSimStopped()) startAsteroidHum(); // même son que la ceinture principale
-      zoomToKuiper();
-      showBackButton();
-      return;
-    }
+    // Planète — stoppe le son ceinture uniquement si on quitte une ceinture
+    stopAsteroidHum();
 
     const mesh = meshById.get(obj.id);
     if (!mesh) return;
@@ -987,6 +983,18 @@ document.addEventListener("keydown", (e) => {
       btn.textContent = sim.paused ? "▶" : "⏸";
       btn.classList.toggle("active", sim.paused);
     }
+  }
+
+  // P — log position caméra dans la console
+  if (e.key === "p" || e.key === "P") {
+    const p = camera.position;
+    const t = controls.target;
+    console.log(
+      `position: set(${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)})`
+    );
+    console.log(
+      `lookAt:   set(${t.x.toFixed(1)}, ${t.y.toFixed(1)}, ${t.z.toFixed(1)})`
+    );
   }
 });
 
