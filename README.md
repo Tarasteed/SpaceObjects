@@ -218,7 +218,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Au survol des items dans la sidebar, mettre en évidence la planète ciblée (Aura, pulse ?)
 - ✅ Masquer tous les HUDs d'un coup (mode cinématique / plein écran propre) au double clique
 - ✅ Zone indiquant les différents raccourcis clavier ajouté au splashscreen
-
+- ✅ Ajout du nom de la pnaète suivi dans le titre de l'onglet du navigateur
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile

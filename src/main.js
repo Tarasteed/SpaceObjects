@@ -729,6 +729,7 @@ buildAudioControls(
 buildSidebar(
   (obj) => {
     currentPlanetId = obj.id;
+    document.title = `3D Space Objects - ${obj.name}`;
     playPing();
     stopAsteroidHum();
     showTooltip(obj);
@@ -761,6 +762,7 @@ buildBackButton(() => {
   hideTooltip();
   clearActiveItem();
   currentPlanetId = null;
+  document.title = "3D Space Objects";
 });
 
 // onPause — joue le son Pause.mp3 à chaque toggle bouton
@@ -869,6 +871,8 @@ document.getElementById("canvas").addEventListener("click", (e) => {
   if (id === currentPlanetId) return;
 
   currentPlanetId = id;
+  document.title = `3D Space Objects - ${obj.name}`;
+
   playPing();
   setActiveItem(id);
   showTooltip(obj);
@@ -890,6 +894,7 @@ document.addEventListener("keydown", (e) => {
     hideTooltip();
     clearActiveItem();
     currentPlanetId = null;
+    document.title = "3D Space Objects";
     document.getElementById("btn-back")?.classList.remove("visible");
   }
 
