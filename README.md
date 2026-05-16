@@ -230,6 +230,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Navigation de planète en planète sans repasser par la vue système
 - [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
 - [ ] Zoom molette depuis la vue système vers une planète (sans clic) ?
+- [ ] Tenter d'ajouter un mode free cam
 
 ### Interface
 - ✅ Contrôle pause / vitesse de simulation (×0.01 à ×20)
