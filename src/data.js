@@ -174,7 +174,7 @@ export const OBJECTS = [
     atmosphere: null,
 
     sim: {
-      instances: "2 000 corps sur ~100 000 réels",
+      instances: "4 000 corps sur ~100 000 réels",
       tailles: "Exagérées pour la visibilité",
     },
     wikipedia: "https://fr.wikipedia.org/wiki/Ceinture_de_Kuiper",
