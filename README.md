@@ -277,7 +277,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Splash screen animé avec logo SVG + loader
 - ✅ Favicon SVG
 - ✅ Effet de vitesse en mode ZOOMING (FOV + blur CSS)
-- [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin)
+- [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin) - en test
 - ❌ Ombres portées — rapport perf/rendu défavorable avec PointLight
 - ❌ Halo lumineux autour de la Lune — artefact visuel indésirable
 - ❌ Ombre des anneaux de Saturne sur la planète — trop coûteux

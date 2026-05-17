@@ -400,14 +400,16 @@ function triggerPause() {
 function createSkybox() {
   const loader = new THREE.TextureLoader();
   loader.load("/textures/starmap.jpg", (texture) => {
-    const geo = new THREE.SphereGeometry(4000, 256, 256);
+    const geo = new THREE.SphereGeometry(7000, 256, 256);
     const mat = new THREE.MeshBasicMaterial({
       map: texture,
       side: THREE.BackSide,
       color: new THREE.Color(0.4, 0.4, 0.4),
+      depthWrite: false, // ← ajoute
+      depthTest: false, // ← ajoute
     });
     const mesh = new THREE.Mesh(geo, mat);
-    mesh.renderOrder = -1;
+    mesh.renderOrder = -2;
     scene.add(mesh);
   });
 }
@@ -475,6 +477,44 @@ function createStars() {
 
 createSkybox();
 const starsGroup = createStars();
+
+// #endregion
+
+// #region ── Galaxie lointaine ─────────────────────────────────────────────────
+
+// Plan 3D horizontal représentant la galaxie vue de l'extérieur.
+// Contrairement au Sprite (qui fait toujours face à la caméra), le Mesh permet
+// de tourner autour de la galaxie et de la voir de côté/de dessous.
+// Le système solaire est dans un bras spiral — le plan est décalé pour que
+// l'origine (0,0,0) ne soit pas au centre de la galaxie.
+// Fade in/out selon camera.position.length().
+const GALAXY_NEAR = 800; // commence à apparaître à partir de cette distance
+const GALAXY_FULL = 2000; // pleinement visible à cette distance
+
+// const galaxyTex = new THREE.TextureLoader().load("/textures/galaxy.jpg");
+const galaxyTex = new THREE.TextureLoader().load("/textures/galaxyTransp.png");
+const galaxyMat = new THREE.MeshBasicMaterial({
+  map: galaxyTex,
+  color: new THREE.Color(0.6, 0.6, 0.7), // ← assombrit et bleutit légèrement
+  transparent: true,
+  opacity: 0,
+  depthWrite: false,
+  depthTest: false,
+  side: THREE.DoubleSide,
+  blending: THREE.AdditiveBlending,
+});
+
+const galaxyMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(8000, 8000),
+  galaxyMat
+);
+galaxyMesh.rotation.x = Math.PI / 2; // couché dans le plan orbital (horizontal)
+galaxyMesh.rotation.z = THREE.MathUtils.degToRad(63);
+// Décalé pour que le système solaire (origine) soit dans un bras spiral
+// et non au centre de la galaxie
+galaxyMesh.position.set(600, 0, 0);
+galaxyMesh.renderOrder = -1;
+scene.add(galaxyMesh);
 
 // #endregion
 
@@ -874,6 +914,15 @@ startLoop(() => {
   updateOrbitTrails();
   updateCamera();
   updateLabels();
+
+  // ── Fade galaxie selon distance caméra ───────────────────────────────────
+  // Le mesh est fixe dans la scène — seule l'opacité varie selon la distance.
+  // Visible de dessus (plat), de côté (fine tranche) et de dessous.
+  const camDist = camera.position.length();
+  galaxyMat.opacity = Math.max(
+    0,
+    Math.min(0.5, (camDist - GALAXY_NEAR) / (GALAXY_FULL - GALAXY_NEAR))
+  );
 
   // Raycasting curseur — relancé à chaque frame pour détecter quand une planète
   // sort de sous le pointeur immobile (le mousemove ne se déclenche pas dans ce cas)
