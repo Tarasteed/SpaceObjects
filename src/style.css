@@ -45,7 +45,7 @@ button {
   position: fixed;
   top: 0;
   left: 0;
-  width: 220px;
+  width: 250px;
   height: 100vh;
   background: rgba(6, 6, 20, 0.85);
   border-right: 1px solid rgba(91, 143, 249, 0.2);
@@ -309,7 +309,7 @@ button {
 #display-panel-wrapper {
   position: fixed;
   top: 20px;
-  left: var(--sidebar-width, 232px);
+  left: var(--sidebar-width, 265px);
   z-index: 15;
 }
 

@@ -29,7 +29,14 @@ document.addEventListener("mouseout", (e) => {
 // et repositionne les éléments dépendants sur mobile.
 // Les positions desktop sont gérées entièrement en CSS.
 function updateSidebarDependents(isCollapsed) {
-  const sidebarWidth = isCollapsed ? 44 : 184;
+  const isMobileView = window.innerWidth <= 768;
+  const sidebarWidth = isCollapsed
+    ? isMobileView
+      ? 44
+      : 52
+    : isMobileView
+    ? 184
+    : 265;
 
   // La custom property est lue par btn-display via CSS (left: var(--sidebar-width))
   // et par les éléments mobiles ci-dessous via JS (les overrides inline sont nécessaires
