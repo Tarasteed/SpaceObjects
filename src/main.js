@@ -397,18 +397,21 @@ function triggerPause() {
 // Grande sphère (r=4000) rendue de l'intérieur avec la carte du ciel NASA.
 // renderOrder=-1 garantit qu'elle est dessinée en premier, derrière tout le reste.
 // La couleur (0.4, 0.4, 0.4) assombrit la texture de 60% — sans ça elle est trop lumineuse.
+// skyboxMat exposé en dehors du callback pour permettre le fade dans la boucle
+let skyboxMat = null;
+
 function createSkybox() {
   const loader = new THREE.TextureLoader();
   loader.load("/textures/starmap.jpg", (texture) => {
     const geo = new THREE.SphereGeometry(7000, 256, 256);
-    const mat = new THREE.MeshBasicMaterial({
+    skyboxMat = new THREE.MeshBasicMaterial({
       map: texture,
       side: THREE.BackSide,
       color: new THREE.Color(0.4, 0.4, 0.4),
-      depthWrite: false, // ← ajoute
-      depthTest: false, // ← ajoute
+      transparent: true,
+      opacity: 1,
     });
-    const mesh = new THREE.Mesh(geo, mat);
+    const mesh = new THREE.Mesh(geo, skyboxMat);
     mesh.renderOrder = -2;
     scene.add(mesh);
   });
@@ -488,8 +491,8 @@ const starsGroup = createStars();
 // Le système solaire est dans un bras spiral — le plan est décalé pour que
 // l'origine (0,0,0) ne soit pas au centre de la galaxie.
 // Fade in/out selon camera.position.length().
-const GALAXY_NEAR = 800; // commence à apparaître à partir de cette distance
-const GALAXY_FULL = 2000; // pleinement visible à cette distance
+const GALAXY_NEAR = 5000; // commence à apparaître à partir de cette distance
+const GALAXY_FULL = 15000; // pleinement visible à cette distance
 
 // const galaxyTex = new THREE.TextureLoader().load("/textures/galaxy.jpg");
 const galaxyTex = new THREE.TextureLoader().load("/textures/galaxyTransp.png");
@@ -505,7 +508,7 @@ const galaxyMat = new THREE.MeshBasicMaterial({
 });
 
 const galaxyMesh = new THREE.Mesh(
-  new THREE.PlaneGeometry(8000, 8000),
+  new THREE.PlaneGeometry(800000, 800000),
   galaxyMat
 );
 galaxyMesh.rotation.x = Math.PI / 2; // couché dans le plan orbital (horizontal)
@@ -915,14 +918,25 @@ startLoop(() => {
   updateCamera();
   updateLabels();
 
-  // ── Fade galaxie selon distance caméra ───────────────────────────────────
-  // Le mesh est fixe dans la scène — seule l'opacité varie selon la distance.
-  // Visible de dessus (plat), de côté (fine tranche) et de dessous.
+  // ── Fade galaxie + skybox selon distance caméra ─────────────────────────
+  // La galaxie fade in pendant que la skybox fade out — transition douce.
+  // Blocage du dézoom max à la distance configurée.
+  const MAX_CAM_DIST = GALAXY_FULL * 200;
   const camDist = camera.position.length();
-  galaxyMat.opacity = Math.max(
+
+  // Bloque le dézoom max — ramène la caméra si elle dépasse la limite
+  if (camDist > MAX_CAM_DIST) {
+    camera.position.normalize().multiplyScalar(MAX_CAM_DIST);
+  }
+
+  const galaxyRatio = Math.max(
     0,
-    Math.min(0.5, (camDist - GALAXY_NEAR) / (GALAXY_FULL - GALAXY_NEAR))
+    Math.min(1, (camDist - GALAXY_NEAR) / (GALAXY_FULL - GALAXY_NEAR))
   );
+  // Galaxie fade in
+  galaxyMat.opacity = galaxyRatio * 0.5;
+  // Skybox fade out en parallèle — disparaît complètement quand la galaxie est pleine
+  if (skyboxMat) skyboxMat.opacity = 1 - galaxyRatio;
 
   // Raycasting curseur — relancé à chaque frame pour détecter quand une planète
   // sort de sous le pointeur immobile (le mousemove ne se déclenche pas dans ce cas)
