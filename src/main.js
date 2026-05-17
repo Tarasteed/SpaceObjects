@@ -498,7 +498,8 @@ const GALAXY_FULL = 15000; // pleinement visible à cette distance
 const galaxyTex = new THREE.TextureLoader().load("/textures/galaxyTransp.png");
 const galaxyMat = new THREE.MeshBasicMaterial({
   map: galaxyTex,
-  color: new THREE.Color(0.6, 0.6, 0.7), // ← assombrit et bleutit légèrement
+  // Teinte chaude et lumineuse — bleu-violet pour les bras, blanc chaud au centre
+  color: new THREE.Color(0.8, 0.65, 1.0),
   transparent: true,
   opacity: 0,
   depthWrite: false,
@@ -508,14 +509,14 @@ const galaxyMat = new THREE.MeshBasicMaterial({
 });
 
 const galaxyMesh = new THREE.Mesh(
-  new THREE.PlaneGeometry(800000, 800000),
+  new THREE.PlaneGeometry(3000000, 3000000),
   galaxyMat
 );
 galaxyMesh.rotation.x = Math.PI / 2; // couché dans le plan orbital (horizontal)
-galaxyMesh.rotation.z = THREE.MathUtils.degToRad(63);
-// Décalé pour que le système solaire (origine) soit dans un bras spiral
-// et non au centre de la galaxie
-galaxyMesh.position.set(600, 0, 0);
+galaxyMesh.rotation.z = THREE.MathUtils.degToRad(63); // inclinaison réaliste ~63°
+// Position calée sur lookAt(-27459, -66072, 143989) depuis la vue lointaine
+// → l'origine (système solaire) tombe dans un bras spiral
+galaxyMesh.position.set(150000, 0, 143989);
 galaxyMesh.renderOrder = -1;
 scene.add(galaxyMesh);
 
@@ -921,7 +922,7 @@ startLoop(() => {
   // ── Fade galaxie + skybox selon distance caméra ─────────────────────────
   // La galaxie fade in pendant que la skybox fade out — transition douce.
   // Blocage du dézoom max à la distance configurée.
-  const MAX_CAM_DIST = GALAXY_FULL * 200;
+  const MAX_CAM_DIST = 1170000 * 0.9; // calé sur position P debug: sqrt(599001²+707571²+696341²)
   const camDist = camera.position.length();
 
   // Bloque le dézoom max — ramène la caméra si elle dépasse la limite
@@ -934,7 +935,7 @@ startLoop(() => {
     Math.min(1, (camDist - GALAXY_NEAR) / (GALAXY_FULL - GALAXY_NEAR))
   );
   // Galaxie fade in
-  galaxyMat.opacity = galaxyRatio * 0.5;
+  galaxyMat.opacity = galaxyRatio * 0.55; // plus pétant avec la nouvelle teinte
   // Skybox fade out en parallèle — disparaît complètement quand la galaxie est pleine
   if (skyboxMat) skyboxMat.opacity = 1 - galaxyRatio;
 
