@@ -287,7 +287,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ LoadingManager partagé via `loader.js` (évite les imports circulaires)
 - ✅ Optimisation mobile (sidebar repliable, HUDs adaptatifs, touch events)
 - ✅ Enum `CameraMode` pour les états caméra
-- ✅ Mode debug compteur de FPS an ajoutant ?debug=true dans l'URL
+- ✅ Mode debug avec multiples métriques an ajoutant ?debug=true dans l'URL
 - ✅ Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
 
@@ -329,7 +329,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 
 ### Interface
 - **Minimap du système** — un petit indicateur en coin montrant la position relative de la caméra dans le système solaire. Aide à se repérer lors des zooms lointains.
-- **Compteur FPS debug** — touche `F` pour afficher un overlay FPS discret. Utile pour mesurer l'impact de chaque feature avant l'optimisation mobile.
 
 ---
 

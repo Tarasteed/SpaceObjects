@@ -46,6 +46,7 @@ import {
   prepareForNewTarget,
 } from "./camera.js";
 import * as THREE from "three";
+import { loader } from "./loader.js";
 import { sim } from "./state.js";
 import { OBJECTS } from "./data.js";
 import {
@@ -455,7 +456,6 @@ function triggerPause() {
 let skyboxMat = null;
 
 function createSkybox() {
-  const loader = new THREE.TextureLoader();
   loader.load("/textures/starmap.jpg", (texture) => {
     const geo = new THREE.SphereGeometry(7000, 256, 256);
     skyboxMat = new THREE.MeshBasicMaterial({
@@ -549,7 +549,7 @@ const GALAXY_NEAR = 5000; // commence à apparaître à partir de cette distance
 const GALAXY_FULL = 15000; // pleinement visible à cette distance
 
 // const galaxyTex = new THREE.TextureLoader().load("/textures/galaxy.jpg");
-const galaxyTex = new THREE.TextureLoader().load("/textures/galaxyTransp.png");
+const galaxyTex = loader.load("/textures/galaxyTransp.png");
 const galaxyMat = new THREE.MeshBasicMaterial({
   map: galaxyTex,
   // Teinte chaude et lumineuse — bleu-violet pour les bras, blanc chaud au centre
@@ -878,6 +878,7 @@ const beltLabelSet = new Set(beltLabels.map(({ label }) => label));
 // t est un compteur de temps global qui grandit à chaque frame (sauf en pause).
 // Chaque pivot reçoit rotation.y = t * speed — source unique du mouvement orbital.
 // Valeur absolue (pas un delta) → simulation déterministe et reproductible.
+
 let t = 0;
 
 startLoop(() => {
