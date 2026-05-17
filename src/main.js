@@ -1,4 +1,12 @@
-import { scene, startLoop, bloomPass, camera, controls } from "./scene.js";
+import {
+  scene,
+  startLoop,
+  bloomPass,
+  camera,
+  controls,
+  renderer,
+  isMobile,
+} from "./scene.js";
 import {
   createPlanet,
   createSaturnRings,
@@ -61,6 +69,52 @@ import {
   resumeAsteroidHum,
   setAsteroidFadeRatio,
 } from "./audio.js";
+
+// #region ── Debug panel (?debug=true) ────────────────────────────────────────
+
+const DEBUG = new URLSearchParams(window.location.search).has("debug");
+
+let _debugPanel = null;
+let _debugFrames = [];
+let _debugLast = performance.now();
+
+if (DEBUG) {
+  _debugPanel = document.createElement("div");
+  _debugPanel.id = "debug-panel";
+  document.body.appendChild(_debugPanel);
+}
+
+function updateDebugPanel(renderer) {
+  if (!DEBUG || !_debugPanel) return;
+
+  const now = performance.now();
+  const delta = now - _debugLast;
+  _debugLast = now;
+  _debugFrames.push(delta);
+  if (_debugFrames.length > 60) _debugFrames.shift();
+
+  const avg = _debugFrames.reduce((a, b) => a + b, 0) / _debugFrames.length;
+  const fps = Math.round(1000 / avg);
+  const ms = avg.toFixed(1);
+  const info = renderer.info;
+
+  // Coût du bloom — différence entre frame time brut et JS time
+  // + nombre de CSS2D éléments dans le DOM
+  const css2dCount = document.querySelectorAll(".planet-label").length;
+
+  _debugPanel.innerHTML =
+    `FPS: <b>${fps}</b> &nbsp; ${ms}ms<br>` +
+    `draw: ${info.render.calls} &nbsp; tri: ${(
+      info.render.triangles / 1000
+    ).toFixed(0)}k<br>` +
+    `geom: ${info.memory.geometries} &nbsp; tex: ${info.memory.textures}<br>` +
+    `labels DOM: ${css2dCount}<br>` +
+    `speed: ${sim.speedFactor.toFixed(
+      2
+    )}x &nbsp; dpr: ${renderer.getPixelRatio()}`;
+}
+
+// #endregion
 
 // #region ── Splash screen ────────────────────────────────────────────────────
 
@@ -245,8 +299,8 @@ function clearHighlight() {
 // Le label est dans la scène (pas dans le mesh) pour ne pas tourner avec lui.
 const _labelWorldPos = new THREE.Vector3();
 function updateLabels() {
-  allLabels.forEach(({ label, mesh }) => {
-    if (!label.visible) return;
+  allLabels.forEach(({ label, mesh, div }) => {
+    if (div.style.opacity === "0") return;
     mesh.getWorldPosition(_labelWorldPos);
     label.position.copy(_labelWorldPos);
   });
@@ -768,7 +822,7 @@ function updateOrbitTrails() {
 const asteroidBeltInstances = createAsteroidBelt({
   innerRadius: 25,
   outerRadius: 28,
-  count: window.innerWidth <= 768 ? 1000 : 2000,
+  count: window.innerWidth <= isMobile ? 1000 : 2000,
   ySpread: 0.6,
 });
 
@@ -776,7 +830,7 @@ const asteroidBeltInstances = createAsteroidBelt({
 const kuiperBeltInstances = createAsteroidBelt({
   innerRadius: 70,
   outerRadius: 85,
-  count: window.innerWidth <= 768 ? 1000 : 4000,
+  count: window.innerWidth <= isMobile ? 1000 : 4000,
   ySpread: 3.0,
   sizeScale: 2,
 });
@@ -1012,6 +1066,8 @@ startLoop(() => {
     }
     lastMode = mode;
   }
+
+  updateDebugPanel(renderer);
 });
 
 // #endregion
@@ -1082,15 +1138,15 @@ buildDisplayPanel(
           !beltLabelSet.has(label) &&
           !extraMoons.some((m) => m.id === mesh.userData.id)
       )
-      .forEach(({ label }) => (label.visible = visible));
+      .forEach(({ div }) => (div.style.opacity = visible ? "1" : "0"));
   },
   (visible) => {
     allLabels
       .filter(({ mesh }) => extraMoons.some((m) => m.id === mesh.userData.id))
-      .forEach(({ label }) => (label.visible = visible));
+      .forEach(({ div }) => (div.style.opacity = visible ? "1" : "0"));
   },
   (visible) => {
-    beltLabels.forEach(({ label }) => (label.visible = visible));
+    beltLabels.forEach(({ div }) => (div.style.opacity = visible ? "1" : "0"));
   }
 );
 
@@ -1109,9 +1165,12 @@ let _lastTap = 0;
 canvas.addEventListener(
   "touchend",
   (e) => {
+    // Ignore si c'était un pinch (2 doigts) — ne compte que les taps 1 doigt
+    if (e.changedTouches.length !== 1 || e.touches.length > 0) return;
+
     const now = Date.now();
     if (now - _lastTap < 300) {
-      e.preventDefault(); // évite le zoom natif du navigateur sur double-tap
+      e.preventDefault();
       toggleHud();
     }
     _lastTap = now;

@@ -29,7 +29,7 @@ document.addEventListener("mouseout", (e) => {
 // et repositionne les éléments dépendants sur mobile.
 // Les positions desktop sont gérées entièrement en CSS.
 function updateSidebarDependents(isCollapsed) {
-  const sidebarWidth = isCollapsed ? 52 : 232;
+  const sidebarWidth = isCollapsed ? 44 : 184;
 
   // La custom property est lue par btn-display via CSS (left: var(--sidebar-width))
   // et par les éléments mobiles ci-dessous via JS (les overrides inline sont nécessaires
@@ -46,6 +46,7 @@ function updateSidebarDependents(isCollapsed) {
     const audioHud = document.getElementById("audio-hud");
     const simHud = document.getElementById("sim-hud");
     const tooltip = document.getElementById("tooltip");
+    const btnBack = document.getElementById("btn-back");
 
     if (audioHud) {
       audioHud.style.left = left;
@@ -58,6 +59,13 @@ function updateSidebarDependents(isCollapsed) {
     }
     if (tooltip) {
       tooltip.style.left = left;
+      tooltip.style.right = "8px";
+    }
+    if (btnBack) {
+      // Sidebar ouverte : btn-back sous le display-panel-wrapper (top: 52px)
+      // Sidebar fermée : btn-back en haut à droite (top: 12px)
+      btnBack.style.top = isCollapsed ? "12px" : "52px";
+      btnBack.style.right = "12px";
     }
   } else {
     // Desktop — on remet les positions CSS par défaut (supprime les overrides mobiles)
@@ -77,6 +85,11 @@ function updateSidebarDependents(isCollapsed) {
     if (tooltip) {
       tooltip.style.left = "";
       tooltip.style.right = "24px";
+    }
+    const btnBack = document.getElementById("btn-back");
+    if (btnBack) {
+      btnBack.style.top = "";
+      btnBack.style.right = "";
     }
   }
 }
@@ -101,6 +114,22 @@ export function clearActiveItem() {
 // Les couleurs de groupe et de planète sont passées via CSS custom properties
 // pour éviter les styles inline.
 // Groupes repliables via clic sur sb-group-label — chevron indique l'état.
+// Scroll tooltip sur mobile sans bouger la caméra —
+// touch-action: pan-y dans le CSS gère le scroll natif,
+// stopPropagation empêche OrbitControls de recevoir l'event
+const _tooltipEl = document.getElementById("tooltip");
+if (_tooltipEl) {
+  _tooltipEl.addEventListener("touchstart", (e) => e.stopPropagation(), {
+    passive: true,
+  });
+  _tooltipEl.addEventListener("touchmove", (e) => e.stopPropagation(), {
+    passive: true,
+  });
+  _tooltipEl.addEventListener("touchend", (e) => e.stopPropagation(), {
+    passive: true,
+  });
+}
+
 export function buildSidebar(onSelect, onHover, onHoverEnd, isActive) {
   const sidebar = document.getElementById("sidebar");
 

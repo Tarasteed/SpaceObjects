@@ -1014,6 +1014,10 @@ kbd {
 /* #region ── Mobile ─────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
+  #sidebar {
+    width: 180px;
+  }
+
   .sb-item {
     padding: 10px 12px;
     min-height: 44px;
@@ -1042,8 +1046,8 @@ kbd {
 
   #sim-hud {
     bottom: 70px;
-    left: 52px;
-    right: 12px;
+    left: 44px;
+    right: 8px;
     transform: none;
     height: 38px;
     gap: 6px;
@@ -1052,8 +1056,8 @@ kbd {
 
   #audio-hud {
     bottom: 12px;
-    left: 52px;
-    right: 12px;
+    left: 44px;
+    right: 8px;
     height: 38px;
     gap: 6px;
     padding: 0 8px;
@@ -1099,10 +1103,53 @@ kbd {
   #tooltip {
     bottom: 120px;
     right: 8px;
-    left: 52px;
+    left: 44px;
     width: auto;
     font-size: 11px;
     padding: 12px 14px;
+    max-height: 52vh;
+    overflow-y: auto;
+    touch-action: pan-y;
+    pointer-events: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tt-header {
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+
+  .tt-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  .tt-type {
+    flex-shrink: 0;
+    font-size: 8.5px;
+    padding: 2px 5px;
+    white-space: nowrap;
+  }
+
+  .tt-speed {
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .tt-speed-label {
+    width: 100%;
+    flex: none;
+  }
+
+  .tt-speed-value {
+    font-size: 14px;
+  }
+
+  .tt-speed-unit {
+    font-size: 11px;
   }
 
   #splash-logo {
@@ -1177,6 +1224,24 @@ body.cursor-planet * {
     transform: translate(-50%, -50%) scale(1.5);
     opacity: 0.2;
   }
+}
+
+/* #endregion */
+
+/* #region ── DEBUG ───────────────────────────────────────────────────*/
+#debug-panel {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font: 12px/1.7 monospace;
+  padding: 8px 12px;
+  border-radius: 8px;
+  pointer-events: none;
+  min-width: 140px;
+  backdrop-filter: blur(4px);
 }
 
 /* #endregion */

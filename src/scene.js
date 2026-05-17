@@ -8,8 +8,16 @@ import { CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 // #region ── Renderer ─────────────────────────────────────────────────────────
 
 const canvas = document.getElementById("canvas");
-export const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
+const isMobile =
+  /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+  window.innerWidth <= 768;
+export const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: !isMobile,
+});
+renderer.setPixelRatio(
+  isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio
+);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
@@ -40,7 +48,7 @@ export const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 40, 100);
 
 export const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+controls.enableDamping = !isMobile;
 controls.dampingFactor = 0.05;
 
 // #endregion
@@ -61,14 +69,15 @@ scene.add(sunFill);
 const renderPass = new RenderPass(scene, camera);
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0.8,
-  0.4,
-  0.85
+  isMobile ? 0.5 : 0.8,
+  isMobile ? 0.3 : 0.4,
+  isMobile ? 0.9 : 0.85
 );
 export const composer = new EffectComposer(renderer);
 composer.addPass(renderPass);
 composer.addPass(bloomPass);
 export { bloomPass };
+export { isMobile };
 
 // #endregion
 
@@ -93,14 +102,16 @@ export function setSkipControlsUpdate(v) {
   skipControlsUpdate = v;
 }
 
+let _labelFrame = 0;
 export function startLoop(onFrame) {
   renderer.setAnimationLoop(() => {
-    if (!skipControlsUpdate) {
-      controls.update();
-    }
+    if (!skipControlsUpdate) controls.update();
     onFrame();
     composer.render();
-    labelRenderer.render(scene, camera);
+    // Mobile : labels toutes les 2 frames (~60fps) au lieu de chaque frame
+    if (!isMobile || _labelFrame++ % 2 === 0) {
+      labelRenderer.render(scene, camera);
+    }
   });
 }
 

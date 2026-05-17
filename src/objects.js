@@ -395,9 +395,12 @@ export function createLabel(mesh, name, color, parentScene) {
   div.textContent = name;
   div.style.setProperty("--label-color", color);
 
+  div.style.opacity = "0";
+  div.style.pointerEvents = "none";
+
   const label = new CSS2DObject(div);
   label.position.set(0, 0, 0); // mis à jour chaque frame via getWorldPosition()
-  label.visible = false; // masqué par défaut — activé via le toggle
+  label.visible = true; // ← toujours true — le CSS2DRenderer ne touche plus à display
 
   let radius = 0;
   if (mesh.geometry) {
@@ -406,7 +409,7 @@ export function createLabel(mesh, name, color, parentScene) {
   }
 
   parentScene.add(label);
-  return { label, mesh, radius };
+  return { label, mesh, radius, div };
 }
 
 // #endregion

@@ -287,9 +287,9 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ LoadingManager partagé via `loader.js` (évite les imports circulaires)
 - ✅ Optimisation mobile (sidebar repliable, HUDs adaptatifs, touch events)
 - ✅ Enum `CameraMode` pour les états caméra
-- [ ] Optimisation performances mobile (LOD, réduction particules)
+- ✅ Mode debug compteur de FPS an ajoutant ?debug=true dans l'URL
+- ✅ Optimisation performances mobile (LOD, réduction particules)
 - [ ] PWA — installable sur mobile
-- [ ] Mode debug compteur de FPS
 
 ### Sound design
 - ✅ Musique ambiante spatiale (Scott Buckley — "Celestial", CC BY 4.0)
