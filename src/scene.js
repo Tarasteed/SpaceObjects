@@ -35,7 +35,7 @@ export const camera = new THREE.PerspectiveCamera(
   55,
   window.innerWidth / window.innerHeight,
   0.1, // ← était 0.01 — monte le near
-  2000000 // ← était 8000 — monte le far pour voir la galaxie
+  5000000 // far
 );
 camera.position.set(0, 40, 100);
 

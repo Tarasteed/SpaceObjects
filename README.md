@@ -228,7 +228,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Touche Échap pour revenir au système depuis n'importe où
 - ✅ Cliquer sur une planète dans la scène pour zoomer (raycasting)
 - ✅ Navigation de planète en planète sans repasser par la vue système
-- [ ] Dézoom progressif jusqu'à l'échelle de la galaxie
+- ✅ Dézoom progressif jusqu'à l'échelle de la galaxie
 - [ ] Zoom molette depuis la vue système vers une planète (sans clic) ?
 - [ ] Tenter d'ajouter un mode free cam
 
@@ -277,7 +277,6 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Splash screen animé avec logo SVG + loader
 - ✅ Favicon SVG
 - ✅ Effet de vitesse en mode ZOOMING (FOV + blur CSS)
-- [ ] Fond de scène au zoom galaxie (Voie Lactée vue de loin) - en test
 - ❌ Ombres portées — rapport perf/rendu défavorable avec PointLight
 - ❌ Halo lumineux autour de la Lune — artefact visuel indésirable
 - ❌ Ombre des anneaux de Saturne sur la planète — trop coûteux

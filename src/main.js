@@ -499,7 +499,7 @@ const galaxyTex = new THREE.TextureLoader().load("/textures/galaxyTransp.png");
 const galaxyMat = new THREE.MeshBasicMaterial({
   map: galaxyTex,
   // Teinte chaude et lumineuse — bleu-violet pour les bras, blanc chaud au centre
-  color: new THREE.Color(0.8, 0.65, 1.0),
+  color: new THREE.Color(1.5, 1.2, 2.0),
   transparent: true,
   opacity: 0,
   depthWrite: false,
@@ -935,7 +935,7 @@ startLoop(() => {
     Math.min(1, (camDist - GALAXY_NEAR) / (GALAXY_FULL - GALAXY_NEAR))
   );
   // Galaxie fade in
-  galaxyMat.opacity = galaxyRatio * 0.55; // plus pétant avec la nouvelle teinte
+  galaxyMat.opacity = galaxyRatio * 0.55;
   // Skybox fade out en parallèle — disparaît complètement quand la galaxie est pleine
   if (skyboxMat) skyboxMat.opacity = 1 - galaxyRatio;
 
