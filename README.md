@@ -250,6 +250,7 @@ Skybox : https://svs.gsfc.nasa.gov/4851
 - ✅ Zone raccourcis clavier dans le splash screen
 - ✅ Nom de la planète suivie dans le titre de l'onglet navigateur
 - [ ] Boutons d'échelle (système interne / complet / galaxie)
+- [ ] Classer les lunes sous les planètes auxquel elles appartiennent
 - ❌ Tooltip style Dead Space — trop complexe avec suivi de planète en temps réel
 - ❌ Panel orbiter / rapprocher — pas suffisamment utile
 
